@@ -32,3 +32,6 @@ t_vec3 divide_by_scalar(t_vec3 a, double b);
 double dot_vec3(t_vec3 a, t_vec3 b);
 double vec3_length(t_vec3 v);
 t_vec3 unit_vector(t_vec3 v);
+
+//ray.c
+t_vec3 at(const t_ray *ray, double t);

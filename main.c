@@ -5,22 +5,36 @@
 #include "libft/libft.h"
 #include "miniRT.h"
 
-bool hit_sphere(const t_vec3 *center, double radius, const t_ray *r) 
+double hit_sphere(const t_vec3 *center, double radius, const t_ray *r) 
 {
 	t_vec3 oc = subtract_vec3(*center, r->origin);
 	double a = dot_vec3(r->direction, r->direction);
 	double b = -2.0 * dot_vec3(r->direction, oc);
 	double c = dot_vec3(oc, oc) - radius*radius;
 	double discriminant = b*b - 4*a*c;
-	return (discriminant >= 0);
+	if (discriminant < 0)
+	{
+		return -1.0;
+	}
+	else
+	{
+		return (-b - sqrt(discriminant) ) / (2.0*a);
+	}
 }
 
 t_vec3 ray_color(const t_ray *r) 
 {
 	t_vec3 red = {1.0, 0, 0};
 	t_vec3 sphere_loc = {0,0,-1};
-	if (hit_sphere(&sphere_loc, 0.5, r))
-		return (red);
+	double t = hit_sphere(&sphere_loc, 0.5, r);
+	if (t > 0.0)
+	{
+		t_vec3 dir_hit_point = at(r, t);
+		t_vec3 outward_ray = subtract_vec3(dir_hit_point, sphere_loc);
+		t_vec3 normal = unit_vector(outward_ray);
+		t_vec3 color = {normal.x + 1, normal.y + 1, normal.z + 1};
+        return multiply_by_scalar(color, 0.5);
+	}
 	//A unit vector is a vector with length/magnitude of exactly 1
 	//we use it in formulas where you only need the direction not how far in
 	//a particular direction it goes
