@@ -21,18 +21,18 @@ int calculate_img_height(float aspect_ratio, int image_width)
 
 int main(void)
 {
-	int image_width;
-	int image_height;
-	float aspect_ratio;
-
-	//image
-	aspect_ratio = 16.0 / 9.0;
-	image_width = 1280;
-	image_height = calculate_img_height(aspect_ratio, image_width);
-
 	//camera
 	t_camera	cam;
-	camera_init(&cam, image_width, image_height);
+	cam.aspect_ratio = 16.0 / 9.0;
+	cam.image_width = 400;
+	cam.image_height = calculate_img_height(cam.aspect_ratio, cam.image_width);
+	cam.samples_per_pixel = 100;
+	cam.max_depth = 50;
+	cam.hfov = 120;
+	cam.look_from = (t_vec3){-2,2,1};
+	cam.look_at = (t_vec3){0,0,-1};
+	cam.v_up = (t_vec3){0,1,0};
+	camera_init(&cam);
 
 	//world
 	t_world world;
@@ -41,7 +41,7 @@ int main(void)
 		ft_putstr_fd("Error: failed to init world\n", 2);
 		return (1);
 	}
-	render(&cam, &world, image_width, image_height);
+	render(&cam, &world);
 	world_destroy(&world);
 	return (0);
 }

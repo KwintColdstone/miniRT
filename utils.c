@@ -16,3 +16,16 @@ double random_double_mm(double min, double max)
     // Returns a random real in [min,max).
     return (min + (max-min)*random_double());
 }
+
+double	clamp_interval(double x, t_interval i)
+{
+	if (x < i.min)
+	{
+		return (i.min);
+	}
+	if (x > i.max)
+	{
+		return (i.max);
+	}
+	return (x);
+}

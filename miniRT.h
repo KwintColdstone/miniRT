@@ -60,15 +60,24 @@ typedef struct s_interval
 
 typedef struct s_camera
 {
-	double focal_length;
-	double viewport_height;
-	double viewport_width;
-	t_vec3 camera_center;
-	t_vec3 viewport_u;
-	t_vec3 viewport_v;
-	t_vec3 pixel_delta_u;
-	t_vec3 pixel_delta_v;
-	t_vec3 pixel00_loc;
+	t_vec3	camera_center;
+	t_vec3	viewport_u;
+	t_vec3	viewport_v;
+	t_vec3	pixel_delta_u;
+	t_vec3	pixel_delta_v;
+	t_vec3	pixel00_loc;
+	t_vec3	look_from;
+	t_vec3	look_at;
+	t_vec3	v_up;
+	double	focal_length;
+	double	viewport_height;
+	double	viewport_width;
+	double	aspect_ratio;
+    int		image_width;
+    int		image_height;
+    int		samples_per_pixel;
+    int		max_depth;
+    int		hfov;
 }	t_camera;
 
 //vec3.c
@@ -81,6 +90,7 @@ t_vec3	multiply_by_scalar(t_vec3 a, double b);
 t_vec3	divide_vec3(t_vec3 a, t_vec3 b);
 t_vec3	divide_by_scalar(t_vec3 a, double b);
 double	dot_vec3(t_vec3 a, t_vec3 b);
+t_vec3	cross_vec3(t_vec3 a, t_vec3 b);
 double	vec3_len_squared(t_vec3 v);
 double	vec3_length(t_vec3 v);
 t_vec3	random_vec3(void);
@@ -103,6 +113,7 @@ bool	world_hit(const t_world* world, const t_ray* r,
 double	degrees_to_radians(double degrees);
 double	random_double(void);
 double	random_double_mm(double min, double max);
+double	clamp_interval(double x, t_interval i);
 
 // create_objects.c
 bool	sphere_list_init(t_sphere_list *list, int capacity);
@@ -112,7 +123,7 @@ bool	world_init(t_world *world);
 void	world_destroy(t_world *world);
 
 // camera
-bool	camera_init(t_camera *cam, int image_width, int image_height);
+bool	camera_init(t_camera *cam);
 
 // render
-bool render(t_camera *cam, t_world *world, int image_width, int image_height);
+bool render(t_camera *cam, t_world *world);

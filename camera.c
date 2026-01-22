@@ -1,24 +1,35 @@
 #include "miniRT.h"
+#include <math.h>
 
-bool	camera_init(t_camera *cam, int image_width, int image_height)
+bool	camera_init(t_camera *cam)
 {
-	//camera
-	cam->focal_length = 1.0;
-	cam->viewport_height = 2.0;
-	cam->viewport_width = cam->viewport_height * ((double)(image_width)/image_height);
-	cam->camera_center = (t_vec3){0,0,0};
+	t_vec3	u;
+	t_vec3	v;
+	t_vec3	w;
+	cam->camera_center = cam->look_from;
+
+	// Calculate the u,v,w unit basis vectors for the camera coordinate frame.
+	w = unit_vector(subtract_vec3(cam->look_from, cam->look_at));
+	u = unit_vector(cross_vec3(cam->v_up, w));
+	v = cross_vec3(w, u);
+
+	// Determine viewport dimensions.
+	cam->focal_length = vec3_length(subtract_vec3(cam->look_from, cam->look_at));
+	double	theta = degrees_to_radians(cam->hfov);
+	double	h = tan(theta / 2);
+	cam->viewport_width = 2.0 * h * cam->focal_length;
+	cam->viewport_height = cam->viewport_width / cam->aspect_ratio;
 
 	// Calculate the vectors across the horizontal and down the vertical viewport edges.
-	t_vec3 viewport_u = {cam->viewport_width, 0, 0};
-	t_vec3 viewport_v = {0, -(cam->viewport_height), 0};
+	t_vec3 viewport_u = multiply_by_scalar(u, cam->viewport_width);
+	t_vec3 viewport_v = multiply_by_scalar(v, -cam->viewport_height);
 
 	// Calculate the horizontal and vertical delta vectors from pixel to pixel.
-	cam->pixel_delta_u = divide_by_scalar(viewport_u, (double)image_width);
-	cam->pixel_delta_v = divide_by_scalar(viewport_v, (double)image_height);
+	cam->pixel_delta_u = divide_by_scalar(viewport_u, (double)cam->image_width);
+	cam->pixel_delta_v = divide_by_scalar(viewport_v, (double)cam->image_height);
 
 	// Calculate the location of the upper left pixel.
-	t_vec3 fl = {0, 0, cam->focal_length};
-	t_vec3 viewport_center = subtract_vec3(cam->camera_center, fl);
+	t_vec3 viewport_center = subtract_vec3(cam->camera_center, multiply_by_scalar(w, cam->focal_length));
 	t_vec3 half_u = divide_by_scalar(viewport_u, 2.0);
 	t_vec3 half_v = divide_by_scalar(viewport_v, 2.0);
 

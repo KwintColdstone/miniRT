@@ -7,12 +7,16 @@ static t_vec3 ray_color(const t_ray *r, const t_world *world, int depth)
 	t_vec3		direction;
 	t_ray		random;
 
-	ray_t.min = 0;
+	ray_t.min = 0.001;
 	ray_t.max = INFINITY;
 	if (world_hit(world, r, ray_t, &rec))
 	{
-		direction = random_on_hemisphere(&rec.normal);
-		random = (t_ray){rec.position, direction};	
+		//random scatter
+		//direction = random_on_hemisphere(&rec.normal);
+		
+		//lambertian scatter (more rays scatter closer to normal)
+		direction = add_vec3(rec.normal, random_unit_vector());
+		random = (t_ray){rec.position, direction};
 		return (multiply_by_scalar(ray_color(&random, world, depth - 1), 0.5));
 	}
 	//A unit vector is a vector with length/magnitude of exactly 1
@@ -30,27 +34,69 @@ static t_vec3 ray_color(const t_ray *r, const t_world *world, int depth)
 	return (add_vec3(w_amount, b_amount));
 }
 
+static double linear_to_gamma(double linear_component)
+{
+	if (linear_component > 0)
+		return sqrt(linear_component);
+	return 0;
+}
+
 static void	write_color(int file, t_vec3 *pixel_color)
 {
+	t_interval	intensity;
+
 	double r = pixel_color->x; 
 	double g = pixel_color->y; 
 	double b = pixel_color->z;
-	int rbyte = (int)(255.999 * r);
-	int gbyte = (int)(255.999 * g);
-	int bbyte = (int)(255.999 * b);
+	r = linear_to_gamma(r);
+	g = linear_to_gamma(g);
+	b = linear_to_gamma(b);
+	intensity = (t_interval){0.000, 0.999};
+	int rbyte = (int)(256 * clamp_interval(r, intensity));
+	int gbyte = (int)(256 * clamp_interval(g, intensity));
+	int bbyte = (int)(256 * clamp_interval(b, intensity));
 	char pixel[16];
 	int len = sprintf(pixel, "%d %d %d\n", rbyte, gbyte, bbyte);
 	write(file, pixel, len);
 }
 
-bool render(t_camera *cam, t_world *world, int image_width, int image_height)
+static t_vec3	sample_square(void)
 {
+	// Returns the vector to a random point in the [-.5,-.5]-[+.5,+.5] unit square.
+	t_vec3	sample;
+
+	sample = (t_vec3){random_double() - 0.5, random_double() - 0.5, 0};
+	return (sample);
+}
+
+t_ray	get_ray(int i, int j, t_camera *cam)
+{
+	// Construct a camera ray originating from the origin and directed at randomly sampled
+	// point around the pixel location i, j.
+	t_vec3	offset;
+
+	offset = sample_square();
+	t_vec3 pixel_column = multiply_by_scalar(cam->pixel_delta_u, ((double)j + offset.x));
+	t_vec3 pixel_row = multiply_by_scalar(cam->pixel_delta_v, ((double)i + offset.y));
+	t_vec3 cur_pixel = add_vec3(pixel_row, pixel_column);
+	t_vec3 cur_pixel_sample = add_vec3(cam->pixel00_loc, cur_pixel);
+
+	t_vec3 ray_direction = subtract_vec3(cur_pixel_sample, cam->camera_center);
+	t_ray ray = {cam->camera_center, ray_direction};
+	return (ray);
+}
+
+bool render(t_camera *cam, t_world *world)
+{
+	t_ray	r;
+	t_vec3	pixel_color;
 	int file;
 	int i;
 	int j;
-	int max_depth;
+	int sample;
+	double	pixel_samples_scale;
 
-	max_depth = 10;
+	pixel_samples_scale = 1.0 / cam->samples_per_pixel;
 	//open file to write image to
 	file = open("image.ppm", O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (file == -1) {
@@ -59,31 +105,31 @@ bool render(t_camera *cam, t_world *world, int image_width, int image_height)
 	}
 	//standard ppm start info
 	write(file, "P3\n", 3);
-	char *width = ft_itoa(image_width);
+	char *width = ft_itoa(cam->image_width);
 	write(file, width, ft_strlen(width));
 	write(file, " ", 1);
-	char *height = ft_itoa(image_height);
+	char *height = ft_itoa(cam->image_height);
 	write(file, height, ft_strlen(height));
 	write(file, "\n", 1);
 	write(file, "255\n", 4);
-
+	
 	//image loop
 	i = 0;
-	while (i < image_height)
+	while (i < cam->image_height)
 	{
 		j = 0;
-		while (j < image_width)
+		while (j < cam->image_width)
 		{
-			t_vec3 pixel_column = multiply_by_scalar(cam->pixel_delta_u, (double)j);
-			t_vec3 pixel_row = multiply_by_scalar(cam->pixel_delta_v, (double)i);
-			t_vec3 cur_pixel = add_vec3(pixel_row, pixel_column);
-			t_vec3 cur_pixel_center = add_vec3(cam->pixel00_loc, cur_pixel);
-
-			t_vec3 ray_direction = subtract_vec3(cur_pixel_center, cam->camera_center);
-			t_ray r = {cam->camera_center, ray_direction};
-
-			t_vec3 pixel_color = ray_color(&r, world, max_depth);
-			write_color(file, &pixel_color);
+			sample = 0;
+			pixel_color = (t_vec3){0,0,0};
+			while (sample < cam->samples_per_pixel)
+			{
+				r = get_ray(i, j, cam);
+				pixel_color = add_vec3(pixel_color, ray_color(&r, world, cam->max_depth));
+				sample++;
+			}
+			t_vec3 final_color = multiply_by_scalar(pixel_color, pixel_samples_scale);
+			write_color(file, &final_color);
 			j++;
 		}
 		i++;
