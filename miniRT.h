@@ -19,37 +19,58 @@ typedef struct s_ray {
 	t_vec3 direction;
 }	t_ray;
 
+typedef enum e_material_type {
+	MAT_LAMBERTIAN,
+	MAT_METAL,
+}	t_material_type;
+
+typedef struct s_material {
+	t_material_type	type;
+	t_vec3		albedo;
+	double		fuzz;
+	double		ir;
+}	t_material;
+
 typedef struct s_sphere_list {
-	t_vec3* centers;
-	double* radii;
-	int count;
-	int capacity;
+	t_vec3		*centers;
+	double		*radii;
+	t_material	*materials;
+	int		count;
+	int		capacity;
 }	t_sphere_list;
 
 typedef struct s_plane_list {
-	t_vec3* points;
-	t_vec3* normals;
+	t_vec3		*q;
+	t_vec3		*u;
+	t_vec3		*v;
+	t_vec3		*normals;
+	t_material	*materials;
 	int count;
 	int capacity;
 }	t_plane_list;
 
 typedef struct s_cylinder_list {
-	t_vec3* centers;
-	double* radii;
-	double* heights;
+	t_vec3		*centers;
+	double		*radii;
+	double		*heights;
+	t_material	*materials;
 	int count;
 	int capacity;
 }	t_cylinder_list;
 
+
 typedef struct s_world {
 	t_sphere_list spheres;
 	t_plane_list planes;
-	t_cylinder_list cylinders; }	t_world;
+	t_cylinder_list cylinders;
+}	t_world;
 
 typedef struct s_hit_record {
 	t_vec3 position;
 	t_vec3 normal;
-	double t; // Distance along ray
+	t_material mat;
+	double t;
+	bool	front_face;
 }	t_hit_record;
 
 typedef struct s_interval
@@ -73,11 +94,11 @@ typedef struct s_camera
 	double	viewport_height;
 	double	viewport_width;
 	double	aspect_ratio;
-    int		image_width;
-    int		image_height;
-    int		samples_per_pixel;
-    int		max_depth;
-    int		hfov;
+	int		image_width;
+	int		image_height;
+	int		samples_per_pixel;
+	int		max_depth;
+	int		hfov;
 }	t_camera;
 
 //vec3.c
@@ -98,12 +119,14 @@ t_vec3	random_vec3_mm(double min, double max);
 t_vec3	unit_vector(t_vec3 v);
 t_vec3	random_unit_vector(void);
 t_vec3	random_on_hemisphere(const t_vec3 *normal);
+t_vec3	reflect(const t_vec3 *v, const t_vec3 *n);
+bool	near_zero(t_vec3 v);
 
 // ray.c
 t_vec3	ray_at(const t_ray *ray, double t);
 
 // hit_objects.c
-bool	sphere_hit(const t_vec3 *center, double radius, const t_ray *r, t_interval ray_t, t_hit_record *rec);
+bool	sphere_hit(const t_vec3 *center, double radius, t_material material, const t_ray *r, t_interval ray_t, t_hit_record *rec);
 
 // world_hit.c
 bool	world_hit(const t_world* world, const t_ray* r,
@@ -117,13 +140,17 @@ double	clamp_interval(double x, t_interval i);
 
 // create_objects.c
 bool	sphere_list_init(t_sphere_list *list, int capacity);
-bool	sphere_list_add(t_sphere_list *list, t_vec3 center, double radius);
+bool	sphere_list_add(t_sphere_list *list, t_vec3 center, double radius, t_material material);
 void	sphere_list_destroy(t_sphere_list *list);
 bool	world_init(t_world *world);
 void	world_destroy(t_world *world);
 
-// camera
+// camera.c
 bool	camera_init(t_camera *cam);
 
-// render
+// render.c
 bool render(t_camera *cam, t_world *world);
+
+// material.c
+bool lambertian_scatter(const t_ray *r_in, const t_hit_record *rec, t_vec3 *attenuation, t_ray *scattered);
+bool metal_scatter(const t_ray *r_in, const t_hit_record *rec, t_vec3 *attenuation, t_ray *scattered);

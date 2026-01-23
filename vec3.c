@@ -138,7 +138,7 @@ t_vec3	random_unit_vector(void)
 	}
 }
 
-t_vec3 random_on_hemisphere(const t_vec3 *normal)
+t_vec3	random_on_hemisphere(const t_vec3 *normal)
 {
 	t_vec3 on_unit_sphere = random_unit_vector();
 	// In the same hemisphere as the normal
@@ -146,4 +146,16 @@ t_vec3 random_on_hemisphere(const t_vec3 *normal)
 		return on_unit_sphere;
 	else
 		return multiply_by_scalar(on_unit_sphere, -1.0);
+}
+
+t_vec3	reflect(const t_vec3 *v, const t_vec3 *n)
+{
+	return (subtract_vec3(*v, multiply_by_scalar(*n, 2 * dot_vec3(*v, *n))));
+}
+
+bool	near_zero(t_vec3 v)
+{
+	// Return true if the vector is close to zero in all dimensions.
+	double s = 1e-8;
+	return (fabs(v.x) < s) && (fabs(v.y) < s) && (fabs(v.z) < s);
 }

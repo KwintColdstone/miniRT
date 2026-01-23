@@ -12,7 +12,7 @@ bool world_hit(const t_world* world, const t_ray* r,
 
 	// Check all spheres
 	for (int i = 0; i < world->spheres.count; i++) {
-		if (sphere_hit(&world->spheres.centers[i], world->spheres.radii[i], r, new_ray_t, &temp_rec))
+		if (sphere_hit(&world->spheres.centers[i], world->spheres.radii[i], world->spheres.materials[i], r, new_ray_t, &temp_rec))
 		{
 			hit_anything = true;
 			closest_so_far = temp_rec.t;

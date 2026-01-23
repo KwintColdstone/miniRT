@@ -1,6 +1,15 @@
 #include "miniRT.h"
 
-bool	sphere_hit(const t_vec3 *center, double radius, const t_ray *r, t_interval ray_t, t_hit_record *rec) 
+void set_face_normal(const t_ray *r, const t_vec3 *outward_normal, t_hit_record *rec)
+{
+	rec->front_face = dot_vec3(r->direction, *outward_normal) < 0;
+	if (rec->front_face == true)
+		rec->normal = *outward_normal;
+	else
+		rec->normal = multiply_by_scalar(*outward_normal, -1.0);
+}
+
+bool	sphere_hit(const t_vec3 *center, double radius, t_material material, const t_ray *r, t_interval ray_t, t_hit_record *rec)
 {
 	t_vec3 oc = subtract_vec3(*center, r->origin);
 	double a = vec3_len_squared(r->direction);
@@ -23,6 +32,13 @@ bool	sphere_hit(const t_vec3 *center, double radius, const t_ray *r, t_interval 
 	rec->t = root;
 	rec->position = ray_at(r, rec->t);
 	t_vec3 outward_normal = divide_by_scalar(subtract_vec3(rec->position, *center), radius);
-	rec->normal = outward_normal;
+	set_face_normal(r, &outward_normal, rec);
+	rec->mat = material;
 	return (true);
+}
+
+bool	plane_hit(const t_vec3 *q, const t_vec3 *u, const t_vec3 *v, t_material material, const t_ray *r, t_interval ray_t, t_hit_record *rec) 
+{
+	
+	return (false);
 }

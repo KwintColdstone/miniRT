@@ -1,23 +1,32 @@
 #include "miniRT.h"
+#include <unistd.h>
 
 static t_vec3 ray_color(const t_ray *r, const t_world *world, int depth)
 {
 	t_hit_record	rec;
 	t_interval	ray_t;
-	t_vec3		direction;
-	t_ray		random;
+	t_ray		scattered;
+	t_vec3		attenuation;
 
+	if (depth <= 0)
+		return ((t_vec3){0,0,0});
 	ray_t.min = 0.001;
 	ray_t.max = INFINITY;
 	if (world_hit(world, r, ray_t, &rec))
 	{
-		//random scatter
-		//direction = random_on_hemisphere(&rec.normal);
-		
-		//lambertian scatter (more rays scatter closer to normal)
-		direction = add_vec3(rec.normal, random_unit_vector());
-		random = (t_ray){rec.position, direction};
-		return (multiply_by_scalar(ray_color(&random, world, depth - 1), 0.5));
+		if (rec.mat.type == MAT_LAMBERTIAN)
+		{
+			lambertian_scatter(r, &rec, &attenuation, &scattered);
+			return (multiply_vec3(attenuation, ray_color(&scattered, world, depth - 1)));
+		}
+		if (rec.mat.type == MAT_METAL)
+		{
+			if (metal_scatter(r, &rec, &attenuation, &scattered))
+			{
+				return (multiply_vec3(attenuation, ray_color(&scattered, world, depth - 1)));
+			}
+		}
+		return ((t_vec3){0,0,0});
 	}
 	//A unit vector is a vector with length/magnitude of exactly 1
 	//we use it in formulas where you only need the direction not how far in
@@ -117,6 +126,8 @@ bool render(t_camera *cam, t_world *world)
 	i = 0;
 	while (i < cam->image_height)
 	{
+		fprintf(stderr,"\rScanlines remaining: %d", cam->image_height - i);
+		fflush(stderr);
 		j = 0;
 		while (j < cam->image_width)
 		{
