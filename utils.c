@@ -29,3 +29,8 @@ double	clamp_interval(double x, t_interval i)
 	}
 	return (x);
 }
+
+bool	interval_contains(t_interval i, double x)
+{
+	return (i.min <= x && x <= i.max);
+}

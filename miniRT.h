@@ -24,14 +24,15 @@ typedef enum e_material_type {
 	MAT_METAL,
 }	t_material_type;
 
-typedef struct s_material {
+typedef struct s_material
+{
 	t_material_type	type;
 	t_vec3		albedo;
 	double		fuzz;
-	double		ir;
 }	t_material;
 
-typedef struct s_sphere_list {
+typedef struct s_sphere_list
+{
 	t_vec3		*centers;
 	double		*radii;
 	t_material	*materials;
@@ -39,17 +40,18 @@ typedef struct s_sphere_list {
 	int		capacity;
 }	t_sphere_list;
 
-typedef struct s_plane_list {
-	t_vec3		*q;
+typedef struct s_plane_list
+{
+	t_vec3		*corners;
 	t_vec3		*u;
 	t_vec3		*v;
-	t_vec3		*normals;
 	t_material	*materials;
 	int count;
 	int capacity;
 }	t_plane_list;
 
-typedef struct s_cylinder_list {
+typedef struct s_cylinder_list
+{
 	t_vec3		*centers;
 	double		*radii;
 	double		*heights;
@@ -58,6 +60,20 @@ typedef struct s_cylinder_list {
 	int capacity;
 }	t_cylinder_list;
 
+typedef struct	s_plane
+{
+	t_vec3		corner;
+	t_vec3		u;
+	t_vec3		v;
+	t_material	mat;
+}	t_plane;
+
+typedef struct	s_sphere
+{
+	t_vec3	center;
+	t_material mat;
+	double	radius;
+}	t_sphere;
 
 typedef struct s_world {
 	t_sphere_list spheres;
@@ -66,10 +82,10 @@ typedef struct s_world {
 }	t_world;
 
 typedef struct s_hit_record {
-	t_vec3 position;
-	t_vec3 normal;
+	t_vec3	position;
+	t_vec3	normal;
 	t_material mat;
-	double t;
+	double	t;
 	bool	front_face;
 }	t_hit_record;
 
@@ -126,7 +142,8 @@ bool	near_zero(t_vec3 v);
 t_vec3	ray_at(const t_ray *ray, double t);
 
 // hit_objects.c
-bool	sphere_hit(const t_vec3 *center, double radius, t_material material, const t_ray *r, t_interval ray_t, t_hit_record *rec);
+bool	sphere_hit(const t_sphere *s, const t_ray *r, t_interval ray_t, t_hit_record *rec);
+bool	plane_hit(const t_plane *p, const t_ray *r, t_interval ray_t, t_hit_record *rec);
 
 // world_hit.c
 bool	world_hit(const t_world* world, const t_ray* r,
@@ -137,6 +154,7 @@ double	degrees_to_radians(double degrees);
 double	random_double(void);
 double	random_double_mm(double min, double max);
 double	clamp_interval(double x, t_interval i);
+bool	interval_contains(t_interval i, double x);
 
 // create_objects.c
 bool	sphere_list_init(t_sphere_list *list, int capacity);

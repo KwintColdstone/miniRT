@@ -115,7 +115,6 @@ t_vec3 random_vec3(void)
 
 t_vec3 random_vec3_mm(double min, double max)
 {
-
 	t_vec3 random;
 
 	random = (t_vec3){random_double_mm(min, max), random_double_mm(min, max), random_double_mm(min, max)};
