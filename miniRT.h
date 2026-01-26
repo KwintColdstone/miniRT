@@ -22,12 +22,14 @@ typedef struct s_ray {
 typedef enum e_material_type {
 	MAT_LAMBERTIAN,
 	MAT_METAL,
+	MAT_EMIT,
 }	t_material_type;
 
 typedef struct s_material
 {
 	t_material_type	type;
 	t_vec3		albedo;
+	t_vec3		emit_color;
 	double		fuzz;
 }	t_material;
 
@@ -75,6 +77,14 @@ typedef struct	s_sphere
 	double	radius;
 }	t_sphere;
 
+typedef struct	s_cylinder
+{
+	t_vec3	center;
+	t_material mat;
+	double	radius;
+	double	height;
+}	t_cylinder;
+
 typedef struct s_world {
 	t_sphere_list spheres;
 	t_plane_list planes;
@@ -106,6 +116,7 @@ typedef struct s_camera
 	t_vec3	look_from;
 	t_vec3	look_at;
 	t_vec3	v_up;
+	t_vec3	background;
 	double	focal_length;
 	double	viewport_height;
 	double	viewport_width;
@@ -144,6 +155,7 @@ t_vec3	ray_at(const t_ray *ray, double t);
 // hit_objects.c
 bool	sphere_hit(const t_sphere *s, const t_ray *r, t_interval ray_t, t_hit_record *rec);
 bool	plane_hit(const t_plane *p, const t_ray *r, t_interval ray_t, t_hit_record *rec);
+bool	cylinder_hit(const t_cylinder *cl, const t_ray *r, t_interval ray_t, t_hit_record *rec);
 
 // world_hit.c
 bool	world_hit(const t_world* world, const t_ray* r,

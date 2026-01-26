@@ -1,13 +1,13 @@
 #include "miniRT.h"
 
-
 bool world_hit(const t_world* world, const t_ray* r,
 	t_interval ray_t, t_hit_record* rec)
 {
 	t_hit_record	temp_rec;
 	t_interval	new_ray_t;
 	t_sphere	s;
-	t_plane	p;
+	t_plane		p;
+	t_cylinder	c;
 	bool hit_anything = false;
 	double closest_so_far = ray_t.max;
 	new_ray_t.max = ray_t.max;
@@ -31,6 +31,19 @@ bool world_hit(const t_world* world, const t_ray* r,
 		p.v = world->planes.v[i];
 		p.mat = world->planes.materials[i];
 		if (plane_hit(&p, r, new_ray_t, &temp_rec))
+		{
+			hit_anything = true;
+			closest_so_far = temp_rec.t;
+			new_ray_t.max = closest_so_far;
+			*rec = temp_rec;
+		}
+	}
+	for (int i = 0; i < world->cylinders.count; i++) {
+		c.center = world->cylinders.centers[i];
+		c.radius = world->cylinders.radii[i];
+		c.height = world->cylinders.heights[i];
+		c.mat = world->cylinders.materials[i];
+		if (cylinder_hit(&c, r, new_ray_t, &temp_rec))
 		{
 			hit_anything = true;
 			closest_so_far = temp_rec.t;

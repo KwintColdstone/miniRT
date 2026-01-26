@@ -71,3 +71,39 @@ bool	plane_hit(const t_plane *p, const t_ray *r, t_interval ray_t, t_hit_record 
 	set_face_normal(r, &normal, rec);
 	return  (true);
 }
+
+bool	cylinder_hit(const t_cylinder *cl, const t_ray *r, t_interval ray_t, t_hit_record *rec)
+{
+	double a = (r->direction.x * r->direction.x) + (r->direction.z * r->direction.z);
+	double b = 2 * (r->direction.x * (r->origin.x - cl->center.x) + 
+				   r->direction.z * (r->origin.z - cl->center.z));
+	double c = (r->origin.x - cl->center.x) * (r->origin.x - cl->center.x) + 
+			   (r->origin.z - cl->center.z) * (r->origin.z - cl->center.z) - 
+			   (cl->radius * cl->radius);
+
+	double discriminant = b * b - 4 * a * c;
+	if (discriminant < 0)
+		return (false);
+	double sqrtd = sqrt(discriminant);
+	double root = (-b - sqrtd) / (2 * a);
+	if (root <= ray_t.min || ray_t.max <= root)
+	{
+		root = (-b + sqrtd) / (2 * a);
+		if (root <= ray_t.min || ray_t.max <= root)
+			return (false);
+	}
+	double hit_y = r->origin.y + root * r->direction.y;
+	if (hit_y < cl->center.y || hit_y > cl->center.y + cl->height)
+		return (false);
+	rec->t = root;
+	rec->position = ray_at(r, rec->t);
+	t_vec3 outward_normal = (t_vec3){
+		rec->position.x - cl->center.x,
+		0.0,
+		rec->position.z - cl->center.z
+	};
+	outward_normal = unit_vector(outward_normal);
+	set_face_normal(r, &outward_normal, rec);
+	rec->mat = cl->mat;
+	return (true);
+}
