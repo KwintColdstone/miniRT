@@ -42,7 +42,7 @@ void	sphere_list_destroy(t_sphere_list *list)
 	list->radii = NULL;
 }
 
-bool plane_list_init(t_plane_list *list, int capacity)
+bool quad_list_init(t_quad_list *list, int capacity)
 {
 	if (!list || capacity <= 0)
 		return (false);
@@ -62,7 +62,7 @@ bool plane_list_init(t_plane_list *list, int capacity)
 	return (true);
 }
 
-bool plane_list_add(t_plane_list *list, const t_plane *p)
+bool quad_list_add(t_quad_list *list, const t_quad *p)
 {
 	if (!list || list->count >= list->capacity)
 		return (false);
@@ -74,7 +74,7 @@ bool plane_list_add(t_plane_list *list, const t_plane *p)
 	return (true);
 }
 
-void	plane_list_destroy(t_plane_list *list)
+void	quad_list_destroy(t_quad_list *list)
 {
 	if (!list)
 		return ;
@@ -135,7 +135,7 @@ void	cylinder_list_destroy(t_cylinder_list *list)
 	list->heights = NULL;
 }
 
-void	planes_and_spheres(t_world *world)
+void	quads_and_spheres(t_world *world)
 {
 	t_material blue_metal;
 	t_material orange_metal;
@@ -153,16 +153,16 @@ void	planes_and_spheres(t_world *world)
 	sphere_list_add(&world->spheres, (t_vec3){0, -1, 5}, 0.5, blue_metal);
 	sphere_list_add(&world->spheres, (t_vec3){1, 0, 6}, 0.4, orange_metal_fuzz);
 
-	t_plane p1 = {(t_vec3){-3,-2, 5}, (t_vec3){0, 0,-4}, (t_vec3){0, 4, 0}, red_lamb};
-	t_plane p2 = {(t_vec3){-2,-2, 0}, (t_vec3){4, 0, 0}, (t_vec3){0, 4, 0}, orange_metal};
-	t_plane p3 = {(t_vec3){ 3,-2, 1}, (t_vec3){0, 0, 4}, (t_vec3){0, 4, 0}, orange_metal_fuzz};
-	t_plane p4 = {(t_vec3){-2, 3, 1}, (t_vec3){4, 0, 0}, (t_vec3){0, 0, 4}, blue_metal};
-	t_plane p5 = {(t_vec3){-2,-3, 5}, (t_vec3){4, 0, 0}, (t_vec3){0, 0,-4}, blue_metal_fuzz};
-	plane_list_add(&world->planes, &p1);
-	plane_list_add(&world->planes, &p2);
-	plane_list_add(&world->planes, &p3);
-	plane_list_add(&world->planes, &p4);
-	plane_list_add(&world->planes, &p5);
+	t_quad p1 = {(t_vec3){-3,-2, 5}, (t_vec3){0, 0,-4}, (t_vec3){0, 4, 0}, red_lamb};
+	t_quad p2 = {(t_vec3){-2,-2, 0}, (t_vec3){4, 0, 0}, (t_vec3){0, 4, 0}, orange_metal};
+	t_quad p3 = {(t_vec3){ 3,-2, 1}, (t_vec3){0, 0, 4}, (t_vec3){0, 4, 0}, orange_metal_fuzz};
+	t_quad p4 = {(t_vec3){-2, 3, 1}, (t_vec3){4, 0, 0}, (t_vec3){0, 0, 4}, blue_metal};
+	t_quad p5 = {(t_vec3){-2,-3, 5}, (t_vec3){4, 0, 0}, (t_vec3){0, 0,-4}, blue_metal_fuzz};
+	quad_list_add(&world->quads, &p1);
+	quad_list_add(&world->quads, &p2);
+	quad_list_add(&world->quads, &p3);
+	quad_list_add(&world->quads, &p4);
+	quad_list_add(&world->quads, &p5);
 }
 
 
@@ -192,48 +192,48 @@ void	create_box(t_world *world, const t_vec3 a, const t_vec3 b, const t_material
 	t_vec3 dy = (t_vec3){0, max.y - min.y, 0};
 	t_vec3 dz = (t_vec3){0, 0, max.z - min.z};
 
-	t_plane front = {
+	t_quad front = {
 		.corner = (t_vec3){min.x, min.y, max.z},
 		.u = dx,
 		.v = dy,
 		.mat = mat
 	};
-	t_plane right = {
+	t_quad right = {
 		.corner = (t_vec3){max.x, min.y, max.z},
 		.u = multiply_by_scalar(dz, -1),
 		.v = dx,
 		.mat = mat
 	};
-	t_plane back = {
+	t_quad back = {
 		.corner = (t_vec3){max.x, min.y, min.z},
 		.u = multiply_by_scalar(dx, -1),
 		.v = dy,
 		.mat = mat
 	};
-	t_plane left = {
+	t_quad left = {
 		.corner = (t_vec3){min.x, min.y, min.z},
 		.u = dz,
 		.v = dy,
 		.mat = mat
 	};
-	t_plane top = {
+	t_quad top = {
 		.corner = (t_vec3){min.x, max.y, max.z},
 		.u = dx,
 		.v = multiply_by_scalar(dz, -1),
 		.mat = mat
 	};
-	t_plane bottom = {
+	t_quad bottom = {
 		.corner = (t_vec3){min.x, min.y, min.z},
 		.u = dx,
 		.v = dz,
 		.mat = mat
 	};
-	plane_list_add(&world->planes, &front);
-	plane_list_add(&world->planes, &right);
-	plane_list_add(&world->planes, &back);
-	plane_list_add(&world->planes, &left);
-	plane_list_add(&world->planes, &top);
-	plane_list_add(&world->planes, &bottom);
+	quad_list_add(&world->quads, &front);
+	quad_list_add(&world->quads, &right);
+	quad_list_add(&world->quads, &back);
+	quad_list_add(&world->quads, &left);
+	quad_list_add(&world->quads, &top);
+	quad_list_add(&world->quads, &bottom);
 }
 
 void	cornell_box_scene(t_world *world)
@@ -242,48 +242,48 @@ void	cornell_box_scene(t_world *world)
 	t_material white = make_lambertian((t_vec3){0.73, 0.73, 0.73});
 	t_material green = make_lambertian((t_vec3){0.12, 0.45, 0.15});
 	t_material light = make_light((t_vec3){10, 10, 10});
-	t_plane green_wall = {
+	t_quad green_wall = {
 		.corner = {5.55, 0, 0},
 		.u = {0, 5.55, 0},
 		.v = {0, 0, 5.55},
 		.mat = green
 	};
-	t_plane red_wall = {
+	t_quad red_wall = {
 		.corner = {0, 0, 0},
 		.u = {0, 5.55, 0},
 		.v = {0, 0, 5.55},
 		.mat = red
 	};
-	t_plane ceiling_light = {
+	t_quad ceiling_light = {
 		.corner = {1.13, 5.54, 1.27},
 		.u = {3.30, 0, 0},
 		.v = {0, 0, 3.05},
 		.mat = light
 	};
-	t_plane floor = {
+	t_quad floor = {
 		.corner = {0, 0, 0},
 		.u = {5.55, 0, 0},
 		.v = {0, 0, 5.55},
 		.mat = white
 	};
-	t_plane ceiling = {
+	t_quad ceiling = {
 		.corner = {5.55, 5.55, 5.55},
 		.u = {-5.55, 0, 0},
 		.v = {0, 0, -5.55},
 		.mat = white
 	};
-	t_plane back_wall = {
+	t_quad back_wall = {
 		.corner = {0, 0, 5.55},
 		.u = {5.55, 0, 0},
 		.v = {0, 5.55, 0},
 		.mat = white
 	};
-	plane_list_add(&world->planes, &green_wall);
-	plane_list_add(&world->planes, &red_wall);
-	plane_list_add(&world->planes, &ceiling_light);
-	plane_list_add(&world->planes, &floor);
-	plane_list_add(&world->planes, &ceiling);
-	plane_list_add(&world->planes, &back_wall);
+	quad_list_add(&world->quads, &green_wall);
+	quad_list_add(&world->quads, &red_wall);
+	quad_list_add(&world->quads, &ceiling_light);
+	quad_list_add(&world->quads, &floor);
+	quad_list_add(&world->quads, &ceiling);
+	quad_list_add(&world->quads, &back_wall);
 
 	t_material metal = make_metal((t_vec3){0.8, 0.8, 0.8}, 0.0);
 	t_material metal_fuzz = make_metal((t_vec3){0.12, 0.45, 0.15}, 0.8);
@@ -310,7 +310,7 @@ bool	world_init(t_world *world)
 	{
 		return (false);
 	}
-	if (!plane_list_init(&world->planes, 20))
+	if (!quad_list_init(&world->quads, 20))
 	{
 		return (false);
 	}
@@ -327,6 +327,6 @@ void world_destroy(t_world *world)
 	if (!world)
 		return;
 	sphere_list_destroy(&world->spheres);
-	plane_list_destroy(&world->planes);
+	quad_list_destroy(&world->quads);
 	cylinder_list_destroy(&world->cylinders);
 }

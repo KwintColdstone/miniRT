@@ -37,7 +37,7 @@ bool	sphere_hit(const t_sphere *s, const t_ray *r, t_interval ray_t, t_hit_recor
 	return (true);
 }
 
-bool	plane_hit(const t_plane *p, const t_ray *r, t_interval ray_t, t_hit_record *rec)
+bool	quad_hit(const t_quad *p, const t_ray *r, t_interval ray_t, t_hit_record *rec)
 {
 	t_vec3 n = cross_vec3(p->u, p->v);
 	t_vec3 normal = unit_vector(n);
@@ -45,7 +45,7 @@ bool	plane_hit(const t_plane *p, const t_ray *r, t_interval ray_t, t_hit_record 
 	t_vec3 w = divide_by_scalar(n, dot_vec3(n,n));
 
 	double denom = dot_vec3(normal, r->direction);
-	// No hit if the ray is parallel to the plane.
+	// No hit if the ray is parallel to the quad.
 	if (fabs(denom) < 1e-8)
 		return false;
 
@@ -54,7 +54,7 @@ bool	plane_hit(const t_plane *p, const t_ray *r, t_interval ray_t, t_hit_record 
 	if (!interval_contains(ray_t, t))
 		return (false);
 
-	// Determine if the hit point lies within the planar shape using its plane coordinates.
+	// Determine if the hit point lies within the planar shape using its quad coordinates.
 	t_vec3 intersection = ray_at(r, t);
 	t_vec3 planar_hitpt_vector = subtract_vec3(intersection, p->corner);
 	double alpha = dot_vec3(w, cross_vec3(planar_hitpt_vector, p->v));
@@ -71,43 +71,31 @@ bool	plane_hit(const t_plane *p, const t_ray *r, t_interval ray_t, t_hit_record 
 	set_face_normal(r, &normal, rec);
 	return  (true);
 }
-/*
-bool	cylinder_hit(const t_cylinder *cl, const t_ray *r, t_interval ray_t, t_hit_record *rec)
-{
-	double a = (r->direction.x * r->direction.x) + (r->direction.z * r->direction.z);
-	double b = 2 * (r->direction.x * (r->origin.x - cl->center.x) + 
-				   r->direction.z * (r->origin.z - cl->center.z));
-	double c = (r->origin.x - cl->center.x) * (r->origin.x - cl->center.x) + 
-			   (r->origin.z - cl->center.z) * (r->origin.z - cl->center.z) - 
-			   (cl->radius * cl->radius);
 
-	double discriminant = b * b - 4 * a * c;
-	if (discriminant < 0)
+bool	plane_hit(const t_plane *p, const t_ray *r, t_interval ray_t, t_hit_record *rec)
+{
+	double D = dot_vec3(p->normal, p->point);
+
+	double denom = dot_vec3(p->normal, r->direction);
+	// No hit if the ray is parallel to the quad.
+	if (fabs(denom) < 1e-8)
+		return false;
+
+	// Return false if the hit point parameter t is outside the ray interval.
+	double t = (D - dot_vec3(p->normal, r->origin)) / denom;
+	if (!interval_contains(ray_t, t))
 		return (false);
-	double sqrtd = sqrt(discriminant);
-	double root = (-b - sqrtd) / (2 * a);
-	if (root <= ray_t.min || ray_t.max <= root)
-	{
-		root = (-b + sqrtd) / (2 * a);
-		if (root <= ray_t.min || ray_t.max <= root)
-			return (false);
-	}
-	double hit_y = r->origin.y + root * r->direction.y;
-	if (hit_y < cl->center.y || hit_y > cl->center.y + cl->height)
-		return (false);
-	rec->t = root;
-	rec->position = ray_at(r, rec->t);
-	t_vec3 outward_normal = (t_vec3){
-		rec->position.x - cl->center.x,
-		0.0,
-		rec->position.z - cl->center.z
-	};
-	outward_normal = unit_vector(outward_normal);
-	set_face_normal(r, &outward_normal, rec);
-	rec->mat = cl->mat;
-	return (true);
+
+	// Determine if the hit point lies within the planar shape using its quad coordinates.
+	t_vec3 intersection = ray_at(r, t);
+
+	// Ray hits the 2D shape; set the rest of the hit record and return true.
+	rec->t = t;
+	rec->position = intersection;
+	rec->mat = p->mat;
+	set_face_normal(r, &p->normal, rec);
+	return  (true);
 }
-*/
 
 static bool	check_cap(const t_cylinder *cl, const t_ray *r, double cap_y, 
 					  double *t_cap)

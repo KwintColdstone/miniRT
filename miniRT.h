@@ -42,11 +42,20 @@ typedef struct s_sphere_list
 	int		capacity;
 }	t_sphere_list;
 
-typedef struct s_plane_list
+typedef struct s_quad_list
 {
 	t_vec3		*corners;
 	t_vec3		*u;
 	t_vec3		*v;
+	t_material	*materials;
+	int count;
+	int capacity;
+}	t_quad_list;
+
+typedef struct s_plane_list
+{
+	t_vec3		*points;
+	t_vec3		*normals;
 	t_material	*materials;
 	int count;
 	int capacity;
@@ -62,11 +71,18 @@ typedef struct s_cylinder_list
 	int capacity;
 }	t_cylinder_list;
 
-typedef struct	s_plane
+typedef struct	s_quad
 {
 	t_vec3		corner;
 	t_vec3		u;
 	t_vec3		v;
+	t_material	mat;
+}	t_quad;
+
+typedef struct	s_plane
+{
+	t_vec3		point;
+	t_vec3		normal;
 	t_material	mat;
 }	t_plane;
 
@@ -87,7 +103,7 @@ typedef struct	s_cylinder
 
 typedef struct s_world {
 	t_sphere_list spheres;
-	t_plane_list planes;
+	t_quad_list quads;
 	t_cylinder_list cylinders;
 }	t_world;
 
@@ -154,6 +170,7 @@ t_vec3	ray_at(const t_ray *ray, double t);
 
 // hit_objects.c
 bool	sphere_hit(const t_sphere *s, const t_ray *r, t_interval ray_t, t_hit_record *rec);
+bool	quad_hit(const t_quad *p, const t_ray *r, t_interval ray_t, t_hit_record *rec);
 bool	plane_hit(const t_plane *p, const t_ray *r, t_interval ray_t, t_hit_record *rec);
 bool	cylinder_hit(const t_cylinder *cl, const t_ray *r, t_interval ray_t, t_hit_record *rec);
 
