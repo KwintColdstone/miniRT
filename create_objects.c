@@ -182,16 +182,70 @@ t_material make_light(t_vec3 emit_color)
 	return (t_material){MAT_EMIT, (t_vec3){0, 0, 0}, emit_color, 0.0};
 }
 
-void cornell_box_scene(t_world *world)
+void	create_box(t_world *world, const t_vec3 a, const t_vec3 b, const t_material mat)
+{
+	// Construct the two opposite vertices with the minimum and maximum coordinates.
+	t_vec3 min = (t_vec3){fmin(a.x,b.x), fmin(a.y,b.y), fmin(a.z,b.z)};
+	t_vec3 max = (t_vec3){fmax(a.x,b.x), fmax(a.y,b.y), fmax(a.z,b.z)};
+
+	t_vec3 dx = (t_vec3){max.x - min.x, 0, 0};
+	t_vec3 dy = (t_vec3){0, max.y - min.y, 0};
+	t_vec3 dz = (t_vec3){0, 0, max.z - min.z};
+
+	t_plane front = {
+		.corner = (t_vec3){min.x, min.y, max.z},
+		.u = dx,
+		.v = dy,
+		.mat = mat
+	};
+	t_plane right = {
+		.corner = (t_vec3){max.x, min.y, max.z},
+		.u = multiply_by_scalar(dz, -1),
+		.v = dx,
+		.mat = mat
+	};
+	t_plane back = {
+		.corner = (t_vec3){max.x, min.y, min.z},
+		.u = multiply_by_scalar(dx, -1),
+		.v = dy,
+		.mat = mat
+	};
+	t_plane left = {
+		.corner = (t_vec3){min.x, min.y, min.z},
+		.u = dz,
+		.v = dy,
+		.mat = mat
+	};
+	t_plane top = {
+		.corner = (t_vec3){min.x, max.y, max.z},
+		.u = dx,
+		.v = multiply_by_scalar(dz, -1),
+		.mat = mat
+	};
+	t_plane bottom = {
+		.corner = (t_vec3){min.x, min.y, min.z},
+		.u = dx,
+		.v = dz,
+		.mat = mat
+	};
+	plane_list_add(&world->planes, &front);
+	plane_list_add(&world->planes, &right);
+	plane_list_add(&world->planes, &back);
+	plane_list_add(&world->planes, &left);
+	plane_list_add(&world->planes, &top);
+	plane_list_add(&world->planes, &bottom);
+}
+
+void	cornell_box_scene(t_world *world)
 {
 	t_material red = make_lambertian((t_vec3){0.65, 0.05, 0.05});
 	t_material white = make_lambertian((t_vec3){0.73, 0.73, 0.73});
 	t_material green = make_lambertian((t_vec3){0.12, 0.45, 0.15});
-	t_material light = make_light((t_vec3){15, 15, 15}); // Very bright light
+	t_material light = make_light((t_vec3){10, 10, 10});
 	t_plane green_wall = {
-		.corner = {5.55, 0, 0},      // Scaled: 555/100
-		.u = {0, 5.55, 0},           // Scaled: (0,555,0)/100
-		.v = {0, 0, 5.55},           // Scaled: (0,0,555)/100
+		.corner = {5.55, 0, 0},
+		.u = {0, 5.55, 0},
+		.v = {0, 0, 5.55},
 		.mat = green
 	};
 	t_plane red_wall = {
@@ -201,9 +255,9 @@ void cornell_box_scene(t_world *world)
 		.mat = red
 	};
 	t_plane ceiling_light = {
-		.corner = {1.13, 5.54, 1.27},     // 343/100, 554/100, 332/100
-		.u = {3.30, 0, 0},               // -130/100
-		.v = {0, 0, 3.05},               // -105/100
+		.corner = {1.13, 5.54, 1.27},
+		.u = {3.30, 0, 0},
+		.v = {0, 0, 3.05},
 		.mat = light
 	};
 	t_plane floor = {
@@ -230,15 +284,19 @@ void cornell_box_scene(t_world *world)
 	plane_list_add(&world->planes, &floor);
 	plane_list_add(&world->planes, &ceiling);
 	plane_list_add(&world->planes, &back_wall);
+
 	t_material metal = make_metal((t_vec3){0.8, 0.8, 0.8}, 0.0);
-	sphere_list_add(&world->spheres, (t_vec3){1.77, 1.0, 4.44}, 1.0, metal); // Metal sphere
+	t_material metal_fuzz = make_metal((t_vec3){0.12, 0.45, 0.15}, 0.8);
+	sphere_list_add(&world->spheres, (t_vec3){1.77, 1.0, 4.44}, 1.0, metal);
 	t_cylinder c = {
-		.height = 2,
-		.radius = 1,
-		.mat = metal,
-		.center = {4, 1, 1}
+		.height = 1,
+		.radius = 0.5,
+		.mat = metal_fuzz,
+		.center = {4, 1, 0}
 	};
 	cylinder_list_add(&world->cylinders, &c);
+	create_box(world, (t_vec3){1.30, 0, 0.65}, (t_vec3){2.95, 1.65, 2.30}, white);
+	create_box(world, (t_vec3){2.65, 0, 2.95}, (t_vec3){4.30, 3.30, 4.60}, white);
 }
 
 bool	world_init(t_world *world)
@@ -252,7 +310,7 @@ bool	world_init(t_world *world)
 	{
 		return (false);
 	}
-	if (!plane_list_init(&world->planes, 10))
+	if (!plane_list_init(&world->planes, 20))
 	{
 		return (false);
 	}
