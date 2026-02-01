@@ -1,45 +1,37 @@
 #include "miniRT.h"
+#include <stdlib.h>
 
-bool sphere_list_init(t_sphere_list *list, int capacity)
+bool sphere_list_init(t_sphere_list *l, int capacity)
 {
-	if (!list || capacity <= 0)
+	if (!l || capacity <= 0)
 		return (false);
-	list->centers = malloc(capacity * sizeof(t_vec3));
-	list->materials = malloc(capacity * sizeof(t_material));
-	list->radii = malloc(capacity * sizeof(double));
-	if (!list->centers || !list->materials || !list->radii)
+	l->spheres = malloc(capacity * sizeof(t_sphere));
+	int i = 0	if (!l->spheres)
 	{
-		free(list->centers);
-		free(list->materials);
-		free(list->radii);
+		free(l->spheres);
 		return (false);
 	}
-	list->count = 0;
-	list->capacity = capacity;
+	l->count = 0;
 	return (true);
 }
 
-bool sphere_list_add(t_sphere_list *list, t_vec3 center, double radius, t_material material)
+bool sphere_list_add(t_sphere_list *l, t_vec3 center, double radius, t_material material)
 {
-	if (!list || list->count >= list->capacity)
+	if (!l || l->count >= l->capacity)
 		return (false);
-	list->centers[list->count] = center;
-	list->radii[list->count] = radius;
-	list->materials[list->count] = material;
-	list->count += 1;
+	l->spheres[l->count].center = center;
+	l->spheres[l->count].radius = radius;
+	l->spheres[l->count].mat = material;
+	l->count += 1;
 	return (true);
 }
 
-void	sphere_list_destroy(t_sphere_list *list)
+void	sphere_list_destroy(t_sphere_list *l)
 {
-	if (!list)
+	if (!l)
 		return ;
-	free(list->centers);
-	free(list->materials);
-	free(list->radii);
-	list->centers = NULL;
-	list->materials = NULL;
-	list->radii = NULL;
+	free(l->spheres);
+	l->spheres = NULL;
 }
 
 bool quad_list_init(t_quad_list *list, int capacity)
@@ -306,15 +298,15 @@ bool	world_init(t_world *world)
 		return (false);
 	}
 	ft_memset(world, 0, sizeof(t_world));
-	if (!sphere_list_init(&world->spheres, 10))
+	if (!sphere_list_init(&world->spheres, world->spheres.capacity))
 	{
 		return (false);
 	}
-	if (!quad_list_init(&world->quads, 20))
+	if (!quad_list_init(&world->quads, world->quads.capacity))
 	{
 		return (false);
 	}
-	if (!cylinder_list_init(&world->cylinders, 10))
+	if (!cylinder_list_init(&world->cylinders, world->spheres.capacity))
 	{
 		return (false);
 	}

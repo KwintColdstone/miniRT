@@ -33,44 +33,6 @@ typedef struct s_material
 	double		fuzz;
 }	t_material;
 
-typedef struct s_sphere_list
-{
-	t_vec3		*centers;
-	double		*radii;
-	t_material	*materials;
-	int		count;
-	int		capacity;
-}	t_sphere_list;
-
-typedef struct s_quad_list
-{
-	t_vec3		*corners;
-	t_vec3		*u;
-	t_vec3		*v;
-	t_material	*materials;
-	int count;
-	int capacity;
-}	t_quad_list;
-
-typedef struct s_plane_list
-{
-	t_vec3		*points;
-	t_vec3		*normals;
-	t_material	*materials;
-	int count;
-	int capacity;
-}	t_plane_list;
-
-typedef struct s_cylinder_list
-{
-	t_vec3		*centers;
-	double		*radii;
-	double		*heights;
-	t_material	*materials;
-	int count;
-	int capacity;
-}	t_cylinder_list;
-
 typedef struct	s_quad
 {
 	t_vec3		corner;
@@ -101,10 +63,62 @@ typedef struct	s_cylinder
 	double	height;
 }	t_cylinder;
 
+typedef struct s_light
+{
+	t_vec3	position;
+	t_vec3	color;
+	double	strength;
+}	t_light;
+
+typedef struct s_ambient
+{
+	t_vec3	color;
+	double	strength;
+}	t_ambient;
+
+typedef struct s_sphere_list
+{
+	t_sphere	*spheres;
+	int		count;
+	int		capacity;
+}	t_sphere_list;
+
+typedef struct s_quad_list
+{
+	t_quad	*quads;
+	int count;
+	int capacity;
+}	t_quad_list;
+
+typedef struct s_plane_list
+{
+	t_plane	*planes;
+	int count;
+	int capacity;
+}	t_plane_list;
+
+typedef struct s_cylinder_list
+{
+	t_cylinder	*cylinders;
+	int count;
+	int capacity;
+}	t_cylinder_list;
+
+
+typedef struct s_light_list
+{
+	t_light	*lights;
+	t_ambient	amb;
+	int count;
+	int capacity;
+}	t_light_list;
+
 typedef struct s_world {
 	t_sphere_list spheres;
 	t_quad_list quads;
+	t_plane_list planes;
 	t_cylinder_list cylinders;
+	t_light_list	lights;
 }	t_world;
 
 typedef struct s_hit_record {
@@ -143,6 +157,16 @@ typedef struct s_camera
 	int		max_depth;
 	int		hfov;
 }	t_camera;
+
+
+
+typedef struct p_parsed
+{
+	t_ambient	amb;
+	t_camera	cam;
+	t_light		light;
+	t_world		world;
+}	t_parsed;
 
 //vec3.c
 t_vec3	add_vec3(t_vec3 a, t_vec3 b);

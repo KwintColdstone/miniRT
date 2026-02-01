@@ -6,7 +6,7 @@ bool world_hit(const t_world* world, const t_ray* r,
 	t_hit_record	temp_rec;
 	t_interval	new_ray_t;
 	t_sphere	s;
-	t_plane		p;
+	t_quad		q;
 	t_cylinder	c;
 	bool hit_anything = false;
 	double closest_so_far = ray_t.max;
@@ -25,12 +25,12 @@ bool world_hit(const t_world* world, const t_ray* r,
 			*rec = temp_rec;
 		}
 	}
-	for (int i = 0; i < world->planes.count; i++) {
-		p.corner = world->planes.corners[i];
-		p.u = world->planes.u[i];
-		p.v = world->planes.v[i];
-		p.mat = world->planes.materials[i];
-		if (plane_hit(&p, r, new_ray_t, &temp_rec))
+	for (int i = 0; i < world->quads.count; i++) {
+		q.corner = world->quads.corners[i];
+		q.u = world->quads.u[i];
+		q.v = world->quads.v[i];
+		q.mat = world->quads.materials[i];
+		if (quad_hit(&q, r, new_ray_t, &temp_rec))
 		{
 			hit_anything = true;
 			closest_so_far = temp_rec.t;

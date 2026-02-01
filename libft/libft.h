@@ -24,6 +24,7 @@
 # include <fcntl.h>
 # include <stdio.h>
 # include <limits.h>
+# include <stdbool.h>
 
 size_t	ft_strlen(const char *s);
 size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize);
@@ -59,6 +60,7 @@ int		ft_toupper(int c);
 int		ft_tolower(int c);
 long	ft_atol(char *str);
 long	ft_hextol(char *str);
+double	ft_atof(char *str);
 char	*ft_strchr(const char *s, int c);
 char	*ft_strrchr(const char *s, int c);
 char	*ft_strdup(const char *s);

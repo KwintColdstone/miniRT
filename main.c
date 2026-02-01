@@ -19,14 +19,15 @@ int calculate_img_height(float aspect_ratio, int image_width)
 	return image_height;
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
+
 	//camera
 	t_camera	cam;
 	cam.aspect_ratio = 16.0 / 9.0;
-	cam.image_width = 800;
+	cam.image_width = 400;
 	cam.image_height = calculate_img_height(cam.aspect_ratio, cam.image_width);
-	cam.samples_per_pixel = 100;
+	cam.samples_per_pixel = 40;
 	cam.max_depth = 10;
 
 	/*
