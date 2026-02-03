@@ -5,19 +5,19 @@ bool world_hit(const t_world* world, const t_ray* r,
 {
 	t_hit_record	temp_rec;
 	t_interval	new_ray_t;
-	t_sphere	s;
-	t_quad		q;
-	t_cylinder	c;
+	t_sphere	sp;
+	t_quad		qu;
+	t_cylinder	cy;
 	bool hit_anything = false;
 	double closest_so_far = ray_t.max;
 	new_ray_t.max = ray_t.max;
 	new_ray_t.min = ray_t.min;
 
-	for (int i = 0; i < world->spheres.count; i++) {
-		s.center = world->spheres.centers[i];
-		s.radius = world->spheres.radii[i];
-		s.mat = world->spheres.materials[i];
-		if (sphere_hit(&s, r, new_ray_t, &temp_rec))
+	for (int i = 0; i < world->sp_list.count; i++) {
+		sp.center = world->sp_list.spheres[i].center;
+		sp.radius = world->sp_list.spheres[i].radius;
+		sp.mat = world->sp_list.spheres[i].mat;
+		if (sphere_hit(&sp, r, new_ray_t, &temp_rec))
 		{
 			hit_anything = true;
 			closest_so_far = temp_rec.t;
@@ -25,12 +25,12 @@ bool world_hit(const t_world* world, const t_ray* r,
 			*rec = temp_rec;
 		}
 	}
-	for (int i = 0; i < world->quads.count; i++) {
-		q.corner = world->quads.corners[i];
-		q.u = world->quads.u[i];
-		q.v = world->quads.v[i];
-		q.mat = world->quads.materials[i];
-		if (quad_hit(&q, r, new_ray_t, &temp_rec))
+	for (int i = 0; i < world->qu_list.count; i++) {
+		qu.corner = world->qu_list.quads[i].corner;
+		qu.u = world->qu_list.quads[i].u;
+		qu.v = world->qu_list.quads[i].v;
+		qu.mat = world->qu_list.quads[i].mat;
+		if (quad_hit(&qu, r, new_ray_t, &temp_rec))
 		{
 			hit_anything = true;
 			closest_so_far = temp_rec.t;
@@ -38,12 +38,13 @@ bool world_hit(const t_world* world, const t_ray* r,
 			*rec = temp_rec;
 		}
 	}
-	for (int i = 0; i < world->cylinders.count; i++) {
-		c.center = world->cylinders.centers[i];
-		c.radius = world->cylinders.radii[i];
-		c.height = world->cylinders.heights[i];
-		c.mat = world->cylinders.materials[i];
-		if (cylinder_hit(&c, r, new_ray_t, &temp_rec))
+	for (int i = 0; i < world->cy_list.count; i++) {
+		cy.center = world->cy_list.cylinders[i].center;
+		cy.axis = world->cy_list.cylinders[i].axis;
+		cy.radius = world->cy_list.cylinders[i].radius;
+		cy.height = world->cy_list.cylinders[i].height;
+		cy.mat = world->cy_list.cylinders[i].mat;
+		if (cylinder_hit(&cy, r, new_ray_t, &temp_rec))
 		{
 			hit_anything = true;
 			closest_so_far = temp_rec.t;

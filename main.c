@@ -21,40 +21,18 @@ int calculate_img_height(float aspect_ratio, int image_width)
 
 int main(int argc, char *argv[])
 {
-
-	//camera
 	t_camera	cam;
+	t_world		world;
 	cam.aspect_ratio = 16.0 / 9.0;
 	cam.image_width = 400;
 	cam.image_height = calculate_img_height(cam.aspect_ratio, cam.image_width);
 	cam.samples_per_pixel = 40;
 	cam.max_depth = 10;
-
-	/*
-	cam.hfov = 80;
-	//cam.look_from = (t_vec3){-1,1,1};
-	//cam.look_at = (t_vec3){0,0,-1};
-	cam.look_from = (t_vec3){0,0,12};
-	cam.look_at = (t_vec3){0,0,0};
-	cam.v_up = (t_vec3){0,1,0};
-	*/
-	cam.hfov = 60;  // Field of view
-	
-	// Camera position for cornell box
-	cam.look_from = (t_vec3){2.78, 2.78, -8.0};
-	cam.look_at = (t_vec3){2.78, 2.78, 0};
 	cam.v_up = (t_vec3){0, 1, 0};
-
 	cam.background = (t_vec3){0,0,0};
-	camera_init(&cam);
 
-	//world
-	t_world world;
-	if (!world_init(&world))
-	{
-		ft_putstr_fd("Error: failed to init world\n", 2);
-		return (1);
-	}
+	parse(argv[1], &world, &cam);
+	camera_init(&cam);
 	render(&cam, &world);
 	world_destroy(&world);
 	return (0);

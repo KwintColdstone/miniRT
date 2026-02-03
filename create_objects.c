@@ -1,132 +1,5 @@
 #include "miniRT.h"
-#include <stdlib.h>
-
-bool sphere_list_init(t_sphere_list *l, int capacity)
-{
-	if (!l || capacity <= 0)
-		return (false);
-	l->spheres = malloc(capacity * sizeof(t_sphere));
-	int i = 0	if (!l->spheres)
-	{
-		free(l->spheres);
-		return (false);
-	}
-	l->count = 0;
-	return (true);
-}
-
-bool sphere_list_add(t_sphere_list *l, t_vec3 center, double radius, t_material material)
-{
-	if (!l || l->count >= l->capacity)
-		return (false);
-	l->spheres[l->count].center = center;
-	l->spheres[l->count].radius = radius;
-	l->spheres[l->count].mat = material;
-	l->count += 1;
-	return (true);
-}
-
-void	sphere_list_destroy(t_sphere_list *l)
-{
-	if (!l)
-		return ;
-	free(l->spheres);
-	l->spheres = NULL;
-}
-
-bool quad_list_init(t_quad_list *list, int capacity)
-{
-	if (!list || capacity <= 0)
-		return (false);
-	list->corners = malloc(capacity * sizeof(t_vec3));
-	list->u = malloc(capacity * sizeof(t_vec3));
-	list->v = malloc(capacity * sizeof(t_vec3));
-	list->materials = malloc(capacity * sizeof(t_material));
-	if (!list->corners || !list->u || !list->v || !list->materials) {
-		free(list->corners);
-		free(list->u);
-		free(list->v);
-		free(list->materials);
-		return (false);
-	}
-	list->count = 0;
-	list->capacity = capacity;
-	return (true);
-}
-
-bool quad_list_add(t_quad_list *list, const t_quad *p)
-{
-	if (!list || list->count >= list->capacity)
-		return (false);
-	list->corners[list->count] = p->corner;
-	list->u[list->count] = p->u;
-	list->v[list->count] = p->v;
-	list->materials[list->count] = p->mat;
-	list->count += 1;
-	return (true);
-}
-
-void	quad_list_destroy(t_quad_list *list)
-{
-	if (!list)
-		return ;
-	free(list->corners);
-	free(list->u);
-	free(list->v);
-	free(list->materials);
-	list->corners = NULL;
-	list->u = NULL;
-	list->v = NULL;
-	list->materials = NULL;
-}
-
-bool cylinder_list_init(t_cylinder_list *list, int capacity)
-{
-	if (!list || capacity <= 0)
-		return (false);
-	list->centers = malloc(capacity * sizeof(t_vec3));
-	list->materials = malloc(capacity * sizeof(t_material));
-	list->radii = malloc(capacity * sizeof(double));
-	list->heights = malloc(capacity * sizeof(double));
-	if (!list->centers || !list->materials || !list->radii || !list->heights)
-	{
-		free(list->centers);
-		free(list->materials);
-		free(list->radii);
-		free(list->heights);
-		return (false);
-	}
-	list->count = 0;
-	list->capacity = capacity;
-	return (true);
-}
-
-bool cylinder_list_add(t_cylinder_list *list, const t_cylinder *c)
-{
-	if (!list || list->count >= list->capacity)
-		return (false);
-	list->centers[list->count] = c->center;
-	list->materials[list->count] = c->mat;
-	list->radii[list->count] = c->radius;
-	list->heights[list->count] = c->height;
-	list->count += 1;
-	return (true);
-}
-
-void	cylinder_list_destroy(t_cylinder_list *list)
-{
-	if (!list)
-		return ;
-	free(list->centers);
-	free(list->materials);
-	free(list->radii);
-	free(list->heights);
-	list->centers = NULL;
-	list->materials = NULL;
-	list->radii = NULL;
-	list->heights = NULL;
-}
-
+/*
 void	quads_and_spheres(t_world *world)
 {
 	t_material blue_metal;
@@ -156,8 +29,6 @@ void	quads_and_spheres(t_world *world)
 	quad_list_add(&world->quads, &p4);
 	quad_list_add(&world->quads, &p5);
 }
-
-
 
 t_material make_lambertian(t_vec3 albedo)
 {
@@ -290,35 +161,4 @@ void	cornell_box_scene(t_world *world)
 	create_box(world, (t_vec3){1.30, 0, 0.65}, (t_vec3){2.95, 1.65, 2.30}, white);
 	create_box(world, (t_vec3){2.65, 0, 2.95}, (t_vec3){4.30, 3.30, 4.60}, white);
 }
-
-bool	world_init(t_world *world)
-{
-	if (!world)
-	{
-		return (false);
-	}
-	ft_memset(world, 0, sizeof(t_world));
-	if (!sphere_list_init(&world->spheres, world->spheres.capacity))
-	{
-		return (false);
-	}
-	if (!quad_list_init(&world->quads, world->quads.capacity))
-	{
-		return (false);
-	}
-	if (!cylinder_list_init(&world->cylinders, world->spheres.capacity))
-	{
-		return (false);
-	}
-	cornell_box_scene(world);
-	return (true);
-}
-
-void world_destroy(t_world *world)
-{
-	if (!world)
-		return;
-	sphere_list_destroy(&world->spheres);
-	quad_list_destroy(&world->quads);
-	cylinder_list_destroy(&world->cylinders);
-}
+*/

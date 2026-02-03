@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <limits.h>
+#include <float.h>
 
 typedef struct s_vec3 {
 	double x;
@@ -58,6 +60,7 @@ typedef struct	s_sphere
 typedef struct	s_cylinder
 {
 	t_vec3	center;
+	t_vec3	axis;
 	t_material mat;
 	double	radius;
 	double	height;
@@ -65,8 +68,9 @@ typedef struct	s_cylinder
 
 typedef struct s_light
 {
-	t_vec3	position;
-	t_vec3	color;
+	t_vec3	center;
+	t_material mat;
+	double	radius;
 	double	strength;
 }	t_light;
 
@@ -114,11 +118,11 @@ typedef struct s_light_list
 }	t_light_list;
 
 typedef struct s_world {
-	t_sphere_list spheres;
-	t_quad_list quads;
-	t_plane_list planes;
-	t_cylinder_list cylinders;
-	t_light_list	lights;
+	t_sphere_list sp_list;
+	t_quad_list qu_list;
+	t_plane_list pl_list;
+	t_cylinder_list cy_list;
+	t_light_list	l_list;
 }	t_world;
 
 typedef struct s_hit_record {
@@ -143,8 +147,7 @@ typedef struct s_camera
 	t_vec3	pixel_delta_u;
 	t_vec3	pixel_delta_v;
 	t_vec3	pixel00_loc;
-	t_vec3	look_from;
-	t_vec3	look_at;
+	t_vec3	orientation;
 	t_vec3	v_up;
 	t_vec3	background;
 	double	focal_length;
@@ -158,15 +161,14 @@ typedef struct s_camera
 	int		hfov;
 }	t_camera;
 
-
-
-typedef struct p_parsed
+typedef struct s_object_counter
 {
-	t_ambient	amb;
-	t_camera	cam;
-	t_light		light;
-	t_world		world;
-}	t_parsed;
+	int sphere_cap;
+	int quad_cap;
+	int plane_cap;
+	int cylinder_cap;
+	int light_cap;
+}	t_object_counter;
 
 //vec3.c
 t_vec3	add_vec3(t_vec3 a, t_vec3 b);
@@ -210,10 +212,24 @@ double	clamp_interval(double x, t_interval i);
 bool	interval_contains(t_interval i, double x);
 
 // create_objects.c
+
+// init.c
 bool	sphere_list_init(t_sphere_list *list, int capacity);
 bool	sphere_list_add(t_sphere_list *list, t_vec3 center, double radius, t_material material);
 void	sphere_list_destroy(t_sphere_list *list);
-bool	world_init(t_world *world);
+bool	quad_list_init(t_quad_list *list, int capacity);
+bool	quad_list_add(t_quad_list *list, const t_quad *quad);
+void	quad_list_destroy(t_quad_list *list);
+bool	cylinder_list_init(t_cylinder_list *list, int capacity);
+bool	cylinder_list_add(t_cylinder_list *list, const t_cylinder *cyl);
+void	cylinder_list_destroy(t_cylinder_list *list);
+bool	plane_list_init(t_plane_list *list, int capacity);
+bool	plane_list_add(t_plane_list *list, const t_plane *plane);
+void	plane_list_destroy(t_plane_list *list);
+bool	light_list_init(t_light_list *list, int capacity);
+bool	light_list_add(t_light_list *list, const t_light *light);
+void	light_list_destroy(t_light_list *list);
+bool	world_init(t_world *world, t_object_counter *c);
 void	world_destroy(t_world *world);
 
 // camera.c
@@ -225,3 +241,13 @@ bool render(t_camera *cam, t_world *world);
 // material.c
 bool lambertian_scatter(const t_ray *r_in, const t_hit_record *rec, t_vec3 *attenuation, t_ray *scattered);
 bool metal_scatter(const t_ray *r_in, const t_hit_record *rec, t_vec3 *attenuation, t_ray *scattered);
+
+// parse.c
+bool	parse(char *file, t_world *world, t_camera *cam);
+
+// parse_utils.c
+bool	is_float(char *s);
+char	*subtract_element(char *s, int *i, char delim);
+bool	assign_vec3(t_vec3 *v, char *s, double min, double max);
+bool	assign_float(double *f, char *s, double min, double max);
+bool	count_objects(int fd, t_object_counter *counts);

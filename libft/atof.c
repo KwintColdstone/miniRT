@@ -1,4 +1,5 @@
 #include "libft.h"
+#include <limits.h>
 
 double	ft_atof(char *str)
 {
@@ -7,6 +8,7 @@ double	ft_atof(char *str)
 	double	divisor;
 	int		i;
 	int		sign;
+	int		fract_count;
 
 	result = 0.0;
 	fraction = 0.0;
@@ -25,6 +27,8 @@ double	ft_atof(char *str)
 		i++;
 	while (str[i] && (ft_isdigit(str[i]) || str[i] == '.'))
 	{
+		if (fract_count >= 3)
+			return (sign * (result + fraction));
 		if (str[i] == '.')
 		{
 			is_fraction = true;
@@ -35,11 +39,14 @@ double	ft_atof(char *str)
 		{
 			fraction += digit / divisor;
 			divisor *= 10.0;
+			fract_count++;
 		}
 		else
 		{
 			result = result * 10 + digit;
 		}
+		if (result >= INT_MAX)
+			return (result);
 		i++;
 	}
 	return (sign * (result + fraction));

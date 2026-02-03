@@ -6,15 +6,14 @@ bool	camera_init(t_camera *cam)
 	t_vec3	u;
 	t_vec3	v;
 	t_vec3	w;
-	cam->camera_center = cam->look_from;
 
 	// Calculate the u,v,w unit basis vectors for the camera coordinate frame.
-	w = unit_vector(subtract_vec3(cam->look_from, cam->look_at));
+	w = unit_vector(multiply_by_scalar(cam->orientation, -1.0));
 	u = unit_vector(cross_vec3(cam->v_up, w));
 	v = cross_vec3(w, u);
 
 	// Determine viewport dimensions.
-	cam->focal_length = vec3_length(subtract_vec3(cam->look_from, cam->look_at));
+	cam->focal_length = 1.0;
 	double	theta = degrees_to_radians(cam->hfov);
 	double	h = tan(theta / 2);
 	cam->viewport_width = 2.0 * h * cam->focal_length;
