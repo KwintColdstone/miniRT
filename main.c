@@ -32,6 +32,15 @@ int main(int argc, char *argv[])
 	cam.background = (t_vec3){0,0,0};
 
 	parse(argv[1], &world, &cam);
+	printf("Parsed objects:\n");
+	printf("Spheres: %d\n", world.sp_list.count);
+	printf("Planes: %d\n", world.pl_list.count);
+	printf("Cylinders: %d\n", world.cy_list.count);
+	printf("Quads: %d\n", world.qu_list.count);
+	printf("Camera: center(%f,%f,%f) orient(%f,%f,%f) fov:%d\n",
+    cam.camera_center.x, cam.camera_center.y, cam.camera_center.z,
+    cam.orientation.x, cam.orientation.y, cam.orientation.z,
+    cam.hfov);
 	camera_init(&cam);
 	render(&cam, &world);
 	world_destroy(&world);

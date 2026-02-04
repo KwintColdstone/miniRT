@@ -1,4 +1,5 @@
 #include "miniRT.h"
+#include <stdio.h>
 #include <unistd.h>
 
 t_vec3 sky(const t_ray *r)
@@ -34,20 +35,6 @@ static t_vec3 ray_color(const t_ray *r, const t_world *world, t_vec3 background,
 	{
 		return (background);
 	}
-/*
-	if (rec.mat.type == MAT_LAMBERTIAN)
-	{
-		lambertian_scatter(r, &rec, &attenuation, &scattered);
-		return (multiply_vec3(attenuation, ray_color(&scattered, world, background, depth - 1)));
-	}
-	if (rec.mat.type == MAT_METAL)
-	{
-		if (metal_scatter(r, &rec, &attenuation, &scattered))
-		{
-			return (multiply_vec3(attenuation, ray_color(&scattered, world, background, depth - 1)));
-		}
-	}
-*/
 	// Start with emitted light
 	t_vec3 color = rec.mat.emit_color;
 	did_scatter = false;
@@ -73,7 +60,7 @@ static void	write_color(int file, t_vec3 *pixel_color)
 {
 	t_interval	intensity;
 
-	double r = pixel_color->x; 
+	double r = pixel_color->x;
 	double g = pixel_color->y; 
 	double b = pixel_color->z;
 	r = linear_to_gamma(r);

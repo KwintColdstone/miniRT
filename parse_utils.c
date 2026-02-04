@@ -34,7 +34,33 @@ bool	is_float(char *s)
 	return (true);
 }
 
-char	*subtract_element(char *s, int *i, char delim)
+char *extract_element(char *s, int *i, char delim)
+{
+	// Skip whitespace
+	while (s[*i] && ft_isspace(s[*i]))
+		*i += 1;
+
+	// If we're at the end of string, return empty
+	if (!s[*i])
+		return ft_strdup("");
+
+	int start = *i;
+
+	// Find the end of the element
+	while (s[*i] && !ft_isspace(s[*i]) && s[*i] != delim)
+		*i += 1;
+
+	// Extract the substring
+	char *element = ft_substr(s, start, *i - start);
+
+	// Skip the delimiter if present
+	if (s[*i] && s[*i] == delim)
+		*i += 1;
+
+	return element;
+}
+/*
+char	*extract_element(char *s, int *i, char delim)
 {
 	while (s[*i] && ft_isspace(s[*i]))
 		*i += 1;
@@ -43,16 +69,16 @@ char	*subtract_element(char *s, int *i, char delim)
 		j++;
 	if (s[j] == delim)
 		j++;
-	*i += j;
+	*i = j;
 	return (ft_substr(s, *i, j - 1));
 }
-
+*/
 
 bool	assign_float(double *f, char *s, double min, double max)
 {
 	int i = 0;
 
-	char *elem = subtract_element(s, &i, ' ');
+	char *elem = extract_element(s, &i, ' ');
 	if (!is_float(elem))
 	{
 		free(elem);
@@ -68,9 +94,9 @@ bool	assign_float(double *f, char *s, double min, double max)
 bool	assign_vec3(t_vec3 *v, char *s, double min, double max)
 {
 	int i = 0;
-	char *x_str = subtract_element(s, &i, ',');
-	char *y_str = subtract_element(s, &i, ',');
-	char *z_str = subtract_element(s, &i, ' ');
+	char *x_str = extract_element(s, &i, ',');
+	char *y_str = extract_element(s, &i, ',');
+	char *z_str = extract_element(s, &i, ' ');
 	if (!is_float(x_str) || !is_float(y_str) || !is_float(z_str))
 	{
 		free(x_str);
@@ -97,6 +123,41 @@ bool	assign_vec3(t_vec3 *v, char *s, double min, double max)
 	return (true);
 }
 
+static t_vec3	color_to_vec3(double r, double g, double b)
+{
+	return (t_vec3){r / 255.0, g / 255.0, b / 255.0};
+}
+
+bool	assign_color(t_vec3 *v, char *s, double strength)
+{
+	int i = 0;
+	char *r_str = extract_element(s, &i, ',');
+	char *g_str = extract_element(s, &i, ',');
+	char *b_str = extract_element(s, &i, ' ');
+	if (!is_float(r_str) || !is_float(g_str) || !is_float(b_str))
+	{
+		free(r_str);
+		free(g_str);
+		free(b_str);
+		return (false);
+	}
+	double r;
+	double g;
+	double b;
+	r = ft_atof(r_str);
+	g = ft_atof(g_str);
+	b = ft_atof(b_str);
+	free(r_str);
+	free(g_str);
+	free(b_str);
+	if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255)
+	{
+		return (false);
+	}
+	*v = color_to_vec3(r*strength, g*strength, b*strength);
+	return (true);
+}
+
 bool	count_objects(int fd, t_object_counter *counts)
 {
 	char	*line;
@@ -111,13 +172,14 @@ bool	count_objects(int fd, t_object_counter *counts)
 		{
 			if (line[i] == 'A')
 			{
+
 			}
 			else if (line[i] == 'C')
 			{
 			}
 			else if (line[i] == 'L')
 			{
-				counts->light_cap++;
+				counts->sphere_cap++;
 			}
 			else if (line[i] == 's' && line[i+1] == 'p')
 			{

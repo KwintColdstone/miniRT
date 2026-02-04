@@ -66,20 +66,6 @@ typedef struct	s_cylinder
 	double	height;
 }	t_cylinder;
 
-typedef struct s_light
-{
-	t_vec3	center;
-	t_material mat;
-	double	radius;
-	double	strength;
-}	t_light;
-
-typedef struct s_ambient
-{
-	t_vec3	color;
-	double	strength;
-}	t_ambient;
-
 typedef struct s_sphere_list
 {
 	t_sphere	*spheres;
@@ -109,20 +95,11 @@ typedef struct s_cylinder_list
 }	t_cylinder_list;
 
 
-typedef struct s_light_list
-{
-	t_light	*lights;
-	t_ambient	amb;
-	int count;
-	int capacity;
-}	t_light_list;
-
 typedef struct s_world {
 	t_sphere_list sp_list;
 	t_quad_list qu_list;
 	t_plane_list pl_list;
 	t_cylinder_list cy_list;
-	t_light_list	l_list;
 }	t_world;
 
 typedef struct s_hit_record {
@@ -215,20 +192,13 @@ bool	interval_contains(t_interval i, double x);
 
 // init.c
 bool	sphere_list_init(t_sphere_list *list, int capacity);
-bool	sphere_list_add(t_sphere_list *list, t_vec3 center, double radius, t_material material);
 void	sphere_list_destroy(t_sphere_list *list);
 bool	quad_list_init(t_quad_list *list, int capacity);
-bool	quad_list_add(t_quad_list *list, const t_quad *quad);
 void	quad_list_destroy(t_quad_list *list);
 bool	cylinder_list_init(t_cylinder_list *list, int capacity);
-bool	cylinder_list_add(t_cylinder_list *list, const t_cylinder *cyl);
 void	cylinder_list_destroy(t_cylinder_list *list);
 bool	plane_list_init(t_plane_list *list, int capacity);
-bool	plane_list_add(t_plane_list *list, const t_plane *plane);
 void	plane_list_destroy(t_plane_list *list);
-bool	light_list_init(t_light_list *list, int capacity);
-bool	light_list_add(t_light_list *list, const t_light *light);
-void	light_list_destroy(t_light_list *list);
 bool	world_init(t_world *world, t_object_counter *c);
 void	world_destroy(t_world *world);
 
@@ -247,7 +217,8 @@ bool	parse(char *file, t_world *world, t_camera *cam);
 
 // parse_utils.c
 bool	is_float(char *s);
-char	*subtract_element(char *s, int *i, char delim);
+char	*extract_element(char *s, int *i, char delim);
 bool	assign_vec3(t_vec3 *v, char *s, double min, double max);
+bool	assign_color(t_vec3 *v, char *s, double strength);
 bool	assign_float(double *f, char *s, double min, double max);
 bool	count_objects(int fd, t_object_counter *counts);
