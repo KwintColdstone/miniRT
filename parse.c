@@ -3,6 +3,7 @@
 #include <fcntl.h>
 #include <float.h>
 #include <limits.h>
+#include <stdio.h>
 #include <unistd.h>
 
 bool	parse_ambient(t_camera *cam, char *line)
@@ -22,6 +23,7 @@ bool	parse_ambient(t_camera *cam, char *line)
 	char *color = extract_element(line, &i, ' ');
 	if (!assign_color(&cam->background, color, s))
 	{
+		ft_putstr_fd("assigning color failed\n", STDERR_FILENO);
 		free(color);
 		return (false);
 	}
@@ -36,8 +38,9 @@ bool	parse_camera(t_camera *cam, char *line)
 
 	i = 0;
 	char *pos = extract_element(line, &i, ' ');
-	if (!assign_vec3(&cam->camera_center, pos, DBL_MIN, DBL_MAX))
+	if (!assign_vec3(&cam->camera_center, pos, -DBL_MAX, DBL_MAX))
 	{
+		ft_putstr_fd("assigning vec3 failed: pos\n", STDERR_FILENO);
 		free(pos);
 		return (false);
 	}
@@ -46,6 +49,7 @@ bool	parse_camera(t_camera *cam, char *line)
 	char *orientation = extract_element(line, &i, ' ');
 	if (!assign_vec3(&cam->orientation, orientation, -1.0, 1.0))
 	{
+		ft_putstr_fd("assigning vec3 failed: orient\n", STDERR_FILENO);
 		free(orientation);
 		return (false);
 	}
@@ -76,9 +80,9 @@ bool	parse_light(t_world *world, char *line, int index)
 
 	i = 0;
 	light_multiplier = 10;
-	base_light_radius = 5;
+	base_light_radius = 1;
 	char *pos = extract_element(line, &i, ' ');
-	if (!assign_vec3(&world->sp_list.spheres[index].center, pos, DBL_MIN, DBL_MAX))
+	if (!assign_vec3(&world->sp_list.spheres[index].center, pos, -DBL_MAX, DBL_MAX))
 	{
 		free(pos);
 		return (false);
@@ -100,7 +104,7 @@ bool	parse_light(t_world *world, char *line, int index)
 	base = (t_material){MAT_EMIT, (t_vec3){0, 0, 0}, 0};
 	world->sp_list.spheres[index].mat = base;
 	char *color = extract_element(line, &i, ' ');
-	if (!assign_color(&world->sp_list.spheres[index].mat.albedo, color, s))
+	if (!assign_color(&world->sp_list.spheres[index].mat.emit_color, color, s))
 	{
 		free(color);
 		return (false);
@@ -116,7 +120,7 @@ bool	parse_sphere(t_world *world, char *line, int index)
 
 	i = 0;
 	char *pos = extract_element(line, &i, ' ');
-	if (!assign_vec3(&world->sp_list.spheres[index].center, pos, DBL_MIN, DBL_MAX))
+	if (!assign_vec3(&world->sp_list.spheres[index].center, pos, -DBL_MAX, DBL_MAX))
 	{
 		free(pos);
 		return (false);
@@ -155,7 +159,7 @@ bool	parse_plane(t_world *world, char *line, int index)
 
 	i = 0;
 	char *point = extract_element(line, &i, ' ');
-	if (!assign_vec3(&world->pl_list.planes[index].point, point, DBL_MIN, DBL_MAX))
+	if (!assign_vec3(&world->pl_list.planes[index].point, point, -DBL_MAX, DBL_MAX))
 	{
 		free(point);
 		return (false);
@@ -190,7 +194,7 @@ bool	parse_cylinder(t_world *world, char *line, int index)
 
 	i = 0;
 	char *pos = extract_element(line, &i, ' ');
-	if (!assign_vec3(&world->cy_list.cylinders[index].center, pos, DBL_MIN, DBL_MAX))
+	if (!assign_vec3(&world->cy_list.cylinders[index].center, pos, -DBL_MAX, DBL_MAX))
 	{
 		free(pos);
 		return (false);
@@ -245,7 +249,7 @@ bool	parse_quad(t_world *world, char *line, int index)
 
 	i = 0;
 	char *corner = extract_element(line, &i, ' ');
-	if (!assign_vec3(&world->qu_list.quads[index].corner, corner, DBL_MIN, DBL_MAX))
+	if (!assign_vec3(&world->qu_list.quads[index].corner, corner, -DBL_MAX, DBL_MAX))
 	{
 		free(corner);
 		return (false);
@@ -253,7 +257,7 @@ bool	parse_quad(t_world *world, char *line, int index)
 	free(corner);
 
 	char *u = extract_element(line, &i, ' ');
-	if (!assign_vec3(&world->qu_list.quads[index].u, u, DBL_MIN, DBL_MAX))
+	if (!assign_vec3(&world->qu_list.quads[index].u, u, -DBL_MAX, DBL_MAX))
 	{
 		free(u);
 		return (false);
@@ -261,7 +265,7 @@ bool	parse_quad(t_world *world, char *line, int index)
 	free(u);
 
 	char *v = extract_element(line, &i, ' ');
-	if (!assign_vec3(&world->qu_list.quads[index].v, v, DBL_MIN, DBL_MAX))
+	if (!assign_vec3(&world->qu_list.quads[index].v, v, -DBL_MAX, DBL_MAX))
 	{
 		free(v);
 		return (false);
@@ -301,38 +305,45 @@ bool	assign_objects(char *file, t_world *world, t_camera *cam)
 		{
 			if (line[i] == 'A')
 			{
+				i++;
 				succes = parse_ambient(cam, &line[i]);
 			}
 			else if (line[i] == 'C')
 			{
+				i++;
 				succes = parse_camera(cam, &line[i]);
 			}
 			else if (line[i] == 'L')
 			{
+				i++;
 				succes = parse_light(world, &line[i], world->sp_list.count);
 				if (succes)
 					world->sp_list.count += 1;
 			}
 			else if (line[i] == 's' && line[i+1] == 'p')
 			{
+				i += 2;
 				succes = parse_sphere(world, &line[i], world->sp_list.count);
 				if (succes)
 					world->sp_list.count += 1;
 			}
 			else if (line[i] == 'p' && line[i+1] == 'l')
 			{
+				i += 2;
 				succes = parse_plane(world, &line[i], world->pl_list.count);
 				if (succes)
 					world->pl_list.count += 1;
 			}
 			else if (line[i] == 'c' && line[i+1] == 'y')
 			{
+				i += 2;
 				succes = parse_cylinder(world, &line[i], world->cy_list.count);
 				if (succes)
 					world->cy_list.count += 1;
 			}
 			else if (line[i] == 'q' && line[i+1] == 'u')
 			{
+				i += 2;
 				succes = parse_quad(world, &line[i], world->qu_list.count);
 				if (succes)
 					world->qu_list.count += 1;
@@ -348,6 +359,7 @@ bool	assign_objects(char *file, t_world *world, t_camera *cam)
 		}
 		free(line);
 		line = get_next_line(fd);
+		printf("new line\n\n");
 		line_count++;
 	}
 	close(fd);
@@ -359,10 +371,15 @@ bool	parse(char *file, t_world *world, t_camera *cam)
 	t_object_counter	counter;
 	int fd;
 
-	fd = open(file, O_RDONLY);
-	if (fd <= -1)
+	if (!file)
 	{
-		ft_putstr_fd("failed to open file\n", STDERR_FILENO);
+		ft_putstr_fd("no file\n", STDERR_FILENO);
+		return false;
+	}
+	fd = open(file, O_RDONLY);
+	if (fd == -1)
+	{
+		perror("file: ");
 		return (false);
 	}
 	if (!count_objects(fd, &counter))

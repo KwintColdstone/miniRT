@@ -1,23 +1,40 @@
 #include "libft/libft.h"
 #include "miniRT.h"
+#include <stdio.h>
 #include <unistd.h>
 
 bool	is_float(char *s)
 {
-	int i = 0;
+	int	i;
 	int	fractals;
+	int	minuses;
 	bool	in_fractal;
 
+	i = 0;
 	fractals = 0;
+	minuses = 0;
 	in_fractal = false;
 	while (s[i])
 	{
+		if (s[i] == '-')
+		{
+			minuses++;
+			i++;
+		}
+		if (minuses > 1)
+		{
+			printf("too many minuses\n");
+			return (false);
+		}
 		if (!in_fractal)
 		{
 			if (!ft_isdigit(s[i]))
 			{
 				if (s[i] != '.')
+				{
+					printf("non digit is not a point\n");
 					return (false);
+				}
 				else
 					in_fractal = true;
 			}
@@ -26,7 +43,10 @@ bool	is_float(char *s)
 		else
 		{
 			if (!ft_isdigit(s[i]) || fractals > 1)
+			{
+				printf("fractal not a digit or more than one fractal\n");
 				return (false);
+			}
 			i++;
 			fractals++;
 		}
@@ -81,13 +101,17 @@ bool	assign_float(double *f, char *s, double min, double max)
 	char *elem = extract_element(s, &i, ' ');
 	if (!is_float(elem))
 	{
+		ft_putstr_fd("not a float\n", STDERR_FILENO);
 		free(elem);
 		return (false);
 	}
 	*f = ft_atof(elem);
 	free(elem);
 	if (*f < min || *f > max)
+	{
+		ft_putstr_fd("float outside range\n", STDERR_FILENO);
 		return (false);
+	}
 	return (true);
 }
 
@@ -97,8 +121,12 @@ bool	assign_vec3(t_vec3 *v, char *s, double min, double max)
 	char *x_str = extract_element(s, &i, ',');
 	char *y_str = extract_element(s, &i, ',');
 	char *z_str = extract_element(s, &i, ' ');
+	printf("x_str: %s\n", x_str);
+	printf("y_str: %s\n", y_str);
+	printf("z_str: %s\n", z_str);
 	if (!is_float(x_str) || !is_float(y_str) || !is_float(z_str))
 	{
+		printf("vec3 float test failed\n");
 		free(x_str);
 		free(y_str);
 		free(z_str);
@@ -110,11 +138,15 @@ bool	assign_vec3(t_vec3 *v, char *s, double min, double max)
 	x = ft_atof(x_str);
 	y = ft_atof(y_str);
 	z = ft_atof(z_str);
+	printf("x: %f\n", x);
+	printf("y: %f\n", y);
+	printf("z: %f\n", z);
 	free(x_str);
 	free(y_str);
 	free(z_str);
 	if (x < min || x > max || y < min || y > max || z < min || z > max)
 	{
+		printf("vec3 outside range\n");
 		return (false);
 	}
 	v->x = x;

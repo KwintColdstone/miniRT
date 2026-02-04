@@ -111,25 +111,37 @@ bool world_init(t_world *world, t_object_counter *c)
 		return (false);
 	}
 	ft_memset(world, 0, sizeof(t_world));
-	if (!sphere_list_init(&world->sp_list, c->sphere_cap))
+	if (c->sphere_cap != 0)
 	{
-		ft_putstr_fd("failed to init sphere list\n", STDERR_FILENO);
-		return (false);
+		if (!sphere_list_init(&world->sp_list, c->sphere_cap))
+		{
+			ft_putstr_fd("failed to init sphere list\n", STDERR_FILENO);
+			return (false);
+		}
 	}
-	if (!quad_list_init(&world->qu_list, c->quad_cap))
+	if (c->quad_cap != 0)
 	{
-		ft_putstr_fd("failed to init quad list\n", STDERR_FILENO);
-		return (false);
+		if (!quad_list_init(&world->qu_list, c->quad_cap))
+		{
+			ft_putstr_fd("failed to init quad list\n", STDERR_FILENO);
+			return (false);
+		}
 	}
-	if (!cylinder_list_init(&world->cy_list, c->cylinder_cap))
+	if (c->cylinder_cap)
 	{
-		ft_putstr_fd("failed to init cylinder list\n", STDERR_FILENO);
-		return (false);
+		if (!cylinder_list_init(&world->cy_list, c->cylinder_cap))
+		{
+			ft_putstr_fd("failed to init cylinder list\n", STDERR_FILENO);
+			return (false);
+		}
 	}
-	if (!plane_list_init(&world->pl_list, c->plane_cap))
+	if (c->plane_cap)
 	{
-		ft_putstr_fd("failed to init plane list\n", STDERR_FILENO);
-		return (false);
+		if (!plane_list_init(&world->pl_list, c->plane_cap))
+		{
+			ft_putstr_fd("failed to init plane list\n", STDERR_FILENO);
+			return (false);
+		}
 	}
 	// cornell_box_scene(world);
 	return (true);
