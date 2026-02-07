@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 	cam.aspect_ratio = 16.0 / 9.0;
 	cam.image_width = 400;
 	cam.image_height = calculate_img_height(cam.aspect_ratio, cam.image_width);
-	cam.samples_per_pixel = 40;
+	cam.samples_per_pixel = 80;
 	cam.max_depth = 10;
 	cam.v_up = (t_vec3){0, 1, 0};
 	cam.background = (t_vec3){0,0,0};

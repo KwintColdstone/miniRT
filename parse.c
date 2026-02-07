@@ -80,7 +80,7 @@ bool	parse_light(t_world *world, char *line, int index)
 
 	i = 0;
 	light_multiplier = 10;
-	base_light_radius = 1;
+	base_light_radius = 50;
 	char *pos = extract_element(line, &i, ' ');
 	if (!assign_vec3(&world->sp_list.spheres[index].center, pos, -DBL_MAX, DBL_MAX))
 	{
@@ -366,6 +366,16 @@ bool	assign_objects(char *file, t_world *world, t_camera *cam)
 	return (true);
 }
 
+bool	check_file_name(char *file)
+{
+	int i;
+
+	i = ft_strlen(file);
+	if (file[i - 1] == 't' && file[i - 2] == 'r' && file[i - 3] == '.')
+		return (true);
+	return (false);
+}
+
 bool	parse(char *file, t_world *world, t_camera *cam)
 {
 	t_object_counter	counter;
@@ -376,10 +386,15 @@ bool	parse(char *file, t_world *world, t_camera *cam)
 		ft_putstr_fd("no file\n", STDERR_FILENO);
 		return false;
 	}
+	if (!check_file_name(file))
+	{
+		ft_putstr_fd("incorrect file name. Use: (name).rt\n", STDERR_FILENO);
+		return (false);
+	}
 	fd = open(file, O_RDONLY);
 	if (fd == -1)
 	{
-		perror("file: ");
+		perror("Error");
 		return (false);
 	}
 	if (!count_objects(fd, &counter))

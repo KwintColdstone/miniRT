@@ -1,6 +1,6 @@
 #include "miniRT.h"
 
-static void set_face_normal(const t_ray *r, const t_vec3 *outward_normal, t_hit_record *rec)
+void set_face_normal(const t_ray *r, const t_vec3 *outward_normal, t_hit_record *rec)
 {
 	rec->front_face = dot_vec3(r->direction, *outward_normal) < 0;
 	if (rec->front_face == true)
@@ -97,87 +97,3 @@ bool	plane_hit(const t_plane *p, const t_ray *r, t_interval ray_t, t_hit_record 
 	return  (true);
 }
 
-static bool	check_cap(const t_cylinder *cl, const t_ray *r, double cap_y, 
-					  double *t_cap)
-{
-	if (fabs(r->direction.y) < 1e-8)
-		return (false);
-	*t_cap = (cap_y - r->origin.y) / r->direction.y;
-	if (*t_cap <= 0)
-		return (false);
-	t_vec3 hit = ray_at(r, *t_cap);
-	double dx = hit.x - cl->center.x;
-	double dz = hit.z - cl->center.z;
-	return (dx * dx + dz * dz <= cl->radius * cl->radius);
-}
-
-static bool	check_cylinder_side(const t_cylinder *cl, const t_ray *r, 
-								t_interval ray_t, double *t_side)
-{
-	double a = r->direction.x * r->direction.x + r->direction.z * r->direction.z;
-	double b = 2 * (r->direction.x * (r->origin.x - cl->center.x) + 
-				   r->direction.z * (r->origin.z - cl->center.z));
-	double c = (r->origin.x - cl->center.x) * (r->origin.x - cl->center.x) + 
-			   (r->origin.z - cl->center.z) * (r->origin.z - cl->center.z) - 
-			   cl->radius * cl->radius;
-	
-	double disc = b * b - 4 * a * c;
-	if (disc < 0)
-		return (false);
-	
-	double root = (-b - sqrt(disc)) / (2 * a);
-	if (root <= ray_t.min || root >= ray_t.max)
-		root = (-b + sqrt(disc)) / (2 * a);
-	
-	if (root <= ray_t.min || root >= ray_t.max)
-		return (false);
-	
-	double y = r->origin.y + root * r->direction.y;
-	if (y < cl->center.y || y > cl->center.y + cl->height)
-		return (false);
-	
-	*t_side = root;
-	return (true);
-}
-
-static t_vec3	get_cylinder_normal(const t_cylinder *cl, const t_vec3 *hit_pos, 
-									double hit_t, double t_side, double t_bottom, 
-									double t_top)
-{
-	if (fabs(hit_t - t_side) < 1e-8)
-	{
-		t_vec3 normal = (t_vec3){hit_pos->x - cl->center.x, 0, hit_pos->z - cl->center.z};
-		return (unit_vector(normal));
-	}
-	else if (fabs(hit_t - t_bottom) < 1e-8)
-		return ((t_vec3){0, -1, 0});
-	else
-		return ((t_vec3){0, 1, 0});
-}
-
-bool	cylinder_hit(const t_cylinder *cl, const t_ray *r, t_interval ray_t, 
-					 t_hit_record *rec)
-{
-	double t_side = INFINITY;
-	double t_bottom = INFINITY;
-	double t_top = INFINITY;
-	double t_min = INFINITY;
-
-	if (check_cylinder_side(cl, r, ray_t, &t_side))
-		t_min = t_side;
-	if (check_cap(cl, r, cl->center.y, &t_bottom) && 
-		t_bottom > ray_t.min && t_bottom < t_min)
-		t_min = t_bottom;
-	if (check_cap(cl, r, cl->center.y + cl->height, &t_top) && 
-		t_top > ray_t.min && t_top < t_min)
-		t_min = t_top;
-	if (t_min == INFINITY)
-		return (false);
-	rec->t = t_min;
-	rec->position = ray_at(r, t_min);
-	rec->mat = cl->mat;
-	t_vec3 normal = get_cylinder_normal(cl, &rec->position, t_min, 
-										t_side, t_bottom, t_top);
-	set_face_normal(r, &normal, rec);
-	return (true);
-}
