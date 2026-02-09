@@ -69,8 +69,7 @@ bool	parse_camera(t_camera *cam, char *line)
 	cam->hfov = hfov;
 	return (true);
 }
-
-
+/*
 bool	parse_light(t_world *world, char *line, int index)
 {
 	double s;
@@ -112,15 +111,97 @@ bool	parse_light(t_world *world, char *line, int index)
 	free(color);
 	return (true);
 }
+*/
+bool	is_str_empty(char *s)
+{
+	int i;
+	int counter;
 
+	i = 0;
+	if (!s || (ft_strlen(s) == 0))
+		return (true);
+	while (s[i])
+	{
+		if (ft_isspace(s[i]))
+			counter++;
+		i++;
+	}
+	if (counter == i)
+		return (true);
+	return (false);
+}
+
+bool	check_material_type(t_material *mat, char *mat_str)
+{
+	t_material base;
+	t_material metal;
+	t_material emit;
+
+	if (is_str_empty(mat_str))
+	{
+		base = (t_material){MAT_LAMBERTIAN, (t_vec3){0, 0, 0}, 0};
+		*mat = base;
+		return (true);
+	}
+	if (ft_strcmp(mat_str, "METAL") == 0)
+	{
+		metal = (t_material){MAT_METAL, (t_vec3){0, 0, 0}, 0};
+		*mat = metal;
+	}
+	else if (ft_strcmp(mat_str, "EMIT") == 0)
+	{
+		emit = (t_material){MAT_EMIT, (t_vec3){0, 0, 0}, 0};
+		*mat = emit;
+	}
+	else
+	{
+		return (false);
+	}
+	return (true);
+}
+
+bool	assign_material(t_material *mat, char *line, int *i)
+{
+
+	char *color = extract_element(line, i, ' ');
+	char *mat_str = extract_element(line, i, ' ');
+	if (!check_material_type(mat, mat_str))
+	{
+		free(color);
+		free(mat_str);
+		return (false);
+	}
+	if (mat->type == MAT_EMIT)
+	{
+		if (!assign_color(&mat->emit_color, color, 1))
+		{
+			free(color);
+			free(mat_str);
+			return (false);
+		}
+	}
+	else
+	{
+		if (!assign_color(&mat->albedo, color, 1))
+		{
+			free(color);
+			free(mat_str);
+			return (false);
+		}
+	}
+	free(color);
+	free(mat_str);
+	return (true);
+}
 
 bool	parse_sphere(t_world *world, char *line, int index)
 {
 	int i;
 
 	i = 0;
+	t_sphere *sp = &world->sp_list.spheres[index];
 	char *pos = extract_element(line, &i, ' ');
-	if (!assign_vec3(&world->sp_list.spheres[index].center, pos, -DBL_MAX, DBL_MAX))
+	if (!assign_vec3(&sp->center, pos, -DBL_MAX, DBL_MAX))
 	{
 		free(pos);
 		return (false);
@@ -133,22 +214,14 @@ bool	parse_sphere(t_world *world, char *line, int index)
 		free(diameter);
 		return (false);
 	}
-	world->sp_list.spheres[index].radius = ft_atof(diameter) / 2;
+	sp->radius = ft_atof(diameter) / 2;
 	free(diameter);
-	if (world->sp_list.spheres[index].radius < 0
-		|| world->sp_list.spheres[index].radius > INT_MAX)
+	if (sp->radius < 0
+		|| sp->radius > INT_MAX)
 		return (false);
 
-	t_material base;
-	base = (t_material){MAT_LAMBERTIAN, (t_vec3){0, 0, 0}, 0};
-	world->sp_list.spheres[index].mat = base;
-	char *color = extract_element(line, &i, ' ');
-	if (!assign_color(&world->sp_list.spheres[index].mat.albedo, color, 1))
-	{
-		free(color);
+	if (!assign_material(&sp->mat, line, &i))
 		return (false);
-	}
-	free(color);
 	return (true);
 }
 
@@ -158,8 +231,9 @@ bool	parse_plane(t_world *world, char *line, int index)
 	int i;
 
 	i = 0;
+	t_plane *pl = &world->pl_list.planes[index];
 	char *point = extract_element(line, &i, ' ');
-	if (!assign_vec3(&world->pl_list.planes[index].point, point, -DBL_MAX, DBL_MAX))
+	if (!assign_vec3(&pl->point, point, -DBL_MAX, DBL_MAX))
 	{
 		free(point);
 		return (false);
@@ -167,23 +241,16 @@ bool	parse_plane(t_world *world, char *line, int index)
 	free(point);
 
 	char *normal = extract_element(line, &i, ' ');
-	if (!assign_vec3(&world->pl_list.planes[index].normal, normal, -1.0, 1.0))
+	if (!assign_vec3(&pl->normal, normal, -1.0, 1.0))
 	{
 		free(normal);
 		return (false);
 	}
 	free(normal);
+	pl->normal = unit_vector(pl->normal);
 
-	t_material base;
-	base = (t_material){MAT_LAMBERTIAN, (t_vec3){0, 0, 0}, 0};
-	world->pl_list.planes[index].mat = base;
-	char *color = extract_element(line, &i, ' ');
-	if (!assign_color(&world->pl_list.planes[index].mat.albedo, color, 1))
-	{
-		free(color);
+	if (!assign_material(&pl->mat, line, &i))
 		return (false);
-	}
-	free(color);
 	return (true);
 }
 
@@ -193,8 +260,9 @@ bool	parse_cylinder(t_world *world, char *line, int index)
 	int i;
 
 	i = 0;
+	t_cylinder *cyl = &world->cy_list.cylinders[index];
 	char *pos = extract_element(line, &i, ' ');
-	if (!assign_vec3(&world->cy_list.cylinders[index].center, pos, -DBL_MAX, DBL_MAX))
+	if (!assign_vec3(&cyl->center, pos, -DBL_MAX, DBL_MAX))
 	{
 		free(pos);
 		return (false);
@@ -202,12 +270,13 @@ bool	parse_cylinder(t_world *world, char *line, int index)
 	free(pos);
 
 	char *axis = extract_element(line, &i, ' ');
-	if (!assign_vec3(&world->cy_list.cylinders[index].axis, axis, -1.0, 1.0))
+	if (!assign_vec3(&cyl->axis, axis, -1.0, 1.0))
 	{
 		free(axis);
 		return (false);
 	}
 	free(axis);
+	cyl->axis = unit_vector(cyl->axis);
 
 	char *diameter = extract_element(line, &i, ' ');
 	if (!is_float(diameter))
@@ -215,30 +284,22 @@ bool	parse_cylinder(t_world *world, char *line, int index)
 		free(diameter);
 		return (false);
 	}
-	world->cy_list.cylinders[index].radius = ft_atof(diameter) / 2;
+	cyl->radius = ft_atof(diameter) / 2;
 	free(diameter);
-	if (world->cy_list.cylinders[index].radius < 0
-		|| world->cy_list.cylinders[index].radius > INT_MAX)
+	if (cyl->radius < 0
+		|| cyl->radius > INT_MAX)
 		return (false);
 
 	char *height = extract_element(line, &i, ' ');
-	if (!assign_float(&world->cy_list.cylinders[index].height, height, 0.0, INT_MAX))
+	if (!assign_float(&cyl->height, height, 0.0, INT_MAX))
 	{
 		free(height);
 		return (false);
 	}
 	free(height);
 
-	t_material base;
-	base = (t_material){MAT_LAMBERTIAN, (t_vec3){0, 0, 0}, 0};
-	world->cy_list.cylinders[index].mat = base;
-	char *color = extract_element(line, &i, ' ');
-	if (!assign_color(&world->cy_list.cylinders[index].mat.albedo, color, 1))
-	{
-		free(color);
+	if (!assign_material(&cyl->mat, line, &i))
 		return (false);
-	}
-	free(color);
 	return (true);
 }
 
@@ -248,8 +309,9 @@ bool	parse_quad(t_world *world, char *line, int index)
 	int i;
 
 	i = 0;
+	t_quad *qu = &world->qu_list.quads[index];
 	char *corner = extract_element(line, &i, ' ');
-	if (!assign_vec3(&world->qu_list.quads[index].corner, corner, -DBL_MAX, DBL_MAX))
+	if (!assign_vec3(&qu->corner, corner, -DBL_MAX, DBL_MAX))
 	{
 		free(corner);
 		return (false);
@@ -257,7 +319,7 @@ bool	parse_quad(t_world *world, char *line, int index)
 	free(corner);
 
 	char *u = extract_element(line, &i, ' ');
-	if (!assign_vec3(&world->qu_list.quads[index].u, u, -DBL_MAX, DBL_MAX))
+	if (!assign_vec3(&qu->u, u, -DBL_MAX, DBL_MAX))
 	{
 		free(u);
 		return (false);
@@ -265,23 +327,15 @@ bool	parse_quad(t_world *world, char *line, int index)
 	free(u);
 
 	char *v = extract_element(line, &i, ' ');
-	if (!assign_vec3(&world->qu_list.quads[index].v, v, -DBL_MAX, DBL_MAX))
+	if (!assign_vec3(&qu->v, v, -DBL_MAX, DBL_MAX))
 	{
 		free(v);
 		return (false);
 	}
 	free(v);
 
-	t_material base;
-	base = (t_material){MAT_LAMBERTIAN, (t_vec3){0, 0, 0}, 0};
-	world->qu_list.quads[index].mat = base;
-	char *color = extract_element(line, &i, ' ');
-	if (!assign_color(&world->qu_list.quads[index].mat.albedo, color, 1))
-	{
-		free(color);
+	if (!assign_material(&qu->mat, line, &i))
 		return (false);
-	}
-	free(color);
 	return (true);
 }
 
@@ -313,6 +367,7 @@ bool	assign_objects(char *file, t_world *world, t_camera *cam)
 				i++;
 				succes = parse_camera(cam, &line[i]);
 			}
+			/*
 			else if (line[i] == 'L')
 			{
 				i++;
@@ -320,6 +375,7 @@ bool	assign_objects(char *file, t_world *world, t_camera *cam)
 				if (succes)
 					world->sp_list.count += 1;
 			}
+			*/
 			else if (line[i] == 's' && line[i+1] == 'p')
 			{
 				i += 2;
@@ -359,7 +415,6 @@ bool	assign_objects(char *file, t_world *world, t_camera *cam)
 		}
 		free(line);
 		line = get_next_line(fd);
-		printf("new line\n\n");
 		line_count++;
 	}
 	close(fd);

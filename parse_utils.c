@@ -121,9 +121,6 @@ bool	assign_vec3(t_vec3 *v, char *s, double min, double max)
 	char *x_str = extract_element(s, &i, ',');
 	char *y_str = extract_element(s, &i, ',');
 	char *z_str = extract_element(s, &i, ' ');
-	printf("x_str: %s\n", x_str);
-	printf("y_str: %s\n", y_str);
-	printf("z_str: %s\n", z_str);
 	if (!is_float(x_str) || !is_float(y_str) || !is_float(z_str))
 	{
 		printf("vec3 float test failed\n");
@@ -138,9 +135,6 @@ bool	assign_vec3(t_vec3 *v, char *s, double min, double max)
 	x = ft_atof(x_str);
 	y = ft_atof(y_str);
 	z = ft_atof(z_str);
-	printf("x: %f\n", x);
-	printf("y: %f\n", y);
-	printf("z: %f\n", z);
 	free(x_str);
 	free(y_str);
 	free(z_str);
