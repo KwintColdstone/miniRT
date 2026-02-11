@@ -198,14 +198,15 @@ bool	count_objects(int fd, t_object_counter *counts)
 		{
 			if (line[i] == 'A')
 			{
-
+				counts->ambient++;
 			}
 			else if (line[i] == 'C')
 			{
+				counts->camera++;
 			}
 			else if (line[i] == 'L')
 			{
-				counts->sphere_cap++;
+				counts->light++;
 			}
 			else if (line[i] == 's' && line[i+1] == 'p')
 			{
@@ -225,13 +226,19 @@ bool	count_objects(int fd, t_object_counter *counts)
 			}
 			else
 			{
-				ft_putstr_fd("parsing failed: not an element", STDERR_FILENO);
+				printf("parsing failed at line %d: not an element\n", i);
+				close(fd);
+				free(line);
+				return (false);
+			}
+			if (counts->ambient > 1 || counts->light > 1 || counts->light > 1)
+			{
+				ft_putstr_fd("parsing failed: more than one capitalized element", STDERR_FILENO);
 				close(fd);
 				free(line);
 				return (false);
 			}
 		}
-		
 		free(line);
 		line = get_next_line(fd);
 	}

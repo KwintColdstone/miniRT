@@ -2,11 +2,12 @@
 #include "miniRT.h"
 #include <fcntl.h>
 #include <float.h>
+#include <iso646.h>
 #include <limits.h>
 #include <stdio.h>
 #include <unistd.h>
 
-bool	parse_ambient(t_camera *cam, char *line)
+bool	parse_ambient(t_world *world, t_camera *cam, char *line)
 {
 	double s;
 	int i;
@@ -21,7 +22,15 @@ bool	parse_ambient(t_camera *cam, char *line)
 	free(strength);
 
 	char *color = extract_element(line, &i, ' ');
+	/*
 	if (!assign_color(&cam->background, color, s))
+	{
+		ft_putstr_fd("assigning color failed\n", STDERR_FILENO);
+		free(color);
+		return (false);
+	}
+	*/
+	if (!assign_color(&world->ambient, color, s))
 	{
 		ft_putstr_fd("assigning color failed\n", STDERR_FILENO);
 		free(color);
@@ -69,49 +78,41 @@ bool	parse_camera(t_camera *cam, char *line)
 	cam->hfov = hfov;
 	return (true);
 }
-/*
-bool	parse_light(t_world *world, char *line, int index)
+
+bool	parse_light(t_world *world, char *line)
 {
-	double s;
-	double base_light_radius;
 	int i;
-	int light_multiplier;
 
 	i = 0;
-	light_multiplier = 10;
-	base_light_radius = 50;
 	char *pos = extract_element(line, &i, ' ');
-	if (!assign_vec3(&world->sp_list.spheres[index].center, pos, -DBL_MAX, DBL_MAX))
+	if (!assign_vec3(&world->light.position, pos, -DBL_MAX, DBL_MAX))
 	{
+		ft_putstr_fd("assigning vec3 failed: pos\n", STDERR_FILENO);
 		free(pos);
 		return (false);
 	}
 	free(pos);
 
-	world->sp_list.spheres[index].radius = base_light_radius;
-
-	char *strength = extract_element(line, &i, ' ');
-	if (!assign_float(&s, strength, 0.0, 1.0))
+	char *brightness = extract_element(line, &i, ' ');
+	if (!assign_float(&world->light.brightness, brightness, 0.0, 1.0))
 	{
-		free(strength);
+		free(brightness);
 		return (false);
 	}
-	s *= light_multiplier;
-	free(strength);
+	free(brightness);
 
-	t_material base;
-	base = (t_material){MAT_EMIT, (t_vec3){0, 0, 0}, 0};
-	world->sp_list.spheres[index].mat = base;
 	char *color = extract_element(line, &i, ' ');
-	if (!assign_color(&world->sp_list.spheres[index].mat.emit_color, color, s))
+	if (!assign_color(&world->light.color, color, 1))
 	{
+		ft_putstr_fd("assigning color failed\n", STDERR_FILENO);
 		free(color);
 		return (false);
 	}
 	free(color);
+
 	return (true);
 }
-*/
+
 bool	is_str_empty(char *s)
 {
 	int i;
@@ -360,22 +361,18 @@ bool	assign_objects(char *file, t_world *world, t_camera *cam)
 			if (line[i] == 'A')
 			{
 				i++;
-				succes = parse_ambient(cam, &line[i]);
+				succes = parse_ambient(world, cam, &line[i]);
 			}
 			else if (line[i] == 'C')
 			{
 				i++;
 				succes = parse_camera(cam, &line[i]);
 			}
-			/*
 			else if (line[i] == 'L')
 			{
 				i++;
-				succes = parse_light(world, &line[i], world->sp_list.count);
-				if (succes)
-					world->sp_list.count += 1;
+				succes = parse_light(world, &line[i]);
 			}
-			*/
 			else if (line[i] == 's' && line[i+1] == 'p')
 			{
 				i += 2;

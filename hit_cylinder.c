@@ -91,12 +91,9 @@ bool	cylinder_hit(const t_cylinder *cl, const t_ray *r, t_interval ray_t,
 	
 	// Transform ray to cylinder's local coordinate system
 	// Note: w is the cylinder's axis direction
-	//rotated_r.origin = world_to_object_space(&r->origin, &cl->center, &u, &v, &w);
-	//rotated_r.direction = world_to_object_direction(&r->direction, &u, &v, &w);
+	rotated_r.origin = world_to_object_space(&r->origin, &cl->center, &u, &v, &w);
+	rotated_r.direction = world_to_object_direction(&r->direction, &u, &v, &w);
 
-	rotated_r.origin = world_to_object_space(&r->origin, &cl->center, &u, &w, &v);
-	rotated_r.direction = world_to_object_direction(&r->direction, &u, &w, &v);
-	
 	// Check for intersections in local space
 	if (check_cylinder_side(cl, &rotated_r, ray_t, &t_side))
 		t_min = t_side;

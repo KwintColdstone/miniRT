@@ -18,13 +18,121 @@ t_vec3 sky(const t_ray *r)
 	t_vec3 b_amount = multiply_by_scalar(blue,a);
 	return (add_vec3(w_amount, b_amount));
 }
+bool is_in_shadow(const t_world *world, const t_vec3 *point, const t_light *light)
+{
+	t_ray       shadow_ray;
+	t_hit_record shadow_rec;
+	t_interval  shadow_t;
+	t_vec3      light_dir;
+	double      light_distance;
 
+	// Calculate direction and distance to light
+	light_dir = subtract_vec3(light->position, *point);
+	light_distance = vec3_length(light_dir);
+
+	if (light_distance < 1e-6)
+		return (false);
+
+	light_dir = unit_vector(light_dir);
+
+	// CRITICAL: Move the ray origin slightly in the direction of the light
+	// This prevents the ray from intersecting the same surface
+	t_vec3 shadow_origin = add_vec3(*point, multiply_by_scalar(light_dir, 0.001));
+	shadow_ray = (t_ray){shadow_origin, light_dir};
+
+	// Check for occluders between point and light (but not beyond the light)
+	shadow_t = (t_interval){0.001, light_distance - 0.001};
+
+	return (world_hit(world, &shadow_ray, shadow_t, &shadow_rec));
+}
+/*
+bool is_in_shadow(const t_world *world, const t_vec3 *point, const t_light *light)
+{
+	t_ray       shadow_ray;
+	t_hit_record shadow_rec;
+	t_interval  shadow_t;
+	t_vec3      light_dir;
+	double      light_distance;
+
+	light_dir = subtract_vec3(light->position, *point);
+	light_distance = vec3_length(light_dir);
+	light_dir = unit_vector(light_dir);
+	shadow_ray = (t_ray){*point, light_dir};
+	shadow_t = (t_interval){0.001, light_distance};
+	return (world_hit(world, &shadow_ray, shadow_t, &shadow_rec));
+}
+*/
+
+t_vec3 direct_lighting(const t_world *world, t_hit_record *rec)
+{
+	t_vec3 direct = {0, 0, 0};
+	t_vec3 ambient;
+	t_vec3 light_dir;
+	t_vec3 diffuse;
+	double diff;
+
+	// AMBIENT term - objects are never completely dark
+	// Ambient = ambient_color * material_albedo
+	ambient = multiply_vec3(world->ambient, rec->mat.albedo);
+	direct = ambient;
+
+	// DIFFUSE term - only if light exists
+	// Check if light has been initialized (brightness > 0 or position not zero)
+	if (world->light.brightness > 0.0)
+	{
+		// Check if point is in shadow
+		if (!is_in_shadow(world, &rec->position, &world->light))
+		{
+			// Light direction
+			light_dir = unit_vector(subtract_vec3(world->light.position, rec->position));
+			
+			// Diffuse factor (Lambert's cosine law)
+			diff = fmax(dot_vec3(rec->normal, light_dir), 0.0);
+			
+			// Diffuse color = light_color * material_color * diffuse_factor * brightness
+			diffuse = multiply_by_scalar(
+				multiply_vec3(world->light.color, rec->mat.albedo),
+				diff * world->light.brightness
+			);
+			
+			direct = add_vec3(direct, diffuse);
+		}
+	}
+
+	return (direct);
+}
+/*
+t_vec3	direct_lighting(const t_world *world, t_hit_record *rec)
+{
+	t_vec3 light_dir;
+	t_vec3 direct = {0, 0, 0};
+	double intensity;
+
+	if (is_in_shadow(world, &rec->position, &world->light))
+		return (direct);
+	
+	intensity = world->light.brightness;
+	light_dir = unit_vector(subtract_vec3(world->light.position, rec->position));
+	double distance = vec3_length(subtract_vec3(world->light.position, rec->position));
+	intensity /= (distance * distance);
+	
+	// Diffuse term
+	double diff = fmax(dot_vec3(rec->normal, light_dir), 0.0);
+	t_vec3 diffuse = multiply_by_scalar(multiply_vec3(world->light.color, rec->mat.albedo), 
+									   diff * intensity);
+	direct = add_vec3(direct, diffuse);
+
+	return (direct);
+}
+*/
 static t_vec3 ray_color(const t_ray *r, const t_world *world, t_vec3 background, int depth)
 {
 	t_hit_record	rec;
 	t_interval	ray_t;
 	t_ray		scattered;
 	t_vec3		attenuation;
+	t_vec3		direct;
+	t_vec3		color;
 	bool		did_scatter;
 
 	if (depth <= 0)
@@ -33,10 +141,33 @@ static t_vec3 ray_color(const t_ray *r, const t_world *world, t_vec3 background,
 	ray_t.max = INFINITY;
 	if (!world_hit(world, r, ray_t, &rec))
 	{
-		return (background);
+		return (sky(r));
+		//return (background);
 	}
 	// Start with emitted light
-	t_vec3 color = rec.mat.emit_color;
+	color = rec.mat.emit_color;
+
+	direct = direct_lighting(world, &rec);
+	color = add_vec3(color, direct);
+
+    // indirect lightning
+	if (rec.mat.type == MAT_LAMBERTIAN)
+	{
+		if (lambertian_scatter(r, &rec, &attenuation, &scattered))
+		{
+			t_vec3 indirect = ray_color(&scattered, world, background, depth - 1);
+			color = add_vec3(color, multiply_vec3(attenuation, indirect));
+		}
+	}
+	else if (rec.mat.type == MAT_METAL)
+	{
+		if (metal_scatter(r, &rec, &attenuation, &scattered))
+		{
+			t_vec3 indirect = ray_color(&scattered, world, background, depth - 1);
+			color = add_vec3(color, multiply_vec3(attenuation, indirect));
+		}
+	}
+	/*
 	did_scatter = false;
 	if (rec.mat.type == MAT_LAMBERTIAN)
 		did_scatter = lambertian_scatter(r, &rec, &attenuation, &scattered);
@@ -45,6 +176,7 @@ static t_vec3 ray_color(const t_ray *r, const t_world *world, t_vec3 background,
 	if (did_scatter)
 		color = add_vec3(color, multiply_vec3(attenuation,
 						ray_color(&scattered, world, background, depth - 1)));
+	*/
 	return (color);
 
 }

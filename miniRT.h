@@ -35,6 +35,12 @@ typedef struct s_material
 	double		fuzz;
 }	t_material;
 
+typedef struct s_light {
+    t_vec3          position;
+    double          brightness;
+    t_vec3          color;
+}   t_light;
+
 typedef struct	s_quad
 {
 	t_vec3		corner;
@@ -101,6 +107,8 @@ typedef struct s_world {
 	t_quad_list qu_list;
 	t_plane_list pl_list;
 	t_cylinder_list cy_list;
+	t_light	light;
+	t_vec3	ambient;
 }	t_world;
 
 typedef struct s_hit_record {
@@ -145,7 +153,9 @@ typedef struct s_object_counter
 	int quad_cap;
 	int plane_cap;
 	int cylinder_cap;
-	int light_cap;
+	int light;
+	int camera;
+	int ambient;
 }	t_object_counter;
 
 //vec3.c
