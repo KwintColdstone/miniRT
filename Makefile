@@ -36,6 +36,15 @@ $(BUILDDIR):
 $(LIBDIR):
 	mkdir -p $@
 
+#libraries
+LDFLAGS	= -L$(LIBDIR) -lm
+LIBFTDIR	= $(LIBDIR)libft/
+LIBFT	= $(LIBFTDIR)libft.a
+
+MLXDIR = $(LIBDIR)/mlx42
+MLX	= -L$(MLXDIR)/build/ -lmlx42 -ldl -lglfw -pthread -lm
+MLXFILE = $(MLXDIR)/build/libmlx42.a
+
 INCLUDE = $(INCDIR) $(LIBFTDIR)
 
 RM	= rm -rf
@@ -54,9 +63,6 @@ INCFLAGS	= $(addprefix -I,$(INCLUDE))
 #CFLAGS	=
 CFLAGS	= -Wall -Wextra -Werror
 #CFLAGS	= -Wall -Wextra -Werror -fsanitize=undefined
-LDFLAGS	= -L$(LIBDIR) -lm
-LIBFTDIR	= $(LIBDIR)libft/
-LIBFT	= $(LIBFTDIR)libft.a
 INPUT	= rt_files/cyl.rt
 
 
@@ -67,19 +73,26 @@ INPUT	= rt_files/cyl.rt
 $(LIBFT):
 	$(MAKE) all -C $(LIBFTDIR)
 
+$(MLXFILE):
+	$(MAKE) mlx_build
+
 $(BUILDDIR)%.o: %.c $(INCLUDE) | $(BUILDDIR)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
-$(NAME): $(LIBFT) $(OFILES)
+$(NAME): $(LIBFT) $(OFILES) $(MLXFILE)
 	$(CC) $(CFLAGS) -o $@ $(OFILES) $(LIBFT) $(LDFLAGS) $(INCFLAGS)
 
 #Base/project requirements
 all: $(NAME)
-#libs_clean:
-#	$(MAKE) fclean -C $(LIBFT_DIR)
+mlx_build:
+	mkdir -p $(MLXDIR) ; cd $(MLXDIR) ;\
+	cmake -B build ; cmake --build build  -j4
+	chmod 777 $(MLXDIR)/build/libmlx42.a
+libs_clean:
+	$(RM) $(MLXDIR)/build ; $(MAKE) fclean -C $(LIBFTDIR)
 clean:
 	$(RM) $(OFILES)
-fclean:	clean #libs_clean
+fclean:	clean libs_clean
 	$(RM) $(NAME) $(DEPFILES)
 re:	fclean all
 
