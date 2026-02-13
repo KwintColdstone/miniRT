@@ -9,6 +9,7 @@
 
 bool	parse_ambient(t_world *world, t_camera *cam, char *line)
 {
+	(void) cam; // unused!!
 	double s;
 	int i;
 
@@ -121,18 +122,18 @@ bool	check_material_type(t_material *mat, char *mat_str)
 
 	if (!mat_str)
 	{
-		base = (t_material){MAT_LAMBERTIAN, (t_vec3){0, 0, 0}, 0};
+		base = (t_material){MAT_LAMBERTIAN, (t_vec3){0, 0, 0}, (t_vec3){0, 0, 0}, 0}; // was not init properly
 		*mat = base;
 		return (true);
 	}
 	if (ft_strcmp(mat_str, "METAL") == 0)
 	{
-		metal = (t_material){MAT_METAL, (t_vec3){0, 0, 0}, 0};
+		metal = (t_material){MAT_METAL, (t_vec3){0, 0, 0}, (t_vec3){0, 0, 0}, 0};
 		*mat = metal;
 	}
 	else if (ft_strcmp(mat_str, "EMIT") == 0)
 	{
-		emit = (t_material){MAT_EMIT, (t_vec3){0, 0, 0}, 0};
+		emit = (t_material){MAT_EMIT, (t_vec3){0, 0, 0}, (t_vec3){0, 0, 0}, 0};
 		*mat = emit;
 	}
 	else

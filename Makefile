@@ -51,13 +51,13 @@ CC	= cc
 CPPFLAGS	= $(INCFLAGS) -MMD -MP
 
 INCFLAGS	= $(addprefix -I,$(INCLUDE))
-CFLAGS	=
-#CFLAGS	= -Wall -Wextra -Werror
+#CFLAGS	=
+CFLAGS	= -Wall -Wextra -Werror
 #CFLAGS	= -Wall -Wextra -Werror -fsanitize=undefined
-LDFLAGS	= -L$(LIBDIR)
+LDFLAGS	= -L$(LIBDIR) -lm
 LIBFTDIR	= $(LIBDIR)libft/
 LIBFT	= $(LIBFTDIR)libft.a
-INPUT	=
+INPUT	= rt_files/cyl.rt
 
 
 -include $(OFILES:.o=.d)

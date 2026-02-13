@@ -1,4 +1,5 @@
 #include "miniRT.h"
+#include <math.h>
 #include <stdio.h>
 #include <unistd.h>
 
@@ -87,7 +88,7 @@ static t_vec3 ray_color(const t_ray *r, const t_world *world, t_vec3 background,
 	t_vec3		attenuation;
 	t_vec3		direct;
 	t_vec3		color;
-	bool		did_scatter;
+	bool		did_scatter; (void) did_scatter; //unused!
 
 	if (depth <= 0)
 		return ((t_vec3){0,0,0});

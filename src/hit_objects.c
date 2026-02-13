@@ -1,4 +1,5 @@
 #include "miniRT.h"
+#include "math.h"
 
 // Checks if ray hit from the inside or outside
 void set_face_normal(const t_ray *r, const t_vec3 *outward_normal, t_hit_record *rec)

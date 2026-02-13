@@ -10,6 +10,7 @@ double	ft_atof(char *str)
 	int		sign;
 	int		fract_count;
 
+	fract_count = 0;
 	result = 0.0;
 	fraction = 0.0;
 	divisor = 10.0;
