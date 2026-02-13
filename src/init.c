@@ -1,4 +1,4 @@
-#include "libft/libft.h"
+#include "libft.h"
 #include "miniRT.h"
 #include <unistd.h>
 

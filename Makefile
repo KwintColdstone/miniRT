@@ -1,13 +1,21 @@
 .DEFAULT_GOAL := all
 
-NAME	=	durak
+NAME	=	minirt
 
 CFILES	=	main.c\
-			test.c\
+			camera.c\
+			hit_cylinder.c\
+			hit_objects.c\
 			init.c\
-			deck_manip.c\
-			game_start.c\
-			printing.c
+			material.c\
+			parse.c\
+			parse_utils.c\
+			ray.c\
+			render.c\
+			transform.c\
+			utils.c\
+			vec3.c\
+			world_hit.c
 
 OFILES	= $(addprefix $(BUILDDIR),$(CFILES:.c=.o))
 DEPFILES	= $(addprefix $(BUILDDIR),$(CFILES:.c=.d))
@@ -16,6 +24,7 @@ VPATH	= $(INCLUDE) $(SRCDIRS)
 BUILDDIR = build/
 SRCDIR = src/
 INCDIR = inc/
+LIBDIR = lib/
 SRCDIRS = $(SRCDIR)\
 		  $(addprefix $(SRCDIR), interface deck_manipulation)
 $(SRCDIR):
@@ -24,8 +33,10 @@ $(INCDIR):
 	mkdir -p $@
 $(BUILDDIR):
 	mkdir -p $@
+$(LIBDIR):
+	mkdir -p $@
 
-INCLUDE = $(INCDIR)
+INCLUDE = $(INCDIR) $(LIBFTDIR)
 
 RM	= rm -rf
 CC	= cc
@@ -40,9 +51,12 @@ CC	= cc
 CPPFLAGS	= $(INCFLAGS) -MMD -MP
 
 INCFLAGS	= $(addprefix -I,$(INCLUDE))
-CFLAGS	= -Wall -Wextra -Werror
+CFLAGS	=
+#CFLAGS	= -Wall -Wextra -Werror
 #CFLAGS	= -Wall -Wextra -Werror -fsanitize=undefined
-LDFLAGS	=
+LDFLAGS	= -L$(LIBDIR)
+LIBFTDIR	= $(LIBDIR)libft/
+LIBFT	= $(LIBFTDIR)libft.a
 INPUT	=
 
 
@@ -50,11 +64,14 @@ INPUT	=
 
 # builds .d files, then builds .o files based on .d.
 # skips files that weren't changed (see CPPFLAGS)
+$(LIBFT):
+	$(MAKE) all -C $(LIBFTDIR)
+
 $(BUILDDIR)%.o: %.c $(INCLUDE) | $(BUILDDIR)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
-$(NAME): $(OFILES)
-	$(CC) $(CFLAGS) -o $@ $(OFILES) $(LDFLAGS) $(INCFLAGS)
+$(NAME): $(LIBFT) $(OFILES)
+	$(CC) $(CFLAGS) -o $@ $(OFILES) $(LIBFT) $(LDFLAGS) $(INCFLAGS)
 
 #Base/project requirements
 all: $(NAME)

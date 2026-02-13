@@ -59,6 +59,7 @@ static t_vec3 get_cylinder_normal_local(const t_vec3 *hit_local, double hit_t,
 										double t_side, double t_bottom, double t_top)
 {
 	// Determine which part of the cylinder was hit
+	(void) t_top; //unused!!
 	if (fabs(hit_t - t_side) < 1e-8)
 	{
 		// Side hit: normal points radially outward

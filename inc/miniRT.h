@@ -1,6 +1,6 @@
 #pragma once
 
-#include "libft/libft.h"
+#include "libft.h"
 #include <fcntl.h>
 #include <math.h>
 #include <stdbool.h>

@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdio.h>
-#include "libft/libft.h"
+#include "libft.h"
 #include "miniRT.h"
 
 int calculate_img_height(float aspect_ratio, int image_width)
@@ -21,6 +21,8 @@ int calculate_img_height(float aspect_ratio, int image_width)
 
 int main(int argc, char *argv[])
 {
+	(void) argc; //unused, fix
+
 	t_camera	cam;
 	t_world		world;
 	cam.aspect_ratio = 16.0 / 9.0;

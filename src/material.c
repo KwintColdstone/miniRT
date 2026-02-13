@@ -4,6 +4,7 @@
 //direction = random_on_hemisphere(&rec.normal);
 bool lambertian_scatter(const t_ray *r_in, const t_hit_record *rec, t_vec3 *attenuation, t_ray *scattered)
 {
+	(void) r_in; 	//unused!!
 	t_vec3 scatter_direction = add_vec3(rec->normal, random_unit_vector());
 	// Catch degenerate scatter direction
 	if (near_zero(scatter_direction))
