@@ -213,8 +213,6 @@ double	random_double_mm(double min, double max);
 double	clamp_interval(double x, t_interval i);
 bool	interval_contains(t_interval i, double x);
 
-// create_objects.c
-
 // init.c
 bool	sphere_list_init(t_sphere_list *list, int capacity);
 void	sphere_list_destroy(t_sphere_list *list);

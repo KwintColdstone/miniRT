@@ -11,15 +11,11 @@ void create_orthonormal_basis(const t_vec3 *axis, t_vec3 *u, t_vec3 *v, t_vec3 *
 	else
 		temp = (t_vec3){1, 0, 0};
 
-	// Make u orthogonal to w
 	*u = subtract_vec3(temp, multiply_by_scalar(*w, dot_vec3(*w, temp)));
 	*u = unit_vector(*u);
-
-	// v completes the orthonormal basis
 	*v = cross_vec3(*w, *u);
 }
 
-// World to object space transformation
 t_vec3 world_to_object_space(const t_vec3 *point, const t_vec3 *center,
                              const t_vec3 *u, const t_vec3 *v, const t_vec3 *w)
 {
@@ -32,7 +28,6 @@ t_vec3 world_to_object_space(const t_vec3 *point, const t_vec3 *center,
 	};
 }
 
-// Object to world space transformation
 t_vec3 object_to_world_space(const t_vec3 *point_obj, const t_vec3 *center,
                              const t_vec3 *u, const t_vec3 *v, const t_vec3 *w)
 {
@@ -46,7 +41,6 @@ t_vec3 object_to_world_space(const t_vec3 *point_obj, const t_vec3 *center,
 	return world_point;
 }
 
-// Transform direction (no translation)
 t_vec3 world_to_object_direction(const t_vec3 *dir,
                                  const t_vec3 *u, const t_vec3 *v, const t_vec3 *w)
 {

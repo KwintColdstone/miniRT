@@ -111,7 +111,7 @@ bool world_init(t_world *world, t_object_counter *c)
 		return (false);
 	}
 	ft_memset(world, 0, sizeof(t_world));
-	if (c->sphere_cap != 0)
+	if (c->sphere_cap)
 	{
 		if (!sphere_list_init(&world->sp_list, c->sphere_cap))
 		{
@@ -119,7 +119,7 @@ bool world_init(t_world *world, t_object_counter *c)
 			return (false);
 		}
 	}
-	if (c->quad_cap != 0)
+	if (c->quad_cap)
 	{
 		if (!quad_list_init(&world->qu_list, c->quad_cap))
 		{
@@ -143,7 +143,6 @@ bool world_init(t_world *world, t_object_counter *c)
 			return (false);
 		}
 	}
-	// cornell_box_scene(world);
 	return (true);
 }
 

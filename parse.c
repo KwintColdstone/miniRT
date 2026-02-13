@@ -113,32 +113,13 @@ bool	parse_light(t_world *world, char *line)
 	return (true);
 }
 
-bool	is_str_empty(char *s)
-{
-	int i;
-	int counter;
-
-	i = 0;
-	if (!s || (ft_strlen(s) == 0))
-		return (true);
-	while (s[i])
-	{
-		if (ft_isspace(s[i]))
-			counter++;
-		i++;
-	}
-	if (counter == i)
-		return (true);
-	return (false);
-}
-
 bool	check_material_type(t_material *mat, char *mat_str)
 {
 	t_material base;
 	t_material metal;
 	t_material emit;
 
-	if (is_str_empty(mat_str))
+	if (!mat_str)
 	{
 		base = (t_material){MAT_LAMBERTIAN, (t_vec3){0, 0, 0}, 0};
 		*mat = base;

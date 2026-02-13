@@ -56,43 +56,19 @@ bool	is_float(char *s)
 
 char *extract_element(char *s, int *i, char delim)
 {
-	// Skip whitespace
 	while (s[*i] && ft_isspace(s[*i]))
 		*i += 1;
-
-	// If we're at the end of string, return empty
 	if (!s[*i])
 		return ft_strdup("");
-
 	int start = *i;
-
-	// Find the end of the element
 	while (s[*i] && !ft_isspace(s[*i]) && s[*i] != delim)
 		*i += 1;
-
-	// Extract the substring
 	char *element = ft_substr(s, start, *i - start);
-
-	// Skip the delimiter if present
 	if (s[*i] && s[*i] == delim)
 		*i += 1;
 
 	return element;
 }
-/*
-char	*extract_element(char *s, int *i, char delim)
-{
-	while (s[*i] && ft_isspace(s[*i]))
-		*i += 1;
-	int j = *i;
-	while (s[j] && !ft_isspace(s[j]) && s[j] != delim)
-		j++;
-	if (s[j] == delim)
-		j++;
-	*i = j;
-	return (ft_substr(s, *i, j - 1));
-}
-*/
 
 bool	assign_float(double *f, char *s, double min, double max)
 {

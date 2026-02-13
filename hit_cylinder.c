@@ -90,7 +90,7 @@ bool	cylinder_hit(const t_cylinder *cl, const t_ray *r, t_interval ray_t,
 	create_orthonormal_basis(&cl->axis, &u, &v, &w);
 	
 	// Transform ray to cylinder's local coordinate system
-	// Note: w is the cylinder's axis direction
+	// w is the cylinder's axis direction
 	rotated_r.origin = world_to_object_space(&r->origin, &cl->center, &u, &v, &w);
 	rotated_r.direction = world_to_object_direction(&r->direction, &u, &v, &w);
 
@@ -99,7 +99,7 @@ bool	cylinder_hit(const t_cylinder *cl, const t_ray *r, t_interval ray_t,
 		t_min = t_side;
 	
 	// Check bottom cap (y = 0 in local space)
-	if (check_cap(cl, &rotated_r, 0.0, &t_bottom) && 
+	if (check_cap(cl, &rotated_r, 0, &t_bottom) && 
 		t_bottom > ray_t.min && t_bottom < t_min)
 		t_min = t_bottom;
 	
@@ -112,21 +112,15 @@ bool	cylinder_hit(const t_cylinder *cl, const t_ray *r, t_interval ray_t,
 	if (t_min == INFINITY)
 		return (false);
 	
-	// Calculate hit information
 	t_vec3 hit_local = ray_at(&rotated_r, t_min);
 	rec->t = t_min;
 	
-	// Transform hit position back to world space
 	rec->position = object_to_world_space(&hit_local, &cl->center, &u, &v, &w);
 	rec->mat = cl->mat;
-	
-	// Calculate normal in local space, then transform to world space
+
 	t_vec3 normal_local = get_cylinder_normal_local(&hit_local, t_min, 
 										t_side, t_bottom, t_top);
 	t_vec3 normal_world = object_to_world_direction(&normal_local, &u, &v, &w);
-	
-	// Set face normal (determines if ray hits from inside or outside)
 	set_face_normal(r, &normal_world, rec);
-	
 	return (true);
 }

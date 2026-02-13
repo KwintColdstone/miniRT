@@ -1,5 +1,6 @@
 #include "miniRT.h"
 
+// Checks if ray hit from the inside or outside
 void set_face_normal(const t_ray *r, const t_vec3 *outward_normal, t_hit_record *rec)
 {
 	rec->front_face = dot_vec3(r->direction, *outward_normal) < 0;
@@ -45,16 +46,15 @@ bool	quad_hit(const t_quad *p, const t_ray *r, t_interval ray_t, t_hit_record *r
 	t_vec3 w = divide_by_scalar(n, dot_vec3(n,n));
 
 	double denom = dot_vec3(normal, r->direction);
-	// No hit if the ray is parallel to the quad.
+	// No hit if the ray is parallel to the quad
 	if (fabs(denom) < 1e-8)
 		return false;
 
-	// Return false if the hit point parameter t is outside the ray interval.
+	// Return false if the hit point parameter t is outside the ray interval
 	double t = (D - dot_vec3(normal, r->origin)) / denom;
 	if (!interval_contains(ray_t, t))
 		return (false);
 
-	// Determine if the hit point lies within the planar shape using its quad coordinates.
 	t_vec3 intersection = ray_at(r, t);
 	t_vec3 planar_hitpt_vector = subtract_vec3(intersection, p->corner);
 	double alpha = dot_vec3(w, cross_vec3(planar_hitpt_vector, p->v));
@@ -64,7 +64,7 @@ bool	quad_hit(const t_quad *p, const t_ray *r, t_interval ray_t, t_hit_record *r
 	t_interval unit_interval = (t_interval){0, 1};
 	if (!interval_contains(unit_interval, alpha) || !interval_contains(unit_interval, beta))
 		return false;
-	// Ray hits the 2D shape; set the rest of the hit record and return true.
+
 	rec->t = t;
 	rec->position = intersection;
 	rec->mat = p->mat;
@@ -77,19 +77,17 @@ bool	plane_hit(const t_plane *p, const t_ray *r, t_interval ray_t, t_hit_record 
 	double D = dot_vec3(p->normal, p->point);
 
 	double denom = dot_vec3(p->normal, r->direction);
-	// No hit if the ray is parallel to the quad.
+	// No hit if the ray is parallel to the quad
 	if (fabs(denom) < 1e-8)
 		return false;
 
-	// Return false if the hit point parameter t is outside the ray interval.
+	// Return false if the hit point parameter t is outside the ray interval
 	double t = (D - dot_vec3(p->normal, r->origin)) / denom;
 	if (!interval_contains(ray_t, t))
 		return (false);
 
-	// Determine if the hit point lies within the planar shape using its quad coordinates.
 	t_vec3 intersection = ray_at(r, t);
 
-	// Ray hits the 2D shape; set the rest of the hit record and return true.
 	rec->t = t;
 	rec->position = intersection;
 	rec->mat = p->mat;
