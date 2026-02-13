@@ -18,6 +18,7 @@ t_vec3 sky(const t_ray *r)
 	t_vec3 b_amount = multiply_by_scalar(blue,a);
 	return (add_vec3(w_amount, b_amount));
 }
+
 bool is_in_shadow(const t_world *world, const t_vec3 *point, const t_light *light)
 {
 	t_ray       shadow_ray;
@@ -104,7 +105,7 @@ static t_vec3 ray_color(const t_ray *r, const t_world *world, t_vec3 background,
 	direct = direct_lighting(world, &rec);
 	color = add_vec3(color, direct);
 
-    // indirect lightning (path tracing)
+	// indirect lightning (path tracing)
 	if (rec.mat.type == MAT_LAMBERTIAN)
 	{
 		if (lambertian_scatter(r, &rec, &attenuation, &scattered))
