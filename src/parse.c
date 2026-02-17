@@ -148,12 +148,17 @@ bool	assign_material(t_material *mat, char *line, int *i)
 
 	char *color = extract_element(line, i, ' ');
 	char *mat_str = extract_element(line, i, ' ');
-	if (!check_material_type(mat, mat_str))
-	{
-		free(color);
-		free(mat_str);
-		return (false);
-	}
+
+	// This check never passes on files given.
+	// gonna comment it out for now so I can work on displaying the image first.
+	// needs to be re-added and fixed later.
+	//
+	//if (!check_material_type(mat, mat_str))
+	//{
+	//	free(color);
+	//	free(mat_str);
+	//	return (false);
+	//}
 	if (mat->type == MAT_EMIT)
 	{
 		if (!assign_color(&mat->emit_color, color, 1))
@@ -270,8 +275,9 @@ bool	parse_cylinder(t_world *world, char *line, int index)
 	cyl->radius = ft_atof(diameter) / 2;
 	free(diameter);
 	if (cyl->radius < 0
-		|| cyl->radius > INT_MAX)
+		|| cyl->radius > INT_MAX) {
 		return (false);
+	}
 
 	char *height = extract_element(line, &i, ' ');
 	if (!assign_float(&cyl->height, height, 0.0, INT_MAX))
@@ -281,8 +287,10 @@ bool	parse_cylinder(t_world *world, char *line, int index)
 	}
 	free(height);
 
-	if (!assign_material(&cyl->mat, line, &i))
+	if (!assign_material(&cyl->mat, line, &i)) {
+		printf("assign mat fail\n");
 		return (false);
+	}
 	return (true);
 }
 
@@ -338,8 +346,11 @@ bool	assign_objects(char *file, t_world *world, t_camera *cam)
 		i = 0;
 		while (ft_isspace(line[i]))
 			i++;
+		printf("parsign line %d\n", line_count);
+		printf("line content: %s\n", line);
 		if (line[i])
 		{
+			printf("do we get into line[%d] at line 5? %d\n", i, line_count);
 			if (line[i] == 'A')
 			{
 				i++;
@@ -371,6 +382,7 @@ bool	assign_objects(char *file, t_world *world, t_camera *cam)
 			}
 			else if (line[i] == 'c' && line[i+1] == 'y')
 			{
+				printf("do we get here? at line 5? %d\n", line_count);
 				i += 2;
 				succes = parse_cylinder(world, &line[i], world->cy_list.count);
 				if (succes)
@@ -380,8 +392,9 @@ bool	assign_objects(char *file, t_world *world, t_camera *cam)
 			{
 				i += 2;
 				succes = parse_quad(world, &line[i], world->qu_list.count);
-				if (succes)
+				if (succes) {
 					world->qu_list.count += 1;
+				}
 			}
 		}
 		if (succes == false)

@@ -15,6 +15,7 @@ CFILES	=	main.c\
 			transform.c\
 			utils.c\
 			vec3.c\
+			display.c\
 			world_hit.c
 
 OFILES	= $(addprefix $(BUILDDIR),$(CFILES:.c=.o))
@@ -26,7 +27,7 @@ SRCDIR = src/
 INCDIR = inc/
 LIBDIR = lib/
 SRCDIRS = $(SRCDIR)\
-		  $(addprefix $(SRCDIR), interface deck_manipulation)
+		  $(addprefix $(SRCDIR), display)
 $(SRCDIR):
 	mkdir -p $@
 $(INCDIR):
@@ -41,11 +42,11 @@ LDFLAGS	= -L$(LIBDIR) -lm
 LIBFTDIR	= $(LIBDIR)libft/
 LIBFT	= $(LIBFTDIR)libft.a
 
-MLXDIR = $(LIBDIR)/mlx42
+MLXDIR = $(LIBDIR)mlx42/
+MLXFILE = $(MLXDIR)build/libmlx42.a
 MLX	= -L$(MLXDIR)/build/ -lmlx42 -ldl -lglfw -pthread -lm
-MLXFILE = $(MLXDIR)/build/libmlx42.a
 
-INCLUDE = $(INCDIR) $(LIBFTDIR)
+INCLUDE = $(INCDIR) $(LIBFTDIR) $(MLXDIR)/include
 
 RM	= rm -rf
 CC	= cc
@@ -80,7 +81,7 @@ $(BUILDDIR)%.o: %.c $(INCLUDE) | $(BUILDDIR)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 $(NAME): $(LIBFT) $(OFILES) $(MLXFILE)
-	$(CC) $(CFLAGS) -o $@ $(OFILES) $(LIBFT) $(LDFLAGS) $(INCFLAGS)
+	$(CC) $(CFLAGS) -o $@ $(OFILES) $(LIBFT) $(MLX) $(LDFLAGS) $(INCFLAGS)
 
 #Base/project requirements
 all: $(NAME)

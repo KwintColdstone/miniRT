@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "libft.h"
 #include "miniRT.h"
+#include "display.h"
 
 int calculate_img_height(float aspect_ratio, int image_width)
 {
@@ -58,6 +59,7 @@ int main(int argc, char *argv[])
 		ft_putstr_fd("failed to render\n", STDERR_FILENO);
 		return (3);
 	}
+	display_world(&cam, &world);
 	world_destroy(&world);
 	return (0);
 }
