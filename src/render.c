@@ -2,6 +2,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <unistd.h>
+#include "display.h"
 
 t_vec3 sky(const t_ray *r)
 {
@@ -148,6 +149,11 @@ static void	write_color(int file, t_vec3 *pixel_color)
 	int rbyte = (int)(256 * clamp_interval(r, intensity));
 	int gbyte = (int)(256 * clamp_interval(g, intensity));
 	int bbyte = (int)(256 * clamp_interval(b, intensity));
+
+	pixel_color->x = rbyte;
+	pixel_color->y = gbyte;
+	pixel_color->z = bbyte;
+
 	char pixel[16];
 	int len = sprintf(pixel, "%d %d %d\n", rbyte, gbyte, bbyte);
 	write(file, pixel, len);
@@ -179,7 +185,7 @@ t_ray	get_ray(int i, int j, t_camera *cam)
 	return (ray);
 }
 
-bool render(t_camera *cam, t_world *world)
+bool render(t_camera *cam, t_world *world, mlx_image_t *image)
 {
 	t_ray	r;
 	t_vec3	pixel_color;
@@ -225,6 +231,11 @@ bool render(t_camera *cam, t_world *world)
 			}
 			t_vec3 final_color = multiply_by_scalar(pixel_color, pixel_samples_scale);
 			write_color(file, &final_color);
+
+			t_rgba	pixel_color;
+			pixel_color.rgba = get_color(final_color.x, final_color.y, final_color.z, 0xFF);
+			mlx_put_pixel(image, j, i, pixel_color.rgba);
+
 			j++;
 		}
 		i++;

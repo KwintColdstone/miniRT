@@ -6,6 +6,7 @@
 #include "libft.h"
 #include "miniRT.h"
 #include "display.h"
+#include "MLX42/MLX42.h"
 
 int calculate_img_height(float aspect_ratio, int image_width)
 {
@@ -54,12 +55,30 @@ int main(int argc, char *argv[])
 		ft_putstr_fd("failed to init camera\n", STDERR_FILENO);
 		return (2);
 	}
-	if (!render(&cam, &world))
+
+	mlx_image_t	*image;
+	mlx_t	*window;
+	window = mlx_init(cam.image_width, cam.image_height, "miniRT", true);
+	if (!window)
+	{
+		printf("PLACEHOLDER ERROR\n");
+		printf("mlx did not init\n");
+		return (1);
+	}
+	image = mlx_new_image(window, cam.image_width, cam.image_height);
+	if (!image)
+	{
+		printf("PLACEHOLDER ERROR, mlx did not init\n");
+		printf("failed image init OR failed placing img to window\n");
+		return (1);
+	}
+
+	if (!render(&cam, &world, image))
 	{
 		ft_putstr_fd("failed to render\n", STDERR_FILENO);
 		return (3);
 	}
-	display_world(&cam, &world);
+	display_world(&cam, &world, window, image);
 	world_destroy(&world);
 	return (0);
 }
