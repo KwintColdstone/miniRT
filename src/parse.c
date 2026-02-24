@@ -419,12 +419,12 @@ bool	check_file_name(char *file)
 bool	parse(char *file, t_world *world, t_camera *cam)
 {
 	t_object_counter	counter;
-	int fd;
+	int 				fd;
 
 	if (!file)
 	{
 		ft_putstr_fd("no file\n", STDERR_FILENO);
-		return false;
+		return (false);
 	}
 	if (!check_file_name(file))
 	{
