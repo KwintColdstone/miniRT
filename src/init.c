@@ -107,9 +107,7 @@ void plane_list_destroy(t_plane_list *list)
 bool world_init(t_world *world, t_object_counter *c)
 {
 	if (!world) 
-	{
 		return (false);
-	}
 	ft_memset(world, 0, sizeof(t_world));
 	if (c->sphere_cap)
 	{

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                            ::::::::        */
+/*   parse.c                                                 :+:    :+:       */
+/*                                                          +:+               */
+/*   By: avaliull <avaliull@student.codam.nl>              +#+                */
+/*                                                        +#+                 */
+/*   Created: 2026/02/24 18:39:20 by avaliull            #+#    #+#           */
+/*   Updated: 2026/02/24 19:16:26 by avaliull            ########   odam.nl   */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libft.h"
 #include "miniRT.h"
 #include <fcntl.h>
@@ -322,84 +334,6 @@ bool	parse_quad(t_world *world, char *line, int index)
 	return (true);
 }
 
-bool	assign_objects(char *file, t_world *world, t_camera *cam)
-{
-	int fd;
-	char *line;
-	int i;
-	int line_count;
-
-	line_count = 1;
-	fd = open(file, O_RDONLY);
-	line = get_next_line(fd);
-	bool succes = true;
-	while (line)
-	{
-		i = 0;
-		while (ft_isspace(line[i]))
-			i++;
-		if (line[i])
-		{
-			if (line[i] == 'A')
-			{
-				i++;
-				succes = parse_ambient(world, cam, &line[i]);
-			}
-			else if (line[i] == 'C')
-			{
-				i++;
-				succes = parse_camera(cam, &line[i]);
-			}
-			else if (line[i] == 'L')
-			{
-				i++;
-				succes = parse_light(world, &line[i]);
-			}
-			else if (line[i] == 's' && line[i+1] == 'p')
-			{
-				i += 2;
-				succes = parse_sphere(world, &line[i], world->sp_list.count);
-				if (succes)
-					world->sp_list.count += 1;
-			}
-			else if (line[i] == 'p' && line[i+1] == 'l')
-			{
-				i += 2;
-				succes = parse_plane(world, &line[i], world->pl_list.count);
-				if (succes)
-					world->pl_list.count += 1;
-			}
-			else if (line[i] == 'c' && line[i+1] == 'y')
-			{
-				i += 2;
-				succes = parse_cylinder(world, &line[i], world->cy_list.count);
-				if (succes)
-					world->cy_list.count += 1;
-			}
-			else if (line[i] == 'q' && line[i+1] == 'u')
-			{
-				i += 2;
-				succes = parse_quad(world, &line[i], world->qu_list.count);
-				if (succes) {
-					world->qu_list.count += 1;
-				}
-			}
-		}
-		if (succes == false)
-		{
-			printf("parsing failure at line: %d\n", line_count);
-			printf("incorrect values for element\n");
-			close(fd);
-			free(line);
-			return (false);
-		}
-		free(line);
-		line = get_next_line(fd);
-		line_count++;
-	}
-	close(fd);
-	return (true);
-}
 
 bool	check_file_name(char *file)
 {
@@ -411,11 +345,11 @@ bool	check_file_name(char *file)
 	return (false);
 }
 
-bool	parse(char *file, t_world *world, t_camera *cam)
+static bool	validate_and_open_file(
+	char *file,
+	int *fd
+)
 {
-	t_object_counter	counter;
-	int 				fd;
-
 	if (!file)
 	{
 		ft_putstr_fd("no file\n", STDERR_FILENO);
@@ -426,12 +360,23 @@ bool	parse(char *file, t_world *world, t_camera *cam)
 		ft_putstr_fd("incorrect file name. Use: (name).rt\n", STDERR_FILENO);
 		return (false);
 	}
-	fd = open(file, O_RDONLY);
-	if (fd == -1)
+	*fd = open(file, O_RDONLY);
+	if (*fd == -1)
 	{
 		perror("Error");
 		return (false);
 	}
+	return (true);
+}
+
+bool	parse(char *file, t_world *world, t_camera *cam)
+{
+	t_object_counter	counter;
+	int 				fd;
+
+	fd = -1;
+	if (validate_and_open_file(file, &fd) == false)
+		return (false);
 	if (!count_objects(fd, &counter))
 	{
 		ft_putstr_fd("failed to count objects\n", STDERR_FILENO);
@@ -442,7 +387,9 @@ bool	parse(char *file, t_world *world, t_camera *cam)
 		ft_putstr_fd("failed to init world\n", STDERR_FILENO);
 		return (false);
 	}
-	if (!assign_objects(file, world, cam))
+	if (validate_and_open_file(file, &fd) == false)
+		return (false);
+	if (!assign_objects(fd, world, cam))
 	{
 		ft_putstr_fd("failed to assign values to element\n", STDERR_FILENO);
 		return (false);

@@ -19,6 +19,7 @@ CFILES	=	main.c\
 
 PARSE_CFILES =	parse.c\
 				count_objects.c\
+				assign_objects.c\
 				parse_utils.c
 
 OFILES	= $(addprefix $(BUILDDIR),$(CFILES:.c=.o))

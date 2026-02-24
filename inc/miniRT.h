@@ -236,11 +236,22 @@ bool render(t_camera *cam, t_world *world, mlx_image_t *image);
 bool lambertian_scatter(const t_ray *r_in, const t_hit_record *rec, t_vec3 *attenuation, t_ray *scattered);
 bool metal_scatter(const t_ray *r_in, const t_hit_record *rec, t_vec3 *attenuation, t_ray *scattered);
 
+/*
+* Parsing
+*/
 // parse.c
 bool	parse(char *file, t_world *world, t_camera *cam);
+bool	parse_ambient(t_world *world, t_camera *cam, char *line);
+bool	parse_camera(t_camera *cam, char *line);
+bool	parse_light(t_world *world, char *line);
+bool	parse_sphere(t_world *world, char *line, int index);
+bool	parse_plane(t_world *world, char *line, int index);
+bool	parse_cylinder(t_world *world, char *line, int index);
+bool	parse_quad(t_world *world, char *line, int index);
 // count_objects.c
 bool	count_objects(int fd, t_object_counter *counts);
-
+// assign_objects.c
+bool	assign_objects(int fd, t_world *world, t_camera *cam);
 // parse_utils.c
 bool	is_float(char *s);
 char	*extract_element(char *s, int *i, char delim);
@@ -248,3 +259,5 @@ bool	assign_vec3(t_vec3 *v, char *s, double min, double max);
 bool	assign_color(t_vec3 *v, char *s, double strength);
 bool	assign_float(double *f, char *s, double min, double max);
 bool	count_objects(int fd, t_object_counter *counts);
+/*
+*/
