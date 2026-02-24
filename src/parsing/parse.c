@@ -235,7 +235,6 @@ bool	parse_plane(t_world *world, char *line, int index)
 	return (true);
 }
 
-
 bool	parse_cylinder(t_world *world, char *line, int index)
 {
 	int i;
@@ -339,11 +338,8 @@ bool	assign_objects(char *file, t_world *world, t_camera *cam)
 		i = 0;
 		while (ft_isspace(line[i]))
 			i++;
-		printf("parsign line %d\n", line_count);
-		printf("line content: %s\n", line);
 		if (line[i])
 		{
-			printf("do we get into line[%d] at line 5? %d\n", i, line_count);
 			if (line[i] == 'A')
 			{
 				i++;
@@ -375,7 +371,6 @@ bool	assign_objects(char *file, t_world *world, t_camera *cam)
 			}
 			else if (line[i] == 'c' && line[i+1] == 'y')
 			{
-				printf("do we get here? at line 5? %d\n", line_count);
 				i += 2;
 				succes = parse_cylinder(world, &line[i], world->cy_list.count);
 				if (succes)

@@ -238,6 +238,8 @@ bool metal_scatter(const t_ray *r_in, const t_hit_record *rec, t_vec3 *attenuati
 
 // parse.c
 bool	parse(char *file, t_world *world, t_camera *cam);
+// count_objects.c
+bool	count_objects(int fd, t_object_counter *counts);
 
 // parse_utils.c
 bool	is_float(char *s);

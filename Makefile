@@ -3,13 +3,12 @@
 NAME	=	minirt
 
 CFILES	=	main.c\
+			$(PARSE_CFILES)\
 			camera.c\
 			hit_cylinder.c\
 			hit_objects.c\
 			init.c\
 			material.c\
-			parse.c\
-			parse_utils.c\
 			ray.c\
 			render.c\
 			transform.c\
@@ -17,6 +16,10 @@ CFILES	=	main.c\
 			vec3.c\
 			display.c\
 			world_hit.c
+
+PARSE_CFILES =	parse.c\
+				count_objects.c\
+				parse_utils.c
 
 OFILES	= $(addprefix $(BUILDDIR),$(CFILES:.c=.o))
 DEPFILES	= $(addprefix $(BUILDDIR),$(CFILES:.c=.d))
@@ -26,8 +29,9 @@ BUILDDIR = build/
 SRCDIR = src/
 INCDIR = inc/
 LIBDIR = lib/
-SRCDIRS = $(SRCDIR)\
-		  $(addprefix $(SRCDIR), display)
+SRCDIRS =	$(SRCDIR) \
+			$(addprefix $(SRCDIR), parsing display)
+
 $(SRCDIR):
 	mkdir -p $@
 $(INCDIR):
