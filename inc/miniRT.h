@@ -109,7 +109,7 @@ typedef struct s_world {
 	t_plane_list pl_list;
 	t_cylinder_list cy_list;
 	t_light	light;
-	t_vec3	ambient;
+	t_vec3	ambient; // example: A 0.2 255, 255, 255
 }	t_world;
 
 typedef struct s_hit_record {

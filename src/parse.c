@@ -10,27 +10,20 @@
 bool	parse_ambient(t_world *world, t_camera *cam, char *line)
 {
 	(void) cam; // unused!!
-	double s;
-	int i;
+	double	s;
+	char	*strength;
+	int		i;
+	char	*color;
 
 	i = 0;
-	char *strength = extract_element(line, &i, ' ');
+	strength = extract_element(line, &i, ' ');
 	if (!assign_float(&s, strength, 0.0, 1.0))
 	{
 		free(strength);
 		return (false);
 	}
 	free(strength);
-
-	char *color = extract_element(line, &i, ' ');
-	/*
-	if (!assign_color(&cam->background, color, s))
-	{
-		ft_putstr_fd("assigning color failed\n", STDERR_FILENO);
-		free(color);
-		return (false);
-	}
-	*/
+	color = extract_element(line, &i, ' ');
 	if (!assign_color(&world->ambient, color, s))
 	{
 		ft_putstr_fd("assigning color failed\n", STDERR_FILENO);
