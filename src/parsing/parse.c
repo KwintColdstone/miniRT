@@ -125,10 +125,11 @@ bool	check_material_type(t_material *mat, char *mat_str)
 	t_material metal;
 	t_material emit;
 
-	if (!mat_str)
+	if (!mat_str || mat_str[0] == '\0')
 	{
 		base = (t_material){MAT_LAMBERTIAN, (t_vec3){0, 0, 0}, (t_vec3){0, 0, 0}, 0}; // was not init properly
 		*mat = base;
+		printf("return from check_material_type on not mat str\n");
 		return (true);
 	}
 	if (ft_strcmp(mat_str, "METAL") == 0)
@@ -142,49 +143,30 @@ bool	check_material_type(t_material *mat, char *mat_str)
 		*mat = emit;
 	}
 	else
-	{
 		return (false);
-	}
 	return (true);
 }
 
 bool	assign_material(t_material *mat, char *line, int *i)
 {
 
-	char *color = extract_element(line, i, ' ');
-	char *mat_str = extract_element(line, i, ' ');
+	char 	*color = extract_element(line, i, ' ');
+	char 	*mat_str = extract_element(line, i, ' ');
+	bool	err_check;
 
-	// This check never passes on files given.
-	// gonna comment it out for now so I can work on displaying the image first.
-	// needs to be re-added and fixed later.
-	//
-	//if (!check_material_type(mat, mat_str))
-	//{
-	//	free(color);
-	//	free(mat_str);
-	//	return (false);
-	//}
+	if (!check_material_type(mat, mat_str))
+	{
+		free(color);
+		free(mat_str);
+		return (false);
+	}
 	if (mat->type == MAT_EMIT)
-	{
-		if (!assign_color(&mat->emit_color, color, 1))
-		{
-			free(color);
-			free(mat_str);
-			return (false);
-		}
-	}
+		err_check = assign_color(&mat->emit_color, color, 1);
 	else
-	{
-		if (!assign_color(&mat->albedo, color, 1))
-		{
-			free(color);
-			free(mat_str);
-			return (false);
-		}
-	}
+		err_check = assign_color(&mat->albedo, color, 1);
 	free(color);
 	free(mat_str);
-	return (true);
+	return (err_check);
 }
 
 bool	parse_sphere(t_world *world, char *line, int index)
@@ -213,27 +195,32 @@ bool	parse_sphere(t_world *world, char *line, int index)
 		|| sp->radius > INT_MAX)
 		return (false);
 
+	printf("here?\n");
 	if (!assign_material(&sp->mat, line, &i))
+	{
+		printf("here wrap\n");
 		return (false);
+	}
 	return (true);
 }
 
 
 bool	parse_plane(t_world *world, char *line, int index)
 {
-	int i;
+	int 	i;
+	char 	*point;
+	char 	*normal;
+	t_plane	*const pl = &world->pl_list.planes[index];
 
 	i = 0;
-	t_plane *pl = &world->pl_list.planes[index];
-	char *point = extract_element(line, &i, ' ');
+	point = extract_element(line, &i, ' ');
 	if (!assign_vec3(&pl->point, point, -DBL_MAX, DBL_MAX))
 	{
 		free(point);
 		return (false);
 	}
 	free(point);
-
-	char *normal = extract_element(line, &i, ' ');
+	normal = extract_element(line, &i, ' ');
 	if (!assign_vec3(&pl->normal, normal, -1.0, 1.0))
 	{
 		free(normal);
@@ -241,7 +228,6 @@ bool	parse_plane(t_world *world, char *line, int index)
 	}
 	free(normal);
 	pl->normal = unit_vector(pl->normal);
-
 	if (!assign_material(&pl->mat, line, &i))
 		return (false);
 	return (true);
