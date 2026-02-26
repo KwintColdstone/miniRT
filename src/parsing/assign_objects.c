@@ -67,7 +67,7 @@ static bool	assign_one_letter_objects(
 	if (line[*i] == 'A')
 	{
 		(*i)++;
-		success = parse_ambient(world, cam, &line[*i]);
+		success = parse_ambient(world, &line[*i]);
 	}
 	else if (line[*i] == 'C')
 	{

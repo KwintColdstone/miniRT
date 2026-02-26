@@ -239,15 +239,17 @@ bool metal_scatter(const t_ray *r_in, const t_hit_record *rec, t_vec3 *attenuati
 /*
 * Parsing
 */
-// parse.c
-bool	parse(char *file, t_world *world, t_camera *cam);
-bool	parse_ambient(t_world *world, t_camera *cam, char *line);
+// parse_[object_name].c
+bool	parse_ambient(t_world *world, char *line);
 bool	parse_camera(t_camera *cam, char *line);
 bool	parse_light(t_world *world, char *line);
 bool	parse_sphere(t_world *world, char *line, int index);
 bool	parse_plane(t_world *world, char *line, int index);
 bool	parse_cylinder(t_world *world, char *line, int index);
 bool	parse_quad(t_world *world, char *line, int index);
+// parse.c
+bool	parse(char *file, t_world *world, t_camera *cam);
+bool	assign_material(t_material *mat, char *line, int *i);
 // count_objects.c
 bool	count_objects(int fd, t_object_counter *counts);
 // assign_objects.c

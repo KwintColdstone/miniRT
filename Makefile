@@ -20,6 +20,13 @@ CFILES	=	main.c\
 PARSE_CFILES =	parse.c\
 				count_objects.c\
 				assign_objects.c\
+				parse_ambient.c\
+				parse_camera.c\
+				parse_light.c\
+				parse_sphere.c\
+				parse_plane.c\
+				parse_cylinder.c\
+				parse_quad.c\
 				parse_utils.c
 
 OFILES	= $(addprefix $(BUILDDIR),$(CFILES:.c=.o))
@@ -31,7 +38,7 @@ SRCDIR = src/
 INCDIR = inc/
 LIBDIR = lib/
 SRCDIRS =	$(SRCDIR) \
-			$(addprefix $(SRCDIR), parsing display)
+			$(addprefix $(SRCDIR), parsing parsing/objects display)
 
 $(SRCDIR):
 	mkdir -p $@
@@ -69,7 +76,7 @@ INCFLAGS	= $(addprefix -I,$(INCLUDE))
 #CFLAGS	=
 CFLAGS	= -Wall -Wextra -Werror
 #CFLAGS	= -Wall -Wextra -Werror -fsanitize=undefined
-INPUT	= rt_files/cornell.rt
+INPUT	= rt_files/cyl.rt
 
 
 -include $(OFILES:.o=.d)

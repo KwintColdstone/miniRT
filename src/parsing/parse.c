@@ -6,7 +6,7 @@
 /*   By: avaliull <avaliull@student.codam.nl>              +#+                */
 /*                                                        +#+                 */
 /*   Created: 2026/02/24 18:39:20 by avaliull            #+#    #+#           */
-/*   Updated: 2026/02/24 19:16:26 by avaliull            ########   odam.nl   */
+/*   Updated: 2026/02/26 17:59:47 by avaliull            ########   odam.nl   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,107 +19,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
-bool	parse_ambient(t_world *world, t_camera *cam, char *line)
-{
-	(void) cam; // unused!!
-	double	s;
-	char	*strength;
-	int		i;
-	char	*color;
-
-	i = 0;
-	strength = extract_element(line, &i, ' ');
-	if (!assign_float(&s, strength, 0.0, 1.0))
-	{
-		free(strength);
-		return (false);
-	}
-	free(strength);
-	color = extract_element(line, &i, ' ');
-	if (!assign_color(&world->ambient, color, s))
-	{
-		ft_putstr_fd("assigning color failed\n", STDERR_FILENO);
-		free(color);
-		return (false);
-	}
-	free(color);
-	return (true);
-}
-
-bool	parse_camera(t_camera *cam, char *line)
-{
-	int i;
-	int hfov;
-
-	i = 0;
-	char *pos = extract_element(line, &i, ' ');
-	if (!assign_vec3(&cam->camera_center, pos, -DBL_MAX, DBL_MAX))
-	{
-		ft_putstr_fd("assigning vec3 failed: pos\n", STDERR_FILENO);
-		free(pos);
-		return (false);
-	}
-	free(pos);
-
-	char *orientation = extract_element(line, &i, ' ');
-	if (!assign_vec3(&cam->orientation, orientation, -1.0, 1.0))
-	{
-		ft_putstr_fd("assigning vec3 failed: orient\n", STDERR_FILENO);
-		free(orientation);
-		return (false);
-	}
-	free(orientation);
-
-
-	char *fov = extract_element(line, &i, ' ');
-	if (!is_float(fov))
-	{
-		free(fov);
-		return (false);
-	}
-	hfov = ft_atoi(fov);
-	free(fov);
-	if (hfov < 0 || hfov > 180)
-		return (false);
-	cam->hfov = hfov;
-	return (true);
-}
-
-bool	parse_light(t_world *world, char *line)
-{
-	int i;
-
-	i = 0;
-	char *pos = extract_element(line, &i, ' ');
-	if (!assign_vec3(&world->light.position, pos, -DBL_MAX, DBL_MAX))
-	{
-		ft_putstr_fd("assigning vec3 failed: pos\n", STDERR_FILENO);
-		free(pos);
-		return (false);
-	}
-	free(pos);
-
-	char *brightness = extract_element(line, &i, ' ');
-	if (!assign_float(&world->light.brightness, brightness, 0.0, 1.0))
-	{
-		free(brightness);
-		return (false);
-	}
-	free(brightness);
-
-	char *color = extract_element(line, &i, ' ');
-	if (!assign_color(&world->light.color, color, 1))
-	{
-		ft_putstr_fd("assigning color failed\n", STDERR_FILENO);
-		free(color);
-		return (false);
-	}
-	free(color);
-
-	return (true);
-}
-
-bool	check_material_type(t_material *mat, char *mat_str)
+static bool	check_material_type(t_material *mat, char *mat_str)
 {
 	t_material base;
 	t_material metal;
@@ -127,14 +27,15 @@ bool	check_material_type(t_material *mat, char *mat_str)
 
 	if (!mat_str || mat_str[0] == '\0')
 	{
-		base = (t_material){MAT_LAMBERTIAN, (t_vec3){0, 0, 0}, (t_vec3){0, 0, 0}, 0}; // was not init properly
+		base = (t_material){MAT_LAMBERTIAN,
+			(t_vec3){0, 0, 0}, (t_vec3){0, 0, 0}, 0};
 		*mat = base;
-		printf("return from check_material_type on not mat str\n");
 		return (true);
 	}
 	if (ft_strcmp(mat_str, "METAL") == 0)
 	{
-		metal = (t_material){MAT_METAL, (t_vec3){0, 0, 0}, (t_vec3){0, 0, 0}, 0};
+		metal = (t_material){MAT_METAL,
+			(t_vec3){0, 0, 0}, (t_vec3){0, 0, 0}, 0};
 		*mat = metal;
 	}
 	else if (ft_strcmp(mat_str, "EMIT") == 0)
@@ -149,9 +50,8 @@ bool	check_material_type(t_material *mat, char *mat_str)
 
 bool	assign_material(t_material *mat, char *line, int *i)
 {
-
-	char 	*color = extract_element(line, i, ' ');
-	char 	*mat_str = extract_element(line, i, ' ');
+	char 	*const color = extract_element(line, i, ' ');
+	char 	*const mat_str = extract_element(line, i, ' ');
 	bool	err_check;
 
 	if (!check_material_type(mat, mat_str))
@@ -169,159 +69,7 @@ bool	assign_material(t_material *mat, char *line, int *i)
 	return (err_check);
 }
 
-bool	parse_sphere(t_world *world, char *line, int index)
-{
-	int i;
-
-	i = 0;
-	t_sphere *sp = &world->sp_list.spheres[index];
-	char *pos = extract_element(line, &i, ' ');
-	if (!assign_vec3(&sp->center, pos, -DBL_MAX, DBL_MAX))
-	{
-		free(pos);
-		return (false);
-	}
-	free(pos);
-
-	char *diameter = extract_element(line, &i, ' ');
-	if (!is_float(diameter))
-	{
-		free(diameter);
-		return (false);
-	}
-	sp->radius = ft_atof(diameter) / 2;
-	free(diameter);
-	if (sp->radius < 0
-		|| sp->radius > INT_MAX)
-		return (false);
-
-	printf("here?\n");
-	if (!assign_material(&sp->mat, line, &i))
-	{
-		printf("here wrap\n");
-		return (false);
-	}
-	return (true);
-}
-
-
-bool	parse_plane(t_world *world, char *line, int index)
-{
-	int 	i;
-	char 	*point;
-	char 	*normal;
-	t_plane	*const pl = &world->pl_list.planes[index];
-
-	i = 0;
-	point = extract_element(line, &i, ' ');
-	if (!assign_vec3(&pl->point, point, -DBL_MAX, DBL_MAX))
-	{
-		free(point);
-		return (false);
-	}
-	free(point);
-	normal = extract_element(line, &i, ' ');
-	if (!assign_vec3(&pl->normal, normal, -1.0, 1.0))
-	{
-		free(normal);
-		return (false);
-	}
-	free(normal);
-	pl->normal = unit_vector(pl->normal);
-	if (!assign_material(&pl->mat, line, &i))
-		return (false);
-	return (true);
-}
-
-bool	parse_cylinder(t_world *world, char *line, int index)
-{
-	int i;
-
-	i = 0;
-	t_cylinder *cyl = &world->cy_list.cylinders[index];
-	char *pos = extract_element(line, &i, ' ');
-	if (!assign_vec3(&cyl->center, pos, -DBL_MAX, DBL_MAX))
-	{
-		free(pos);
-		return (false);
-	}
-	free(pos);
-
-	char *axis = extract_element(line, &i, ' ');
-	if (!assign_vec3(&cyl->axis, axis, -1.0, 1.0))
-	{
-		free(axis);
-		return (false);
-	}
-	free(axis);
-	cyl->axis = unit_vector(cyl->axis);
-
-	char *diameter = extract_element(line, &i, ' ');
-	if (!is_float(diameter))
-	{
-		free(diameter);
-		return (false);
-	}
-	cyl->radius = ft_atof(diameter) / 2;
-	free(diameter);
-	if (cyl->radius < 0
-		|| cyl->radius > INT_MAX) {
-		return (false);
-	}
-
-	char *height = extract_element(line, &i, ' ');
-	if (!assign_float(&cyl->height, height, 0.0, INT_MAX))
-	{
-		free(height);
-		return (false);
-	}
-	free(height);
-
-	if (!assign_material(&cyl->mat, line, &i)) {
-		printf("assign mat fail\n");
-		return (false);
-	}
-	return (true);
-}
-
-
-bool	parse_quad(t_world *world, char *line, int index)
-{
-	int i;
-
-	i = 0;
-	t_quad *qu = &world->qu_list.quads[index];
-	char *corner = extract_element(line, &i, ' ');
-	if (!assign_vec3(&qu->corner, corner, -DBL_MAX, DBL_MAX))
-	{
-		free(corner);
-		return (false);
-	}
-	free(corner);
-
-	char *u = extract_element(line, &i, ' ');
-	if (!assign_vec3(&qu->u, u, -DBL_MAX, DBL_MAX))
-	{
-		free(u);
-		return (false);
-	}
-	free(u);
-
-	char *v = extract_element(line, &i, ' ');
-	if (!assign_vec3(&qu->v, v, -DBL_MAX, DBL_MAX))
-	{
-		free(v);
-		return (false);
-	}
-	free(v);
-
-	if (!assign_material(&qu->mat, line, &i))
-		return (false);
-	return (true);
-}
-
-
-bool	check_file_name(char *file)
+static bool	check_file_name(char *file)
 {
 	int i;
 
