@@ -32,15 +32,19 @@ typedef struct	s_exit_data {
 	t_camera	*cam;
 	t_world		*world;
 	mlx_t		*window;
+	int			exit_code;
 }	t_exit_data;
 
 uint32_t	get_color(int red, int green, int blue, int opacity);
 
-int	display_world(
+int	raytrace(
 	t_camera *cam,
-	t_world *world,
+	t_world *world
+);
+int	display_world(
 	mlx_t *window,
 	mlx_image_t *image
 );
+void	window_close(void* param);
 
 #endif	// DISPLAY_H

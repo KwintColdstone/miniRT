@@ -19,43 +19,60 @@ uint32_t	get_color(int red, int green, int blue, int opacity)
 	return ((red << 24) + (green << 16) + (blue << 8) + opacity);
 }
 
-void	on_window_close(void* param)
+void	window_close(void* param)
 {
 	t_exit_data	*const exit_data = param;
 
-	mlx_terminate(exit_data->window);
-	world_destroy(exit_data->world);
+	if (!exit_data)
+	{
+		dprintf(STDERR_FILENO, "\nDEBUG: no exit_data (should never happen i hope)\n");
+		exit (1);
+	}
+	if (exit_data->window)
+		mlx_terminate(exit_data->window);
+	if (exit_data->world)
+		world_destroy(exit_data->world);
 	dprintf(STDERR_FILENO, "\nDEBUG: exit hook caled\n");
-	exit (0);
+	exit (exit_data->exit_code);
 }
 
 static void	minirt_key_hook(mlx_key_data_t keydata, void* param)
 {
 	if (keydata.key == MLX_KEY_ESCAPE && keydata.action == MLX_PRESS)
-		on_window_close(param);
+		window_close(param);
 }
 
 int	display_world(
-	t_camera *cam,
-	t_world *world,
 	mlx_t *window,
 	mlx_image_t *image
 )
 {
-	t_exit_data	exit_data;
-
-	exit_data.cam = cam;
-	exit_data.world = world;
-	exit_data.window = window;
 	if (mlx_image_to_window(window, image, 0, 0) < 0)
-	{
-		printf("PLACEHOLDER ERROR\n");
-		printf("could not put image to window\n");
-		return (1);
-	}
-	mlx_key_hook(window, minirt_key_hook, (void *) &exit_data);
-	mlx_close_hook(window, on_window_close, (void *) &exit_data);
+		minirt_perror(1, "Failed to display image in the window\n");
 	mlx_loop(window);
 	mlx_terminate(window);
 	return (0);
+}
+
+int	raytrace(
+	t_camera *cam,
+	t_world *world
+)
+{
+	mlx_image_t	*image;
+	mlx_t		*window;
+	t_exit_data	exit_data;
+
+	window = mlx_init(cam->image_width, cam->image_height, "miniRT", true);
+	if (!window)
+		minirt_perror(1, "Failed to initialize window\n");
+	exit_data.window = window;
+	mlx_close_hook(window, window_close, (void *) &exit_data);
+	mlx_key_hook(window, minirt_key_hook, (void *) &exit_data);
+	image = mlx_new_image(window, cam->image_width, cam->image_height);
+	if (!image)
+		minirt_perror(1, "Failed to initialize image\n");
+	if (!render(cam, world, image))
+		minirt_perror(1, "Failed to render image\n");
+	return (display_world(window, image));
 }

@@ -4,7 +4,12 @@
 #include "libft.h"
 #include "miniRT.h"
 #include "display.h"
-#include "MLX42/MLX42.h"
+
+int	minirt_perror(int return_code, char *err_msg)
+{
+	ft_putstr_fd(err_msg, STDERR_FILENO);
+	return(return_code);
+}
 
 int calculate_img_height(float aspect_ratio, int image_width)
 {
@@ -19,64 +24,54 @@ int calculate_img_height(float aspect_ratio, int image_width)
 	return image_height;
 }
 
+void	set_camera_defaults(t_camera *cam)
+{
+	cam->aspect_ratio = 16.0 / 9.0;
+	cam->image_width = 400;
+	cam->image_height = calculate_img_height(cam->aspect_ratio,
+							cam->image_width);
+	cam->samples_per_pixel = 40;
+	cam->max_depth = 10;
+	cam->v_up = (t_vec3){0, 1, 0};
+	cam->background = (t_vec3){0,0,0};
+}
+
+void	print_parsed_objects(
+	t_camera	*cam,
+	t_world		*world
+)
+{
+	printf("Parsed objects:\n");
+	printf("Spheres: %d, center(%f,%f,%f), radius: %f \n",
+		world->sp_list.count, world->sp_list.spheres[0].center.x,
+		world->sp_list.spheres[0].center.y, world->sp_list.spheres[0].center.z,
+		world->sp_list.spheres[0].radius);
+	printf("Planes: %d\n", world->pl_list.count);
+	printf("Cylinders: %d\n", world->cy_list.count);
+	printf("Quads: %d\n", world->qu_list.count);
+	printf("Camera: center(%f,%f,%f) orient(%f,%f,%f) fov:%d\n",
+		cam->camera_center.x, cam->camera_center.y, cam->camera_center.z,
+		cam->orientation.x, cam->orientation.y, cam->orientation.z,
+		cam->hfov);
+}
+
 int main(int argc, char *argv[])
 {
-	(void) argc; //unused, fix
-
 	t_camera	cam;
 	t_world		world;
-	cam.aspect_ratio = 16.0 / 9.0;
-	cam.image_width = 400;
-	cam.image_height = calculate_img_height(cam.aspect_ratio, cam.image_width);
-	cam.samples_per_pixel = 40;
-	cam.max_depth = 10;
-	cam.v_up = (t_vec3){0, 1, 0};
-	cam.background = (t_vec3){0,0,0};
+	t_exit_data	exit_data;
 
-	if (!parse(argv[1], &world, &cam))
-	{
+	exit_data.exit_code = 0;
+	if (argc != 2 || !parse(argv[1], &world, &cam)) // check parsing allocations
 		return (1);
-	}
-	printf("Parsed objects:\n");
-	printf("Spheres: %d, center(%f,%f,%f), radius: %f \n", world.sp_list.count, world.sp_list.spheres[0].center.x,world.sp_list.spheres[0].center.y,
-	world.sp_list.spheres[0].center.z, world.sp_list.spheres[0].radius);
-	printf("Planes: %d\n", world.pl_list.count);
-	printf("Cylinders: %d\n", world.cy_list.count);
-	printf("Quads: %d\n", world.qu_list.count);
-	printf("Camera: center(%f,%f,%f) orient(%f,%f,%f) fov:%d\n",
-	cam.camera_center.x, cam.camera_center.y, cam.camera_center.z,
-	cam.orientation.x, cam.orientation.y, cam.orientation.z,
-	cam.hfov);
-
+	set_camera_defaults(&cam);
 	if (!camera_init(&cam))
-	{
-		ft_putstr_fd("failed to init camera\n", STDERR_FILENO);
-		return (2);
-	}
-
-	mlx_image_t	*image;
-	mlx_t	*window;
-	window = mlx_init(cam.image_width, cam.image_height, "miniRT", true);
-	if (!window)
-	{
-		printf("PLACEHOLDER ERROR\n");
-		printf("mlx did not init\n");
-		return (1);
-	}
-	image = mlx_new_image(window, cam.image_width, cam.image_height);
-	if (!image)
-	{
-		printf("PLACEHOLDER ERROR, mlx did not init\n");
-		printf("failed image init OR failed placing img to window\n");
-		return (1);
-	}
-
-	if (!render(&cam, &world, image))
-	{
-		ft_putstr_fd("failed to render\n", STDERR_FILENO);
-		return (3);
-	}
-	display_world(&cam, &world, window, image);
-	world_destroy(&world);
-	return (0);
+		return (minirt_perror(1, "failed to init camera\n"));
+	print_parsed_objects(&cam, &world);
+	exit_data.cam = &cam;
+	exit_data.world = &world;
+	exit_data.window = NULL;
+	exit_data.exit_code = raytrace(&cam, &world);
+	window_close((void *) &exit_data);
+	return (1); // should not be reachable lol
 }

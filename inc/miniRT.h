@@ -261,5 +261,9 @@ bool	assign_vec3(t_vec3 *v, char *s, double min, double max);
 bool	assign_color(t_vec3 *v, char *s, double strength);
 bool	assign_float(double *f, char *s, double min, double max);
 bool	count_objects(int fd, t_object_counter *counts);
+/**/
+
 /*
+* Error
 */
+int	minirt_perror(int return_code, char *err_msg);
