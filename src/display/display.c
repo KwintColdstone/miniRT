@@ -19,16 +19,20 @@ uint32_t	get_color(int red, int green, int blue, int opacity)
 	return ((red << 24) + (green << 16) + (blue << 8) + opacity);
 }
 
-static void	minirt_key_hook(mlx_key_data_t keydata, void* param)
+void	on_window_close(void* param)
 {
 	t_exit_data	*const exit_data = param;
 
+	mlx_terminate(exit_data->window);
+	world_destroy(exit_data->world);
+	dprintf(STDERR_FILENO, "\nDEBUG: exit hook caled\n");
+	exit (0);
+}
+
+static void	minirt_key_hook(mlx_key_data_t keydata, void* param)
+{
 	if (keydata.key == MLX_KEY_ESCAPE && keydata.action == MLX_PRESS)
-	{
-		mlx_terminate(exit_data->window);
-		world_destroy(exit_data->world);
-		exit (0);
-	}
+		on_window_close(param);
 }
 
 int	display_world(
@@ -50,6 +54,7 @@ int	display_world(
 		return (1);
 	}
 	mlx_key_hook(window, minirt_key_hook, (void *) &exit_data);
+	mlx_close_hook(window, on_window_close, (void *) &exit_data);
 	mlx_loop(window);
 	mlx_terminate(window);
 	return (0);
