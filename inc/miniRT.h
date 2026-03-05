@@ -1,6 +1,6 @@
 #pragma once
 
-#include "libft.h"
+#include "../lib/libft/libft.h"
 #include <fcntl.h>
 #include <math.h>
 #include <stdbool.h>
@@ -11,11 +11,19 @@
 #include <float.h>
 #include "MLX42/MLX42.h"
 
-typedef struct s_vec3 {
+typedef struct s_vec3
+{
 	double x;
 	double y;
 	double z;
 }	t_vec3;
+
+typedef struct s_uvw
+{
+	t_vec3	u;
+	t_vec3	v;
+	t_vec3	w;
+}	t_uvw;
 
 typedef struct s_ray {
 	t_vec3 origin;
@@ -74,6 +82,14 @@ typedef struct	s_cylinder
 	double	height;
 }	t_cylinder;
 
+typedef struct	s_cyl_t
+{
+	double	side;
+	double	bottom;
+	double	top;
+	double	min;
+}	t_cyl_t;
+
 typedef struct s_sphere_list
 {
 	t_sphere	*spheres;
@@ -109,7 +125,7 @@ typedef struct s_world {
 	t_plane_list pl_list;
 	t_cylinder_list cy_list;
 	t_light	light;
-	t_vec3	ambient; // example: A 0.2 255, 255, 255
+	t_vec3	ambient;
 }	t_world;
 
 typedef struct s_hit_record {
@@ -197,15 +213,11 @@ bool	world_hit(const t_world* world, const t_ray* r,
 	t_interval ray_t, t_hit_record* rec);
 
 // transform.c
-void create_orthonormal_basis(const t_vec3 *axis, t_vec3 *u, t_vec3 *v, t_vec3 *w);
-t_vec3 world_to_object_space(const t_vec3 *point, const t_vec3 *center,
-                             const t_vec3 *u, const t_vec3 *v, const t_vec3 *w);
-t_vec3 object_to_world_space(const t_vec3 *point_obj, const t_vec3 *center,
-                             const t_vec3 *u, const t_vec3 *v, const t_vec3 *w);
-t_vec3 world_to_object_direction(const t_vec3 *dir,
-                                 const t_vec3 *u, const t_vec3 *v, const t_vec3 *w);
-t_vec3 object_to_world_direction(const t_vec3 *dir_obj,
-                                 const t_vec3 *u, const t_vec3 *v, const t_vec3 *w);
+void create_orthonormal_basis(const t_vec3 *axis, t_uvw *c);
+t_vec3 world_to_object_space(const t_vec3 *point, const t_vec3 *center, t_uvw *c);
+t_vec3 object_to_world_space(const t_vec3 *point_obj, const t_vec3 *center, t_uvw *c);
+t_vec3 world_to_object_direction(const t_vec3 *dir, t_uvw *c);
+t_vec3 object_to_world_direction(const t_vec3 *dir_obj, t_uvw *c);
 
 // utils.c
 double	degrees_to_radians(double degrees);
