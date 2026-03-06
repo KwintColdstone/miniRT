@@ -6,7 +6,7 @@
 /*   By: avaliull <avaliull@student.codam.nl>              +#+                */
 /*                                                        +#+                 */
 /*   Created: 2026/02/17 16:06:13 by avaliull            #+#    #+#           */
-/*   Updated: 2026/03/06 17:44:59 by avaliull            ########   odam.nl   */
+/*   Updated: 2026/03/06 18:42:32 by avaliull            ########   odam.nl   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,8 @@ void	window_close(void *param)
 
 	if (exit_data->window)
 		mlx_terminate(exit_data->window);
-	dprintf(STDERR_FILENO, "\nDEBUG: segfaulting on world destroy!\n");
 	if (exit_data->world)
 		world_destroy(exit_data->world);
-	dprintf(STDERR_FILENO, "\nDEBUG: if you see this, we have not segfaulted on world destroy! yay!\n");
 	if (exit_data->colors)
 	{
 		i = -1;
@@ -97,26 +95,26 @@ static void	draw_image(
 
 int	raytrace(
 	t_camera *cam,
-	t_world *world
+	t_world *world,
+	t_exit_data *exit_data
 )
 {
 	mlx_image_t	*image;
 	mlx_t		*window;
-	t_exit_data	exit_data;
 	t_rgba		**colors;
 
 	colors = init_colors(cam);
 	if (colors == NULL)
 		minirt_perror(1, "Failed to initialize color array\n");
-	exit_data.colors = colors;
+	exit_data->colors = colors;
 	if (!render(cam, world, colors))
 		minirt_perror(1, "Failed to render image\n");
 	window = mlx_init(cam->image_width, cam->image_height, "miniRT", true);
 	if (!window)
 		minirt_perror(1, "Failed to initialize window\n");
-	exit_data.window = window;
-	mlx_close_hook(window, window_close, (void *) &exit_data);
-	mlx_key_hook(window, minirt_key_hook, (void *) &exit_data);
+	exit_data->window = window;
+	mlx_close_hook(window, window_close, (void *) exit_data);
+	mlx_key_hook(window, minirt_key_hook, (void *) exit_data);
 	image = mlx_new_image(window, cam->image_width, cam->image_height);
 	if (!image)
 		minirt_perror(1, "Failed to initialize image\n");

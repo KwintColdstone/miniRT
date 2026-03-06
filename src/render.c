@@ -218,7 +218,7 @@ bool render(t_camera *cam, t_world *world, t_rgba **colors)
 	i = 0;
 	while (i < cam->image_height)
 	{
-		fprintf(stderr,"\rScanlines remaining: %d", cam->image_height - i);
+		fprintf(stderr,"\rScanlines remaining: %d", cam->image_height - i); // not allowed !
 		fflush(stderr);
 		j = 0;
 		while (j < cam->image_width)
@@ -238,7 +238,6 @@ bool render(t_camera *cam, t_world *world, t_rgba **colors)
 		}
 		i++;
 	}
-
 	//close(file);
 	return (true);
 }

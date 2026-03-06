@@ -8,7 +8,7 @@ bool sphere_list_init(t_sphere_list *list, int capacity)
 
 	if (!list || capacity <= 0)
 		return (false);
-	list->spheres = malloc(capacity * sizeof(t_sphere));
+	list->spheres = ft_calloc(capacity, sizeof(t_sphere));
 	if (!list->spheres)
 		return (false);
 	list->count = 0;
@@ -19,8 +19,7 @@ bool sphere_list_init(t_sphere_list *list, int capacity)
 void sphere_list_destroy(t_sphere_list *list)
 {
 	if (!list)
-		return;
-	printf("huh\n");
+		return ;
 	if (list->spheres) // looks like this variable is not set up properly. whatsip
 		free(list->spheres);
 	list->spheres = NULL;

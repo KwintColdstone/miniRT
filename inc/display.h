@@ -6,7 +6,7 @@
 /*   By: avaliull <avaliull@student.codam.nl>              +#+                */
 /*                                                        +#+                 */
 /*   Created: 2026/02/17 16:09:30 by avaliull            #+#    #+#           */
-/*   Updated: 2026/03/06 17:39:58 by avaliull            ########   odam.nl   */
+/*   Updated: 2026/03/06 18:41:15 by avaliull            ########   odam.nl   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,8 @@ uint32_t	get_color(int red, int green, int blue, int opacity);
 
 int	raytrace(
 	t_camera *cam,
-	t_world *world
+	t_world *world,
+	t_exit_data *exit_data
 );
 // render.c
 bool render(t_camera *cam, t_world *world, t_rgba **colors);
