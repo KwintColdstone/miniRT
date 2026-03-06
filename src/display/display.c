@@ -6,7 +6,7 @@
 /*   By: avaliull <avaliull@student.codam.nl>              +#+                */
 /*                                                        +#+                 */
 /*   Created: 2026/02/17 16:06:13 by avaliull            #+#    #+#           */
-/*   Updated: 2026/03/06 20:12:41 by avaliull            ########   odam.nl   */
+/*   Updated: 2026/03/06 20:22:35 by avaliull            ########   odam.nl   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,17 +108,17 @@ int	raytrace(
 		return (1);
 	exit_data->colors = colors;
 	if (!render(cam, world, colors))
-		return (minirt_perror("Failed to render image"), 1); // check return logic
+		return (minirt_perror("Failed to render image"), 1);
 	mlx_set_setting(MLX_STRETCH_IMAGE, 1); // this does not preserve the proportions :(
 	window = mlx_init(cam->image_width, cam->image_height, "miniRT", true);
 	if (!window)
-		return (minirt_perror("Failed to initialize window\n"), 1);
+		return (external_perror("Failed to init MLX window"), 1);
 	exit_data->window = window;
 	mlx_close_hook(window, window_close, (void *) exit_data);
 	mlx_key_hook(window, minirt_key_hook, (void *) exit_data);
 	image = mlx_new_image(window, cam->image_width, cam->image_height);
 	if (!image)
-		return (minirt_perror("Failed to initialize image\n"), 1);
+		return (external_perror("Failed to init MLX image"), 1);
 	draw_image(cam, image, colors);
 	return (display_world(window, image));
 }
