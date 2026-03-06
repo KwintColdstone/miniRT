@@ -20,7 +20,7 @@ void sphere_list_destroy(t_sphere_list *list)
 {
 	if (!list)
 		return ;
-	if (list->spheres) // looks like this variable is not set up properly. whatsip
+	if (list->spheres)
 		free(list->spheres);
 	list->spheres = NULL;
 	list->count = 0;
@@ -47,7 +47,8 @@ void quad_list_destroy(t_quad_list *list)
 	if (!list)
 		return;
 
-	free(list->quads);
+	if (list->quads)
+		free(list->quads);
 	list->quads = NULL;
 	list->count = 0;
 	list->capacity = 0;
@@ -72,7 +73,8 @@ void cylinder_list_destroy(t_cylinder_list *list)
 	if (!list)
 		return;
 
-	free(list->cylinders);
+	if (list->cylinders)
+		free(list->cylinders);
 	list->cylinders = NULL;
 	list->count = 0;
 	list->capacity = 0;
@@ -98,7 +100,8 @@ void plane_list_destroy(t_plane_list *list)
 	if (!list)
 		return;
 
-	free(list->planes);
+	if (list->planes)
+		free(list->planes);
 	list->planes = NULL;
 	list->count = 0;
 	list->capacity = 0;
@@ -110,34 +113,22 @@ bool world_init(t_world *world, t_object_counter *c)
 	if (c->sphere_cap)
 	{
 		if (!sphere_list_init(&world->sp_list, c->sphere_cap))
-		{
-			ft_putstr_fd("failed to init sphere list\n", STDERR_FILENO);
-			return (false);
-		}
+			return (minirt_perror(false, "Failed to init sphere list\n"));
 	}
 	if (c->quad_cap)
 	{
 		if (!quad_list_init(&world->qu_list, c->quad_cap))
-		{
-			ft_putstr_fd("failed to init quad list\n", STDERR_FILENO);
-			return (false);
-		}
+			return (minirt_perror(false, "Failed to init quad list\n"));
 	}
 	if (c->cylinder_cap)
 	{
 		if (!cylinder_list_init(&world->cy_list, c->cylinder_cap))
-		{
-			ft_putstr_fd("failed to init cylinder list\n", STDERR_FILENO);
-			return (false);
-		}
+			return (minirt_perror(false, "Failed to init cylinder list\n"));
 	}
 	if (c->plane_cap)
 	{
 		if (!plane_list_init(&world->pl_list, c->plane_cap))
-		{
-			ft_putstr_fd("failed to init plane list\n", STDERR_FILENO);
-			return (false);
-		}
+			return (minirt_perror(false, "Failed to init plane list\n"));
 	}
 	return (true);
 }

@@ -6,7 +6,7 @@
 /*   By: avaliull <avaliull@student.codam.nl>              +#+                */
 /*                                                        +#+                 */
 /*   Created: 2026/02/17 16:06:13 by avaliull            #+#    #+#           */
-/*   Updated: 2026/03/06 18:42:32 by avaliull            ########   odam.nl   */
+/*   Updated: 2026/03/06 19:14:24 by avaliull            ########   odam.nl   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static int	display_world(
 )
 {
 	if (mlx_image_to_window(window, image, 0, 0) < 0)
-		minirt_perror(1, "Failed to display image in the window\n");
+		minirt_perror(1, "MLX - failed to put image to window\n");
 	mlx_loop(window);
 	return (0);
 }
@@ -109,6 +109,7 @@ int	raytrace(
 	exit_data->colors = colors;
 	if (!render(cam, world, colors))
 		minirt_perror(1, "Failed to render image\n");
+	mlx_set_setting(MLX_STRETCH_IMAGE, 1); // this does not preserve the proportions :(
 	window = mlx_init(cam->image_width, cam->image_height, "miniRT", true);
 	if (!window)
 		minirt_perror(1, "Failed to initialize window\n");

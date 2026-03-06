@@ -7,6 +7,8 @@
 
 int	minirt_perror(int return_code, char *err_msg)
 {
+	ft_putstr_fd("Error\n", STDERR_FILENO);
+	ft_putstr_fd("Description: ", STDERR_FILENO);
 	ft_putstr_fd(err_msg, STDERR_FILENO);
 	return(return_code);
 }
@@ -42,10 +44,14 @@ void	print_parsed_objects(
 )
 {
 	printf("Parsed objects:\n");
-	printf("Spheres: %d, center(%f,%f,%f), radius: %f \n",
-		world->sp_list.count, world->sp_list.spheres[0].center.x,
-		world->sp_list.spheres[0].center.y, world->sp_list.spheres[0].center.z,
-		world->sp_list.spheres[0].radius);
+	printf("Spheres: %d", world->sp_list.count);
+	if (world->sp_list.count > 0)
+		printf(", center(%f,%f,%f), radius: %f",
+			world->sp_list.spheres[0].center.x,
+			world->sp_list.spheres[0].center.y,
+			 world->sp_list.spheres[0].center.z,
+			world->sp_list.spheres[0].radius);
+	printf("\n");
 	printf("Planes: %d\n", world->pl_list.count);
 	printf("Cylinders: %d\n", world->cy_list.count);
 	printf("Quads: %d\n", world->qu_list.count);
@@ -66,7 +72,7 @@ int main(int argc, char *argv[])
 		return (1);
 	set_camera_defaults(&cam);
 	if (!camera_init(&cam))
-		return (minirt_perror(1, "failed to init camera\n"));
+		return (minirt_perror(1, "Failed to init camera\n"));
 	print_parsed_objects(&cam, &world);
 	exit_data.world = &world;
 	exit_data.window = NULL;
