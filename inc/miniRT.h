@@ -241,9 +241,6 @@ void	world_destroy(t_world *world);
 // camera.c
 bool	camera_init(t_camera *cam);
 
-// render.c
-bool render(t_camera *cam, t_world *world, mlx_image_t *image);
-
 // material.c
 bool lambertian_scatter(const t_ray *r_in, const t_hit_record *rec, t_vec3 *attenuation, t_ray *scattered);
 bool metal_scatter(const t_ray *r_in, const t_hit_record *rec, t_vec3 *attenuation, t_ray *scattered);

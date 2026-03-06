@@ -76,7 +76,7 @@ INCFLAGS	= $(addprefix -I,$(INCLUDE))
 #CFLAGS	=
 CFLAGS	= -Wall -Wextra -Werror
 #CFLAGS	= -Wall -Wextra -Werror -fsanitize=undefined
-INPUT	= rt_files/cornell.rt
+INPUT	= rt_files/cyl.rt
 
 
 -include $(OFILES:.o=.d)

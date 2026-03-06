@@ -68,9 +68,9 @@ int main(int argc, char *argv[])
 	if (!camera_init(&cam))
 		return (minirt_perror(1, "failed to init camera\n"));
 	print_parsed_objects(&cam, &world);
-	exit_data.cam = &cam;
 	exit_data.world = &world;
 	exit_data.window = NULL;
+	exit_data.colors = NULL;
 	exit_data.exit_code = raytrace(&cam, &world);
 	window_close((void *) &exit_data);
 	return (1); // should not be reachable lol

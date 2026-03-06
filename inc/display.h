@@ -29,9 +29,9 @@ typedef union t_rgba
 }	t_rgba;
 
 typedef struct	s_exit_data {
-	t_camera	*cam;
 	t_world		*world;
 	mlx_t		*window;
+	t_rgba		**colors;
 	int			exit_code;
 }	t_exit_data;
 
@@ -45,6 +45,9 @@ int	display_world(
 	mlx_t *window,
 	mlx_image_t *image
 );
+// render.c
+bool render(t_camera *cam, t_world *world, t_rgba **colors);
+
 void	window_close(void* param);
 
 #endif	// DISPLAY_H
