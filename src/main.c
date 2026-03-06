@@ -1,28 +1,39 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <errno.h>
 #include "libft.h"
 #include "miniRT.h"
 #include "display.h"
 
-int	minirt_perror(int return_code, char *err_msg)
+// Function to report an error related to minirt-specific functions
+void	minirt_perror(char *err_msg)
 {
 	ft_putstr_fd("Error\n", STDERR_FILENO);
 	ft_putstr_fd("Description: ", STDERR_FILENO);
 	ft_putstr_fd(err_msg, STDERR_FILENO);
-	return(return_code);
+	ft_putchar_fd('\n', STDERR_FILENO);
 }
 
+// Function to report an error related to library functions that set errno
+void	external_perror(char *err_msg)
+{
+	ft_putstr_fd("Error\n", STDERR_FILENO);
+	ft_putstr_fd("Description: ", STDERR_FILENO);
+	ft_putstr_fd(err_msg, STDERR_FILENO);
+	ft_putstr_fd(": ", STDERR_FILENO);
+	ft_putstr_fd(strerror(errno), STDERR_FILENO);
+	ft_putchar_fd('\n', STDERR_FILENO);
+}
+
+// Calculate the image height, and ensure that it's at least 1.
 int calculate_img_height(float aspect_ratio, int image_width)
 {
 	int image_height;
 
-	// Calculate the image height, and ensure that it's at least 1.
 	image_height = (int)(image_width / aspect_ratio);
 	if (image_height < 1)
-	{
 		image_height = 1;
-	}
 	return image_height;
 }
 
@@ -71,8 +82,7 @@ int main(int argc, char *argv[])
 	if (argc != 2 || !parse(argv[1], &world, &cam)) // check parsing allocations
 		return (1);
 	set_camera_defaults(&cam);
-	if (!camera_init(&cam))
-		return (minirt_perror(1, "Failed to init camera\n"));
+	camera_init(&cam);
 	print_parsed_objects(&cam, &world);
 	exit_data.world = &world;
 	exit_data.window = NULL;

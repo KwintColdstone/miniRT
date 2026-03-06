@@ -6,7 +6,7 @@
 /*   By: avaliull <avaliull@student.codam.nl>              +#+                */
 /*                                                        +#+                 */
 /*   Created: 2026/02/17 16:06:13 by avaliull            #+#    #+#           */
-/*   Updated: 2026/03/06 19:14:24 by avaliull            ########   odam.nl   */
+/*   Updated: 2026/03/06 20:12:41 by avaliull            ########   odam.nl   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static int	display_world(
 )
 {
 	if (mlx_image_to_window(window, image, 0, 0) < 0)
-		minirt_perror(1, "MLX - failed to put image to window\n");
+		return (external_perror("MLX - failed to put image to window\n"), 1);
 	mlx_loop(window);
 	return (0);
 }
@@ -55,7 +55,7 @@ static t_rgba	**init_colors(t_camera *cam)
 
 	colors = ft_calloc(cam->image_height + 1, sizeof(t_rgba *));
 	if (!colors)
-		return (NULL);
+		return (external_perror("Failed to init colors"), NULL);
 	i = -1;
 	while (++i < cam->image_height)
 	{
@@ -65,7 +65,7 @@ static t_rgba	**init_colors(t_camera *cam)
 			while (--i >= 0)
 				free(colors[i]);
 			free(colors);
-			return (NULL);
+			return (external_perror("Failed to init colors"), NULL);
 		}
 	}
 	return (colors);
@@ -105,20 +105,20 @@ int	raytrace(
 
 	colors = init_colors(cam);
 	if (colors == NULL)
-		minirt_perror(1, "Failed to initialize color array\n");
+		return (1);
 	exit_data->colors = colors;
 	if (!render(cam, world, colors))
-		minirt_perror(1, "Failed to render image\n");
+		return (minirt_perror("Failed to render image"), 1); // check return logic
 	mlx_set_setting(MLX_STRETCH_IMAGE, 1); // this does not preserve the proportions :(
 	window = mlx_init(cam->image_width, cam->image_height, "miniRT", true);
 	if (!window)
-		minirt_perror(1, "Failed to initialize window\n");
+		return (minirt_perror("Failed to initialize window\n"), 1);
 	exit_data->window = window;
 	mlx_close_hook(window, window_close, (void *) exit_data);
 	mlx_key_hook(window, minirt_key_hook, (void *) exit_data);
 	image = mlx_new_image(window, cam->image_width, cam->image_height);
 	if (!image)
-		minirt_perror(1, "Failed to initialize image\n");
+		return (minirt_perror("Failed to initialize image\n"), 1);
 	draw_image(cam, image, colors);
 	return (display_world(window, image));
 }

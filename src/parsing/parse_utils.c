@@ -155,9 +155,7 @@ bool	assign_color(t_vec3 *v, char *s, double strength)
 	free(g_str);
 	free(b_str);
 	if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255)
-	{
 		return (false);
-	}
 	*v = color_to_vec3(r*strength, g*strength, b*strength);
 	return (true);
 }

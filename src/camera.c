@@ -57,7 +57,7 @@ static void	calculate_upper_left_pixel(t_camera *cam, t_vec3 viewport_u,
 	calculate_middle_pixel00(cam, viewport_upper_left);
 }
 
-bool	camera_init(t_camera *cam)
+void	camera_init(t_camera *cam)
 {
 	t_vec3	u;
 	t_vec3	v;
@@ -75,5 +75,4 @@ bool	camera_init(t_camera *cam)
 	cam->pixel_delta_v = divide_by_scalar(viewport_v,
 			(double)cam->image_height);
 	calculate_upper_left_pixel(cam, viewport_u, viewport_v, w);
-	return (true);
 }

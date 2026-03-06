@@ -239,7 +239,7 @@ bool	world_init(t_world *world, t_object_counter *c);
 void	world_destroy(t_world *world);
 
 // camera.c
-bool	camera_init(t_camera *cam);
+void	camera_init(t_camera *cam);
 
 // material.c
 bool lambertian_scatter(const t_ray *r_in, const t_hit_record *rec, t_vec3 *attenuation, t_ray *scattered);
@@ -275,4 +275,5 @@ bool	count_objects(int fd, t_object_counter *counts);
 /*
 * Error
 */
-int	minirt_perror(int return_code, char *err_msg);
+void	minirt_perror(char *err_msg);
+void	external_perror(char *err_msg);

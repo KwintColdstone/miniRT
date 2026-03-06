@@ -10,7 +10,7 @@ bool sphere_list_init(t_sphere_list *list, int capacity)
 		return (false);
 	list->spheres = ft_calloc(capacity, sizeof(t_sphere));
 	if (!list->spheres)
-		return (false);
+		return (external_perror("malloc fail"), false);
 	list->count = 0;
 	list->capacity = capacity;
 		return (true);
@@ -35,7 +35,7 @@ bool quad_list_init(t_quad_list *list, int capacity)
 
 	list->quads = malloc(capacity * sizeof(t_quad));
 	if (!list->quads)
-		return (false);
+		return (external_perror("malloc fail"), false);
 
 	list->count = 0;
 	list->capacity = capacity;
@@ -62,7 +62,7 @@ bool cylinder_list_init(t_cylinder_list *list, int capacity)
 
 	list->cylinders = malloc(capacity * sizeof(t_cylinder));
 	if (!list->cylinders)
-		return (false);
+		return (external_perror("malloc fail"), false);
 	list->count = 0;
 	list->capacity = capacity;
 		return (true);
@@ -84,11 +84,11 @@ void cylinder_list_destroy(t_cylinder_list *list)
 bool plane_list_init(t_plane_list *list, int capacity)
 {
 	if (!list || capacity <= 0)
-		return (false);
+		return (false); // do we need an error message here?
 
 	list->planes = malloc(capacity * sizeof(t_plane));
 	if (!list->planes)
-		return (false);
+		return (external_perror("malloc fail"), false);
 
 	list->count = 0;
 	list->capacity = capacity;
@@ -113,22 +113,22 @@ bool world_init(t_world *world, t_object_counter *c)
 	if (c->sphere_cap)
 	{
 		if (!sphere_list_init(&world->sp_list, c->sphere_cap))
-			return (minirt_perror(false, "Failed to init sphere list\n"));
+			return (minirt_perror("Failed to init sphere list"), false);
 	}
 	if (c->quad_cap)
 	{
 		if (!quad_list_init(&world->qu_list, c->quad_cap))
-			return (minirt_perror(false, "Failed to init quad list\n"));
+			return (minirt_perror("Failed to init quad list"), false);
 	}
 	if (c->cylinder_cap)
 	{
 		if (!cylinder_list_init(&world->cy_list, c->cylinder_cap))
-			return (minirt_perror(false, "Failed to init cylinder list\n"));
+			return (minirt_perror("Failed to init cylinder list"), false);
 	}
 	if (c->plane_cap)
 	{
 		if (!plane_list_init(&world->pl_list, c->plane_cap))
-			return (minirt_perror(false, "Failed to init plane list\n"));
+			return (minirt_perror("Failed to init plane list"), false);
 	}
 	return (true);
 }

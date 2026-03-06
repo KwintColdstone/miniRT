@@ -6,7 +6,7 @@
 /*   By: avaliull <avaliull@student.codam.nl>              +#+                */
 /*                                                        +#+                 */
 /*   Created: 2026/02/24 18:39:20 by avaliull            #+#    #+#           */
-/*   Updated: 2026/03/06 19:06:34 by avaliull            ########   odam.nl   */
+/*   Updated: 2026/03/06 20:09:01 by avaliull            ########   odam.nl   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <float.h>
 #include <iso646.h>
 #include <limits.h>
-#include <stdio.h>
+#include <errno.h>
 #include <unistd.h>
 
 static bool	check_material_type(t_material *mat, char *mat_str)
@@ -44,7 +44,7 @@ static bool	check_material_type(t_material *mat, char *mat_str)
 		*mat = emit;
 	}
 	else
-		return (false);
+		return (minirt_perror("Unknown material type"), false);
 	return (true);
 }
 
@@ -85,21 +85,12 @@ static bool	validate_and_open_file(
 )
 {
 	if (!file)
-	{
-		ft_putstr_fd("no file\n", STDERR_FILENO);
-		return (false);
-	}
+		return (minirt_perror("No file"), false);
 	if (!check_file_name(file))
-	{
-		ft_putstr_fd("incorrect file name. Use: (name).rt\n", STDERR_FILENO);
-		return (false);
-	}
+		return (minirt_perror("Incorrect file format. Use [name].rt"), false);
 	*fd = open(file, O_RDONLY);
 	if (*fd == -1)
-	{
-		perror("Error");
-		return (false);
-	}
+		return (external_perror("System error when opening file"), false);
 	return (true);
 }
 
@@ -112,21 +103,12 @@ bool	parse(char *file, t_world *world, t_camera *cam)
 	if (validate_and_open_file(file, &fd) == false)
 		return (false);
 	if (!count_objects(fd, &counter))
-	{
-		ft_putstr_fd("failed to count objects\n", STDERR_FILENO);
-		return (false);
-	}
+		return (minirt_perror("Failed to count objects"), false);
 	if (!world_init(world, &counter))
-	{
-		ft_putstr_fd("failed to init world\n", STDERR_FILENO);
-		return (false);
-	}
+		return (minirt_perror("Failed to init world"), false);
 	if (validate_and_open_file(file, &fd) == false)
 		return (false);
 	if (!assign_objects(fd, world, cam))
-	{
-		ft_putstr_fd("failed to assign values to element\n", STDERR_FILENO);
-		return (false);
-	}
+		return (minirt_perror("Failed to assign values to element"), false);
 	return (true);
 }
