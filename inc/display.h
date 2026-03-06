@@ -6,7 +6,7 @@
 /*   By: avaliull <avaliull@student.codam.nl>              +#+                */
 /*                                                        +#+                 */
 /*   Created: 2026/02/17 16:09:30 by avaliull            #+#    #+#           */
-/*   Updated: 2026/02/26 18:16:59 by avaliull            ########   odam.nl   */
+/*   Updated: 2026/03/06 17:39:58 by avaliull            ########   odam.nl   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,13 +41,12 @@ int	raytrace(
 	t_camera *cam,
 	t_world *world
 );
-int	display_world(
-	mlx_t *window,
-	mlx_image_t *image
-);
 // render.c
 bool render(t_camera *cam, t_world *world, t_rgba **colors);
-
 void	window_close(void* param);
+
+// mlx_usage.c
+void	minirt_key_hook(mlx_key_data_t keydata, void* param);
+uint32_t	get_color(int red, int green, int blue, int opacity);
 
 #endif	// DISPLAY_H

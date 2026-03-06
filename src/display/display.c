@@ -6,18 +6,13 @@
 /*   By: avaliull <avaliull@student.codam.nl>              +#+                */
 /*                                                        +#+                 */
 /*   Created: 2026/02/17 16:06:13 by avaliull            #+#    #+#           */
-/*   Updated: 2026/02/26 18:17:13 by avaliull            ########   odam.nl   */
+/*   Updated: 2026/03/06 17:39:47 by avaliull            ########   odam.nl   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "MLX42/MLX42.h"
 #include "miniRT.h"
 #include "display.h"
-
-uint32_t	get_color(int red, int green, int blue, int opacity)
-{
-	return ((red << 24) + (green << 16) + (blue << 8) + opacity);
-}
 
 void	window_close(void* param)
 {
@@ -44,13 +39,7 @@ void	window_close(void* param)
 	exit (exit_data->exit_code);
 }
 
-static void	minirt_key_hook(mlx_key_data_t keydata, void* param)
-{
-	if (keydata.key == MLX_KEY_ESCAPE && keydata.action == MLX_PRESS)
-		window_close(param);
-}
-
-int	display_world(
+static int	display_world(
 	mlx_t *window,
 	mlx_image_t *image
 )
@@ -61,7 +50,7 @@ int	display_world(
 	return (0);
 }
 
-t_rgba **init_colors(t_camera *cam)
+static t_rgba **init_colors(t_camera *cam)
 {
 	t_rgba	**colors;
 	int		i;
@@ -117,7 +106,7 @@ int	raytrace(
 	t_rgba		**colors;
 
 	colors = init_colors(cam);
-	if (colors == NULL) // don't forget to add these to exit_data!
+	if (colors == NULL)
 		minirt_perror(1, "Failed to initialize color array\n");
 	exit_data.colors = colors;
 	if (!render(cam, world, colors))
