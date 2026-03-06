@@ -1,8 +1,8 @@
-#include "miniRT.h"
+#include "../inc/miniRT.h"
 #include "math.h"
 
 // Checks if ray hit from the inside or outside
-void set_face_normal(const t_ray *r, const t_vec3 *outward_normal, t_hit_record *rec)
+void	set_face_normal(const t_ray *r, const t_vec3 *outward_normal, t_hit_record *rec)
 {
 	rec->front_face = dot_vec3(r->direction, *outward_normal) < 0;
 	if (rec->front_face == true)
@@ -11,42 +11,68 @@ void set_face_normal(const t_ray *r, const t_vec3 *outward_normal, t_hit_record 
 		rec->normal = multiply_by_scalar(*outward_normal, -1.0);
 }
 
-bool	sphere_hit(const t_sphere *s, const t_ray *r, t_interval ray_t, t_hit_record *rec)
+void	fill_sphere_hit_record(t_hit_record *rec, const t_sphere *s, const t_ray *r, double root)
 {
-	t_vec3 oc = subtract_vec3(s->center, r->origin);
-	double a = vec3_len_squared(r->direction);
-	double h = dot_vec3(r->direction, oc);
-	double c = vec3_len_squared(oc) - s->radius*s->radius;
-	double discriminant = h*h - a*c;
+	t_vec3	outward_normal;
+
+	rec->t = root;
+	rec->position = ray_at(r, rec->t);
+	outward_normal = divide_by_scalar(subtract_vec3(rec->position, s->center), s->radius);
+	set_face_normal(r, &outward_normal, rec);
+	rec->mat = s->mat;
+}
+
+bool	calculate_sphere_root(const t_sphere *s, const t_ray *r, t_interval ray_t, double *root)
+{
+	t_vec3	oc;
+	double	a;
+	double	h;
+	double	c;
+	double	discriminant;
+
+	oc = subtract_vec3(s->center, r->origin);
+	a = vec3_len_squared(r->direction);
+	h = dot_vec3(r->direction, oc);
+	c = vec3_len_squared(oc) - s->radius*s->radius;
+	discriminant = h*h - a*c;
 	if (discriminant < 0)
 	{
 		return (false);
 	}
 	double sqrtd = sqrt(discriminant);
-	// Find nearest root in acceptable range
-	double root = (h - sqrtd) / a;
-	if (root <= ray_t.min || ray_t.max <= root)
+	*root = (h - sqrtd) / a;
+	if (*root <= ray_t.min || ray_t.max <= *root)
 	{
-		root = (h + sqrtd) / a;
-		if (root <= ray_t.min || ray_t.max <= root)
+		*root = (h + sqrtd) / a;
+		if (*root <= ray_t.min || ray_t.max <= *root)
 			return (false);
 	}
-	rec->t = root;
-	rec->position = ray_at(r, rec->t);
-	t_vec3 outward_normal = divide_by_scalar(subtract_vec3(rec->position, s->center), s->radius);
-	set_face_normal(r, &outward_normal, rec);
-	rec->mat = s->mat;
+}
+
+// Find nearest root in acceptable range
+bool	sphere_hit(const t_sphere *s, const t_ray *r, t_interval ray_t, t_hit_record *rec)
+{
+	double	root;
+	if (!calculate_sphere_root(s, r, ray_t, &root))
+		return (false);
+	fill_sphere_hit_record(rec, s, r, root);
 	return (true);
 }
 
 bool	quad_hit(const t_quad *p, const t_ray *r, t_interval ray_t, t_hit_record *rec)
 {
-	t_vec3 n = cross_vec3(p->u, p->v);
-	t_vec3 normal = unit_vector(n);
-	double D = dot_vec3(normal, p->corner);
-	t_vec3 w = divide_by_scalar(n, dot_vec3(n,n));
 
-	double denom = dot_vec3(normal, r->direction);
+	t_vec3 n;
+	t_vec3 normal;
+	double D;
+	t_vec3 w;
+	double denom;
+
+	n = cross_vec3(p->u, p->v);
+	normal = unit_vector(n);
+	D = dot_vec3(normal, p->corner);
+	w = divide_by_scalar(n, dot_vec3(n,n));
+	denom = dot_vec3(normal, r->direction);
 	// No hit if the ray is parallel to the quad
 	if (fabs(denom) < 1e-8)
 		return false;
