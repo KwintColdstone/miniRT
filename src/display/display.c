@@ -6,7 +6,7 @@
 /*   By: avaliull <avaliull@student.codam.nl>              +#+                */
 /*                                                        +#+                 */
 /*   Created: 2026/02/17 16:06:13 by avaliull            #+#    #+#           */
-/*   Updated: 2026/03/06 17:39:47 by avaliull            ########   odam.nl   */
+/*   Updated: 2026/03/06 17:44:59 by avaliull            ########   odam.nl   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 #include "miniRT.h"
 #include "display.h"
 
-void	window_close(void* param)
+void	window_close(void *param)
 {
-	t_exit_data	*const	exit_data = param;
+	t_exit_data *const	exit_data = param;
 	int					i;
 
 	if (exit_data->window)
@@ -50,7 +50,7 @@ static int	display_world(
 	return (0);
 }
 
-static t_rgba **init_colors(t_camera *cam)
+static t_rgba	**init_colors(t_camera *cam)
 {
 	t_rgba	**colors;
 	int		i;
@@ -75,8 +75,8 @@ static t_rgba **init_colors(t_camera *cam)
 
 static void	draw_image(
 	t_camera *cam,
-	mlx_image_t	*image,
-	t_rgba		**colors
+	mlx_image_t *image,
+	t_rgba **colors
 )
 {
 	int	i;
