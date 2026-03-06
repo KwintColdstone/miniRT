@@ -124,7 +124,7 @@ static bool	find_closest_intersection(const t_cylinder *cl,
 	return (true);
 }
 
-static t_vec3	calc_world_normal(t_hit_record *rec, t_uvw *c,
+static t_vec3	calc_world_normal(t_uvw *c,
 		t_cyl_t t, t_vec3 *hit_local)
 {
 	t_vec3	normal_local;
@@ -160,7 +160,7 @@ bool	cylinder_hit(const t_cylinder *cl, const t_ray *r, t_interval ray_t,
 	rec->t = t.min;
 	rec->position = object_to_world_space(&hit_local, &cl->center, &c);
 	rec->mat = cl->mat;
-	normal_world = calc_world_normal(rec, &c, t, &hit_local);
+	normal_world = calc_world_normal(&c, t, &hit_local);
 	set_face_normal(r, &normal_world, rec);
 	return (true);
 }
