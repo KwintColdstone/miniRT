@@ -15,6 +15,7 @@ CFILES	=	main.c\
 			utils.c\
 			vec3.c\
 			display.c\
+			mlx_usage.c\
 			world_hit.c
 
 PARSE_CFILES =	parse.c\

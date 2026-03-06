@@ -20,8 +20,9 @@ void sphere_list_destroy(t_sphere_list *list)
 {
 	if (!list)
 		return;
-
-	free(list->spheres);
+	printf("huh\n");
+	if (list->spheres) // looks like this variable is not set up properly. whatsip
+		free(list->spheres);
 	list->spheres = NULL;
 	list->count = 0;
 	list->capacity = 0;

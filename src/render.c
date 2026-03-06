@@ -186,7 +186,7 @@ t_ray	get_ray(int i, int j, t_camera *cam)
 	return (ray);
 }
 
-bool render(t_camera *cam, t_world *world, mlx_image_t *image)
+bool render(t_camera *cam, t_world *world, t_rgba **colors)
 {
 	t_ray	r;
 	t_vec3	pixel_color;
@@ -214,13 +214,10 @@ bool render(t_camera *cam, t_world *world, mlx_image_t *image)
 	//write(file, "255\n", 4);
 	
 	//image loop
-	t_rgba	**color_array; // add malloc fail checks
 
-	color_array = ft_calloc(cam->image_height + 1, sizeof(t_rgba *));
 	i = 0;
 	while (i < cam->image_height)
 	{
-		color_array[i] = ft_calloc(cam->image_width + 1, sizeof(t_rgba));
 		fprintf(stderr,"\rScanlines remaining: %d", cam->image_height - i);
 		fflush(stderr);
 		j = 0;
@@ -236,24 +233,12 @@ bool render(t_camera *cam, t_world *world, mlx_image_t *image)
 			}
 			t_vec3 final_color = multiply_by_scalar(pixel_color, pixel_samples_scale);
 			write_color(&final_color);
-
-			color_array[i][j].rgba = get_color(final_color.x, final_color.y, final_color.z, 0xFF);
+			colors[i][j].rgba = get_color(final_color.x, final_color.y, final_color.z, 0xFF);
 			j++;
 		}
 		i++;
 	}
 
-	i = 0;
-	while (i < cam->image_height)
-	{
-		j = 0;
-		while (j < cam->image_width)
-		{
-			mlx_put_pixel(image, j, i, color_array[i][j].rgba);
-			j++;
-		}
-		i++;
-	}
 	//close(file);
 	return (true);
 }
