@@ -47,6 +47,7 @@ bool	calculate_sphere_root(const t_sphere *s, const t_ray *r, t_interval ray_t, 
 		if (*root <= ray_t.min || ray_t.max <= *root)
 			return (false);
 	}
+	return (true);
 }
 
 // Find nearest root in acceptable range
