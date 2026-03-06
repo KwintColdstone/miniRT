@@ -6,7 +6,7 @@
 /*   By: avaliull <avaliull@student.codam.nl>              +#+                */
 /*                                                        +#+                 */
 /*   Created: 2026/02/26 17:36:32 by avaliull            #+#    #+#           */
-/*   Updated: 2026/02/26 17:38:33 by avaliull            ########   odam.nl   */
+/*   Updated: 2026/03/06 20:37:21 by avaliull            ########   odam.nl   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,10 @@
 
 bool	parse_plane(t_world *world, char *line, int index)
 {
-	int 	i;
-	char 	*point;
-	char 	*normal;
-	t_plane	*const pl = &world->pl_list.planes[index];
+	int				i;
+	char			*point;
+	char			*normal;
+	t_plane *const	pl = &world->pl_list.planes[index];
 
 	i = 0;
 	point = extract_element(line, &i, ' ');

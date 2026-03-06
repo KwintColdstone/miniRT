@@ -6,7 +6,7 @@
 /*   By: avaliull <avaliull@student.codam.nl>              +#+                */
 /*                                                        +#+                 */
 /*   Created: 2026/02/24 18:39:20 by avaliull            #+#    #+#           */
-/*   Updated: 2026/03/06 20:09:01 by avaliull            ########   odam.nl   */
+/*   Updated: 2026/03/06 20:41:40 by avaliull            ########   odam.nl   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,14 +16,13 @@
 #include <float.h>
 #include <iso646.h>
 #include <limits.h>
-#include <errno.h>
 #include <unistd.h>
 
 static bool	check_material_type(t_material *mat, char *mat_str)
 {
-	t_material base;
-	t_material metal;
-	t_material emit;
+	t_material	base;
+	t_material	metal;
+	t_material	emit;
 
 	if (!mat_str || mat_str[0] == '\0')
 	{
@@ -50,9 +49,9 @@ static bool	check_material_type(t_material *mat, char *mat_str)
 
 bool	assign_material(t_material *mat, char *line, int *i)
 {
-	char 	*const color = extract_element(line, i, ' ');
-	char 	*const mat_str = extract_element(line, i, ' ');
-	bool	err_check;
+	char *const	color = extract_element(line, i, ' ');
+	char *const	mat_str = extract_element(line, i, ' ');
+	bool		err_check;
 
 	if (!check_material_type(mat, mat_str))
 	{
@@ -71,7 +70,7 @@ bool	assign_material(t_material *mat, char *line, int *i)
 
 static bool	check_file_name(char *file)
 {
-	int i;
+	int	i;
 
 	i = ft_strlen(file);
 	if (file[i - 1] == 't' && file[i - 2] == 'r' && file[i - 3] == '.')
@@ -97,7 +96,7 @@ static bool	validate_and_open_file(
 bool	parse(char *file, t_world *world, t_camera *cam)
 {
 	t_object_counter	counter;
-	int 				fd;
+	int					fd;
 
 	fd = -1;
 	if (validate_and_open_file(file, &fd) == false)

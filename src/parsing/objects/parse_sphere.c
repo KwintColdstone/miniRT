@@ -6,7 +6,7 @@
 /*   By: avaliull <avaliull@student.codam.nl>              +#+                */
 /*                                                        +#+                 */
 /*   Created: 2026/02/26 17:36:32 by avaliull            #+#    #+#           */
-/*   Updated: 2026/02/26 17:37:40 by avaliull            ########   odam.nl   */
+/*   Updated: 2026/03/06 20:36:19 by avaliull            ########   odam.nl   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@
 bool	parse_sphere(t_world *world, char *line, int index)
 {
 	t_sphere *const	sp = &world->sp_list.spheres[index];
-	int 			i;
+	int				i;
 	char			*diameter;
-	char 			*pos;
+	char			*pos;
 
 	i = 0;
 	pos = extract_element(line, &i, ' ');
