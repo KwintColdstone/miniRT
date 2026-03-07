@@ -1,20 +1,32 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                            ::::::::        */
+/*   utils.c                                                 :+:    :+:       */
+/*                                                          +:+               */
+/*   By: avaliull <avaliull@student.codam.nl>              +#+                */
+/*                                                        +#+                 */
+/*   Created: 2026/03/07 19:04:02 by avaliull            #+#    #+#           */
+/*   Updated: 2026/03/07 19:04:54 by avaliull            ########   odam.nl   */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "miniRT.h"
 
-double degrees_to_radians(double degrees)
+double	degrees_to_radians(double degrees)
 {
-    return (degrees * M_PI / 180.0);
+	return (degrees * M_PI / 180.0);
 }
 
-double random_double(void)
+// Returns a random real in [0,1).
+double	random_double(void)
 {
-    // Returns a random real in [0,1).
-    return (rand() / (RAND_MAX + 1.0));
+	return (rand() / (RAND_MAX + 1.0));
 }
 
-double random_double_mm(double min, double max)
+// Returns a random real in [min,max).
+double	random_double_mm(double min, double max)
 {
-    // Returns a random real in [min,max).
-    return (min + (max-min)*random_double());
+	return (min + (max - min) * random_double());
 }
 
 double	clamp_interval(double x, t_interval i)

@@ -4,11 +4,11 @@ NAME	=	minirt
 
 CFILES	=	main.c\
 			error_and_exit.c\
+			$(INIT_CFILES)\
 			$(PARSE_CFILES)\
 			camera.c\
 			hit_cylinder.c\
 			hit_objects.c\
-			init.c\
 			material.c\
 			ray.c\
 			render.c\
@@ -18,6 +18,12 @@ CFILES	=	main.c\
 			display.c\
 			mlx_usage.c\
 			world_hit.c
+
+INIT_CFILES =	init_world.c\
+				init_sphere.c\
+				init_quad.c\
+				init_cylinder.c\
+				init_plane.c
 
 PARSE_CFILES =	parse.c\
 				count_objects.c\
@@ -44,7 +50,7 @@ INCDIR = inc/
 LIBDIR = lib/
 SRCDIRS =	$(SRCDIR) \
 			$(addprefix $(SRCDIR), parsing parsing/objects display \
-			error_and_exit)
+			error_and_exit init_objects)
 
 $(SRCDIR):
 	mkdir -p $@
