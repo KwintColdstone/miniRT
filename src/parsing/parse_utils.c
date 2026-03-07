@@ -5,9 +5,9 @@
 
 bool	is_float(char *s)
 {
-	int	i;
-	int	fractals;
-	int	minuses;
+	int		i;
+	int		fractals;
+	int		minuses;
 	bool	in_fractal;
 
 	i = 0;
@@ -62,11 +62,19 @@ char *extract_element(char *s, int *i, char delim)
 	while (s[*i] && ft_isspace(s[*i]))
 		*i += 1;
 	if (!s[*i])
-		return ft_strdup("");
+	{
+		element = ft_strdup("");
+		if (!element)
+			return (external_perror("malloc error on extracting element"),
+				NULL);
+		return (element);
+	}
 	start = *i;
 	while (s[*i] && !ft_isspace(s[*i]) && s[*i] != delim)
 		*i += 1;
 	element = ft_substr(s, start, *i - start);
+	if (!element)
+		return (external_perror("malloc error on extracting element"), NULL);
 	if (s[*i] && s[*i] == delim)
 		*i += 1;
 	return (element);

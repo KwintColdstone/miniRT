@@ -6,29 +6,36 @@
 /*   By: avaliull <avaliull@student.codam.nl>              +#+                */
 /*                                                        +#+                 */
 /*   Created: 2026/02/26 17:36:32 by avaliull            #+#    #+#           */
-/*   Updated: 2026/03/06 20:37:21 by avaliull            ########   odam.nl   */
+/*   Updated: 2026/03/07 16:34:25 by avaliull            ########   odam.nl   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdbool.h>
 #include "miniRT.h"
 
-bool	parse_plane(t_world *world, char *line, int index)
+static bool	parse_point(char *line, t_plane *const pl, int *i)
 {
-	int				i;
-	char			*point;
-	char			*normal;
-	t_plane *const	pl = &world->pl_list.planes[index];
+	char	*point;
 
-	i = 0;
-	point = extract_element(line, &i, ' ');
+	point = extract_element(line, i, ' ');
+	if (!point)
+		return (false);
 	if (!assign_vec3(&pl->point, point, -DBL_MAX, DBL_MAX))
 	{
 		free(point);
 		return (false);
 	}
 	free(point);
-	normal = extract_element(line, &i, ' ');
+	return (true);
+}
+
+static bool	parse_normal(char *line, t_plane *const pl, int *i)
+{
+	char	*normal;
+
+	normal = extract_element(line, i, ' ');
+	if (!normal)
+		return (false);
 	if (!assign_vec3(&pl->normal, normal, -1.0, 1.0))
 	{
 		free(normal);
@@ -36,7 +43,20 @@ bool	parse_plane(t_world *world, char *line, int index)
 	}
 	free(normal);
 	pl->normal = unit_vector(pl->normal);
+	return (true);
+}
+
+bool	parse_plane(t_world *world, char *line, int index)
+{
+	t_plane *const	pl = &world->pl_list.planes[index];
+	int				i;
+
+	i = 0;
+	if (!parse_point(line, pl, &i))
+		return (minirt_perror("Failed to parse plane point"), false);
+	if (!parse_normal(line, pl, &i))
+		return (minirt_perror("Failed to parse plane normal"), false);
 	if (!assign_material(&pl->mat, line, &i))
-		return (false);
+		return (minirt_perror("Failed to assign plane material"), false);
 	return (true);
 }

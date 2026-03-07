@@ -6,7 +6,7 @@
 /*   By: avaliull <avaliull@student.codam.nl>              +#+                */
 /*                                                        +#+                 */
 /*   Created: 2026/02/26 17:36:32 by avaliull            #+#    #+#           */
-/*   Updated: 2026/03/06 20:40:33 by avaliull            ########   odam.nl   */
+/*   Updated: 2026/03/07 16:38:10 by avaliull            ########   odam.nl   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,13 @@
 #include "libft.h"
 #include "miniRT.h"
 
-static bool	extract_pos(t_cylinder *const cyl, char *line, int *i)
+static bool	parse_pos(t_cylinder *const cyl, char *line, int *i)
 {
 	char	*pos;
 
 	pos = extract_element(line, i, ' ');
+	if (!pos)
+		return (external_perror("malloc fail in extract_pos"), false);
 	if (!assign_vec3(&cyl->center, pos, -DBL_MAX, DBL_MAX))
 	{
 		free(pos);
@@ -28,11 +30,13 @@ static bool	extract_pos(t_cylinder *const cyl, char *line, int *i)
 	return (true);
 }
 
-static bool	extract_axis(t_cylinder *const cyl, char *line, int *i)
+static bool	parse_axis(t_cylinder *const cyl, char *line, int *i)
 {
 	char	*axis;
 
 	axis = extract_element(line, i, ' ');
+	if (!axis)
+		return (external_perror("malloc fail in extract_axis"), false);
 	if (!assign_vec3(&cyl->axis, axis, -1.0, 1.0))
 	{
 		free(axis);
@@ -43,11 +47,13 @@ static bool	extract_axis(t_cylinder *const cyl, char *line, int *i)
 	return (true);
 }
 
-static bool	extract_diameter(t_cylinder *const cyl, char *line, int *i)
+static bool	parse_diameter(t_cylinder *const cyl, char *line, int *i)
 {
 	char	*diameter;
 
 	diameter = extract_element(line, i, ' ');
+	if (!diameter)
+		return (external_perror("malloc fail in extract_diameter"), false);
 	if (!is_float(diameter))
 	{
 		free(diameter);
@@ -60,11 +66,13 @@ static bool	extract_diameter(t_cylinder *const cyl, char *line, int *i)
 	return (true);
 }
 
-static bool	extract_height(t_cylinder *const cyl, char *line, int *i)
+static bool	parse_height(t_cylinder *const cyl, char *line, int *i)
 {
 	char	*height;
 
 	height = extract_element(line, i, ' ');
+	if (!height)
+		return (external_perror("malloc fail in extract_height"), false);
 	if (!assign_float(&cyl->height, height, 0.0, INT_MAX))
 	{
 		free(height);
@@ -80,10 +88,14 @@ bool	parse_cylinder(t_world *world, char *line, int index)
 	int					i;
 
 	i = 0;
-	extract_pos(cyl, line, &i);
-	extract_axis(cyl, line, &i);
-	extract_diameter(cyl, line, &i);
-	extract_height(cyl, line, &i);
+	if (!parse_pos(cyl, line, &i))
+		return (minirt_perror("Failed to parse position of cylinder"), false);
+	if (!parse_axis(cyl, line, &i))
+		return (minirt_perror("Failed to parse axis of cylinder"), false);
+	if (!parse_diameter(cyl, line, &i))
+		return (minirt_perror("Failed to parse diameter of cylinder"), false);
+	if (!parse_height(cyl, line, &i))
+		return (minirt_perror("Failed to parse height of cylinder"), false);
 	if (!assign_material(&cyl->mat, line, &i))
 		return (minirt_perror("Failed to assign material to cylinder"), false);
 	return (true);

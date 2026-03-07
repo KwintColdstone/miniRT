@@ -6,7 +6,7 @@
 /*   By: avaliull <avaliull@student.codam.nl>              +#+                */
 /*                                                        +#+                 */
 /*   Created: 2026/02/24 17:40:02 by avaliull            #+#    #+#           */
-/*   Updated: 2026/03/06 19:06:04 by avaliull            ########   odam.nl   */
+/*   Updated: 2026/03/07 15:58:16 by avaliull            ########   odam.nl   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,12 +75,13 @@ static bool	check_objects_in_line(
 			object_check = check_two_letter_object(counts, line, i);
 		if (object_check == -1 || object_check == 1)
 		{
+			printf("Error\nDescription: ");
 			printf("parsing failed at line %d: not an element\n", i);
 			return (false);
 		}
 		if (counts->ambient > 1 || counts->light > 1 || counts->light > 1)
 		{
-			ft_putstr_fd("parsing failed: more than one capitalized element", STDERR_FILENO);
+			minirt_perror("parsing failed: more than one capitalized element");
 			return (false);
 		}
 	}

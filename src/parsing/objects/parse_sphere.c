@@ -6,7 +6,7 @@
 /*   By: avaliull <avaliull@student.codam.nl>              +#+                */
 /*                                                        +#+                 */
 /*   Created: 2026/02/26 17:36:32 by avaliull            #+#    #+#           */
-/*   Updated: 2026/03/06 20:36:19 by avaliull            ########   odam.nl   */
+/*   Updated: 2026/03/07 16:29:15 by avaliull            ########   odam.nl   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,29 @@
 #include "libft.h"
 #include "miniRT.h"
 
-bool	parse_sphere(t_world *world, char *line, int index)
+static bool	parse_pos(char *line, t_sphere *const sp, int *i)
 {
-	t_sphere *const	sp = &world->sp_list.spheres[index];
-	int				i;
-	char			*diameter;
-	char			*pos;
+	char	*pos;
 
-	i = 0;
-	pos = extract_element(line, &i, ' ');
+	pos = extract_element(line, i, ' ');
+	if (!pos)
+		return (false);
 	if (!assign_vec3(&sp->center, pos, -DBL_MAX, DBL_MAX))
 	{
 		free(pos);
 		return (false);
 	}
 	free(pos);
-	diameter = extract_element(line, &i, ' ');
+	return (true);
+}
+
+static bool	parse_diameter(char *line, t_sphere *const sp, int *i)
+{
+	char	*diameter;
+
+	diameter = extract_element(line, i, ' ');
+	if (!diameter)
+		return (false);
 	if (!is_float(diameter))
 	{
 		free(diameter);
@@ -37,8 +44,21 @@ bool	parse_sphere(t_world *world, char *line, int index)
 	}
 	sp->radius = ft_atof(diameter) / 2;
 	free(diameter);
+	return (true);
+}
+
+bool	parse_sphere(t_world *world, char *line, int index)
+{
+	t_sphere *const	sp = &world->sp_list.spheres[index];
+	int				i;
+
+	i = 0;
+	if (!parse_pos(line, sp, &i))
+		return (minirt_perror("Failed to parse position of sphere"), false);
+	if (!parse_diameter(line, sp, &i))
+		return (minirt_perror("Failed to parse diameter of sphere"), false);
 	if (sp->radius < 0 || sp->radius > INT_MAX
 		|| !assign_material(&sp->mat, line, &i))
-		return (false);
+		return (minirt_perror("Failed to assign material of sphere"), false);
 	return (true);
 }
