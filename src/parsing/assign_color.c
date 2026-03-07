@@ -6,7 +6,7 @@
 /*   By: avaliull <avaliull@student.codam.nl>              +#+                */
 /*                                                        +#+                 */
 /*   Created: 2026/03/07 17:04:50 by avaliull            #+#    #+#           */
-/*   Updated: 2026/03/07 17:24:36 by avaliull            ########   odam.nl   */
+/*   Updated: 2026/03/07 17:27:59 by avaliull            ########   odam.nl   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static void	free_color_strings(char *r, char *g, char *b)
 
 static t_vec3	color_to_vec3(double r, double g, double b)
 {
-	return (t_vec3){r / 255.0, g / 255.0, b / 255.0};
+	return ((t_vec3){r / 255.0, g / 255.0, b / 255.0});
 }
 
 static bool	string_rgb_to_vec3(t_vec3 *v, double strength, char *color_str[3])
@@ -39,7 +39,7 @@ static bool	string_rgb_to_vec3(t_vec3 *v, double strength, char *color_str[3])
 	free_color_strings(color_str[0], color_str[1], color_str[2]);
 	if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255)
 		return (false);
-	*v = color_to_vec3(r*strength, g*strength, b*strength);
+	*v = color_to_vec3(r * strength, g * strength, b * strength);
 	return (true);
 }
 
@@ -62,7 +62,7 @@ bool	assign_color(t_vec3 *v, char *s, double strength)
 		return (free_color_strings(r_str, g_str, b_str), false);
 	if (!is_float(r_str) || !is_float(g_str) || !is_float(b_str))
 		return (free_color_strings(r_str, g_str, b_str), false);
-	if (!string_rgb_to_vec3(v, strength, (char *[3]) {r_str, g_str, b_str}))
+	if (!string_rgb_to_vec3(v, strength, (char *[3]){r_str, g_str, b_str}))
 		return (false);
 	return (true);
 }
