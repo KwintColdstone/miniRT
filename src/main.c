@@ -1,30 +1,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdio.h>
-#include <errno.h>
-#include "libft.h"
 #include "miniRT.h"
 #include "display.h"
-
-// Function to report an error related to minirt-specific functions
-void	minirt_perror(char *err_msg)
-{
-	ft_putstr_fd("Error\n", STDERR_FILENO);
-	ft_putstr_fd("Description: ", STDERR_FILENO);
-	ft_putstr_fd(err_msg, STDERR_FILENO);
-	ft_putchar_fd('\n', STDERR_FILENO);
-}
-
-// Function to report an error related to library functions that set errno
-void	external_perror(char *err_msg)
-{
-	ft_putstr_fd("Error\n", STDERR_FILENO);
-	ft_putstr_fd("Description: ", STDERR_FILENO);
-	ft_putstr_fd(err_msg, STDERR_FILENO);
-	ft_putstr_fd(": ", STDERR_FILENO);
-	ft_putstr_fd(strerror(errno), STDERR_FILENO);
-	ft_putchar_fd('\n', STDERR_FILENO);
-}
 
 // Calculate the image height, and ensure that it's at least 1.
 int calculate_img_height(float aspect_ratio, int image_width)

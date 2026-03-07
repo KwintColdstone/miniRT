@@ -3,6 +3,7 @@
 NAME	=	minirt
 
 CFILES	=	main.c\
+			error_and_exit.c\
 			$(PARSE_CFILES)\
 			camera.c\
 			hit_cylinder.c\
@@ -39,7 +40,8 @@ SRCDIR = src/
 INCDIR = inc/
 LIBDIR = lib/
 SRCDIRS =	$(SRCDIR) \
-			$(addprefix $(SRCDIR), parsing parsing/objects display)
+			$(addprefix $(SRCDIR), parsing parsing/objects display \
+			error_and_exit)
 
 $(SRCDIR):
 	mkdir -p $@

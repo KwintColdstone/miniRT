@@ -6,36 +6,13 @@
 /*   By: avaliull <avaliull@student.codam.nl>              +#+                */
 /*                                                        +#+                 */
 /*   Created: 2026/02/17 16:06:13 by avaliull            #+#    #+#           */
-/*   Updated: 2026/03/06 20:24:12 by avaliull            ########   odam.nl   */
+/*   Updated: 2026/03/07 15:47:08 by avaliull            ########   odam.nl   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "MLX42/MLX42.h"
 #include "miniRT.h"
 #include "display.h"
-
-void	window_close(void *param)
-{
-	t_exit_data *const	exit_data = param;
-	int					i;
-
-	if (exit_data->window)
-		mlx_terminate(exit_data->window);
-	if (exit_data->world)
-		world_destroy(exit_data->world);
-	if (exit_data->colors)
-	{
-		i = -1;
-		while (exit_data->colors[++i])
-			free(exit_data->colors[i]);
-		free(exit_data->colors);
-	}
-	exit_data->window = NULL;
-	exit_data->world = NULL;
-	exit_data->colors = NULL;
-	dprintf(STDERR_FILENO, "\nDEBUG: exit hook caled\n");
-	exit (exit_data->exit_code);
-}
 
 static int	display_world(
 	mlx_t *window,
