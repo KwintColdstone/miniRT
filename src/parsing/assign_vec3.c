@@ -6,42 +6,64 @@
 /*   By: avaliull <avaliull@student.codam.nl>              +#+                */
 /*                                                        +#+                 */
 /*   Created: 2026/03/07 17:29:15 by avaliull            #+#    #+#           */
-/*   Updated: 2026/03/07 17:29:27 by avaliull            ########   odam.nl   */
+/*   Updated: 2026/03/07 18:11:06 by avaliull            ########   odam.nl   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "miniRT.h"
 
-bool	assign_vec3(t_vec3 *v, char *s, double min, double max)
+static void	free_xyz_strings(char *r, char *g, char *b)
 {
-	int i = 0;
-	char *x_str = extract_element(s, &i, ',');
-	char *y_str = extract_element(s, &i, ',');
-	char *z_str = extract_element(s, &i, ' ');
-	if (!is_float(x_str) || !is_float(y_str) || !is_float(z_str))
-	{
-		printf("vec3 float test failed\n");
-		free(x_str);
-		free(y_str);
-		free(z_str);
-		return (false);
-	}
-	double x;
-	double y;
-	double z;
-	x = ft_atof(x_str);
-	y = ft_atof(y_str);
-	z = ft_atof(z_str);
-	free(x_str);
-	free(y_str);
-	free(z_str);
+	if (r)
+		free(r);
+	if (g)
+		free(g);
+	if (b)
+		free(b);
+}
+
+static bool	assign_vector_values(t_vec3 *v, double min, double max,
+	char *vec3[3])
+{
+	double	x;
+	double	y;
+	double	z;
+
+	x = ft_atof(vec3[0]);
+	y = ft_atof(vec3[1]);
+	z = ft_atof(vec3[2]);
+	free_xyz_strings(vec3[0], vec3[1], vec3[2]);
 	if (x < min || x > max || y < min || y > max || z < min || z > max)
-	{
-		printf("vec3 outside range\n");
-		return (false);
-	}
+		return (minirt_perror("vec3 values outside of range"), false);
 	v->x = x;
 	v->y = y;
 	v->z = z;
+	return (true);
+}
+
+bool	assign_vec3(t_vec3 *v, char *s, double min, double max)
+{
+	int		i;
+	char	*x_str;
+	char	*y_str;
+	char	*z_str;
+
+	i = 0;
+	x_str = extract_element(s, &i, ',');
+	if (!x_str)
+		return (free_xyz_strings(x_str, NULL, NULL), false);
+	y_str = extract_element(s, &i, ',');
+	if (!y_str)
+		return (free_xyz_strings(x_str, y_str, NULL), false);
+	z_str = extract_element(s, &i, ' ');
+	if (!z_str)
+		return (free_xyz_strings(x_str, y_str, z_str), false);
+	if (!is_float(x_str) || !is_float(y_str) || !is_float(z_str))
+	{
+		free_xyz_strings(x_str, y_str, z_str);
+		return (minirt_perror("vec3 values are not floats"), false);
+	}
+	if (!assign_vector_values(v, min, max, (char *[3]){x_str, y_str, z_str}))
+		return (false);
 	return (true);
 }

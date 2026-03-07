@@ -6,7 +6,7 @@
 /*   By: avaliull <avaliull@student.codam.nl>              +#+                */
 /*                                                        +#+                 */
 /*   Created: 2026/03/07 17:04:50 by avaliull            #+#    #+#           */
-/*   Updated: 2026/03/07 17:27:59 by avaliull            ########   odam.nl   */
+/*   Updated: 2026/03/07 18:05:53 by avaliull            ########   odam.nl   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static bool	string_rgb_to_vec3(t_vec3 *v, double strength, char *color_str[3])
 	b = ft_atof(color_str[2]);
 	free_color_strings(color_str[0], color_str[1], color_str[2]);
 	if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255)
-		return (false);
+		return (minirt_perror("color values outside of RGB range"), false);
 	*v = color_to_vec3(r * strength, g * strength, b * strength);
 	return (true);
 }
