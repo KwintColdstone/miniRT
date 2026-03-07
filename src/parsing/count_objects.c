@@ -6,7 +6,7 @@
 /*   By: avaliull <avaliull@student.codam.nl>              +#+                */
 /*                                                        +#+                 */
 /*   Created: 2026/02/24 17:40:02 by avaliull            #+#    #+#           */
-/*   Updated: 2026/03/07 15:58:16 by avaliull            ########   odam.nl   */
+/*   Updated: 2026/03/07 16:42:50 by avaliull            ########   odam.nl   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,13 +44,13 @@ static int	check_two_letter_object(
 {
 	if (!ft_isspace(line[i + 2]) || line[i] < 'a' || line[i] > 'z')
 		return (-1);
-	if (line[i] == 's' && line[i+1] == 'p')
+	if (line[i] == 's' && line[i + 1] == 'p')
 		counts->sphere_cap++;
-	else if (line[i] == 'p' && line[i+1] == 'l')
+	else if (line[i] == 'p' && line[i + 1] == 'l')
 		counts->plane_cap++;
-	else if (line[i] == 'c' && line[i+1] == 'y')
+	else if (line[i] == 'c' && line[i + 1] == 'y')
 		counts->cylinder_cap++;
-	else if (line[i] == 'q' && line[i+1] == 'u')
+	else if (line[i] == 'q' && line[i + 1] == 'u')
 		counts->quad_cap++;
 	else
 		return (1);

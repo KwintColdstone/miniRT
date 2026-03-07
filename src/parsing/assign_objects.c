@@ -6,7 +6,7 @@
 /*   By: avaliull <avaliull@student.codam.nl>              +#+                */
 /*                                                        +#+                 */
 /*   Created: 2026/02/24 18:54:03 by avaliull            #+#    #+#           */
-/*   Updated: 2026/03/06 19:08:16 by avaliull            ########   odam.nl   */
+/*   Updated: 2026/03/07 16:41:49 by avaliull            ########   odam.nl   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,8 +99,8 @@ static bool	check_and_assign_objects_from_line(
 
 bool	assign_objects(int fd, t_world *world, t_camera *cam)
 {
-	char 	*line;
-	int 	i;
+	char	*line;
+	int		i;
 	int		line_count;
 
 	line_count = 1;
@@ -112,7 +112,7 @@ bool	assign_objects(int fd, t_world *world, t_camera *cam)
 			i++;
 		if (check_and_assign_objects_from_line(world, cam, line, &i) == false)
 		{
-			printf("parsing failure at line: %d\n", line_count);
+			printf("Error\nParsing failure at line: %d\n", line_count);
 			printf("incorrect values for element\n");
 			close(fd);
 			free(line);

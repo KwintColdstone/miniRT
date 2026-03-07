@@ -6,7 +6,7 @@
 /*   By: avaliull <avaliull@student.codam.nl>              +#+                */
 /*                                                        +#+                 */
 /*   Created: 2026/02/24 18:39:20 by avaliull            #+#    #+#           */
-/*   Updated: 2026/03/06 20:41:40 by avaliull            ########   odam.nl   */
+/*   Updated: 2026/03/07 16:53:58 by avaliull            ########   odam.nl   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,56 +17,6 @@
 #include <iso646.h>
 #include <limits.h>
 #include <unistd.h>
-
-static bool	check_material_type(t_material *mat, char *mat_str)
-{
-	t_material	base;
-	t_material	metal;
-	t_material	emit;
-
-	if (!mat_str || mat_str[0] == '\0')
-	{
-		base = (t_material){MAT_LAMBERTIAN,
-			(t_vec3){0, 0, 0}, (t_vec3){0, 0, 0}, 0};
-		*mat = base;
-		return (true);
-	}
-	if (ft_strcmp(mat_str, "METAL") == 0)
-	{
-		metal = (t_material){MAT_METAL,
-			(t_vec3){0, 0, 0}, (t_vec3){0, 0, 0}, 0};
-		*mat = metal;
-	}
-	else if (ft_strcmp(mat_str, "EMIT") == 0)
-	{
-		emit = (t_material){MAT_EMIT, (t_vec3){0, 0, 0}, (t_vec3){0, 0, 0}, 0};
-		*mat = emit;
-	}
-	else
-		return (minirt_perror("Unknown material type"), false);
-	return (true);
-}
-
-bool	assign_material(t_material *mat, char *line, int *i)
-{
-	char *const	color = extract_element(line, i, ' ');
-	char *const	mat_str = extract_element(line, i, ' ');
-	bool		err_check;
-
-	if (!check_material_type(mat, mat_str))
-	{
-		free(color);
-		free(mat_str);
-		return (false);
-	}
-	if (mat->type == MAT_EMIT)
-		err_check = assign_color(&mat->emit_color, color, 1);
-	else
-		err_check = assign_color(&mat->albedo, color, 1);
-	free(color);
-	free(mat_str);
-	return (err_check);
-}
 
 static bool	check_file_name(char *file)
 {
