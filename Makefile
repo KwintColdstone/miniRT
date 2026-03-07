@@ -23,6 +23,7 @@ PARSE_CFILES =	parse.c\
 				count_objects.c\
 				assign_objects.c\
 				assign_material.c\
+				assign_color.c\
 				parse_ambient.c\
 				parse_camera.c\
 				parse_light.c\

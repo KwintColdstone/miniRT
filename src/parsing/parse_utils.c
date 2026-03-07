@@ -134,36 +134,3 @@ bool	assign_vec3(t_vec3 *v, char *s, double min, double max)
 	v->z = z;
 	return (true);
 }
-
-static t_vec3	color_to_vec3(double r, double g, double b)
-{
-	return (t_vec3){r / 255.0, g / 255.0, b / 255.0};
-}
-
-bool	assign_color(t_vec3 *v, char *s, double strength)
-{
-	int i = 0;
-	char *r_str = extract_element(s, &i, ',');
-	char *g_str = extract_element(s, &i, ',');
-	char *b_str = extract_element(s, &i, ' ');
-	if (!is_float(r_str) || !is_float(g_str) || !is_float(b_str))
-	{
-		free(r_str);
-		free(g_str);
-		free(b_str);
-		return (false);
-	}
-	double r;
-	double g;
-	double b;
-	r = ft_atof(r_str);
-	g = ft_atof(g_str);
-	b = ft_atof(b_str);
-	free(r_str);
-	free(g_str);
-	free(b_str);
-	if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255)
-		return (false);
-	*v = color_to_vec3(r*strength, g*strength, b*strength);
-	return (true);
-}
