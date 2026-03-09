@@ -8,16 +8,22 @@ CFILES	=	main.c\
 			$(PARSE_CFILES)\
 			camera.c\
 			hit_cylinder.c\
+			hit_cylinder_helpers.c\
 			hit_objects.c\
+			hit_objects_helpers.c\
 			material.c\
 			ray.c\
 			render.c\
 			transform.c\
 			utils.c\
-			vec3.c\
+			vec3_1.c\
+			vec3_2.c\
+			vec3_3.c\
+			vec3_4.c\
 			display.c\
 			mlx_usage.c\
-			world_hit.c
+			world_hit.c\
+			world_hit2.c
 
 INIT_CFILES =	init_world.c\
 				init_sphere.c\

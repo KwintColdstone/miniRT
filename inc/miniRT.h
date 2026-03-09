@@ -203,14 +203,25 @@ t_vec3	ray_at(const t_ray *ray, double t);
 bool	sphere_hit(const t_sphere *s, const t_ray *r, t_interval ray_t, t_hit_record *rec);
 bool	quad_hit(const t_quad *p, const t_ray *r, t_interval ray_t, t_hit_record *rec);
 bool	plane_hit(const t_plane *p, const t_ray *r, t_interval ray_t, t_hit_record *rec);
+// hit_objects_helpers.c
 void	set_face_normal(const t_ray *r, const t_vec3 *outward_normal, t_hit_record *rec);
+void	fill_sphere_hit_record(t_hit_record *rec,
+			const t_sphere *s, const t_ray *r, double root);
+bool	calculate_sphere_root(const t_sphere *s,
+			const t_ray *r, t_interval ray_t, double *root);
 
 // hit_cylinder.c
 bool	cylinder_hit(const t_cylinder *cl, const t_ray *r, t_interval ray_t, t_hit_record *rec);
+// hit_cylinder_helpers.c
+static t_vec3	calc_world_normal(t_uvw *c,
+		t_cyl_t t, t_vec3 *hit_local);
 
 // world_hit.c
 bool	world_hit(const t_world* world, const t_ray* r,
 	t_interval ray_t, t_hit_record* rec);
+// world_hit2.c
+bool	is_plane_hit(const t_world *world, const t_ray *r,
+	t_interval new_ray_t, t_hit_record *rec);
 
 // transform.c
 void create_orthonormal_basis(const t_vec3 *axis, t_uvw *c);
@@ -242,7 +253,7 @@ void	world_destroy(t_world *world);
 void	camera_init(t_camera *cam);
 
 // material.c
-bool lambertian_scatter(const t_ray *r_in, const t_hit_record *rec, t_vec3 *attenuation, t_ray *scattered);
+bool lambertian_scatter(const t_hit_record *rec, t_vec3 *attenuation, t_ray *scattered);
 bool metal_scatter(const t_ray *r_in, const t_hit_record *rec, t_vec3 *attenuation, t_ray *scattered);
 
 /*

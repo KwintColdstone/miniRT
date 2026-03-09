@@ -6,7 +6,7 @@
 /*   By: kjongeri <kjongeri@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 16:07:11 by kjongeri          #+#    #+#             */
-/*   Updated: 2026/03/05 21:58:44 by kjongeri         ###   ########.fr       */
+/*   Updated: 2026/03/09 17:18:06 by kjongeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,30 +74,6 @@ static bool	check_cylinder_side(const t_cylinder *cl, const t_ray *r,
 	return (true);
 }
 
-// Determine which part of the cylinder was hit
-// Side hit: normal points radially outward
-// Bottom cap hit: normal points down
-// Top cap hit: normal points up
-static t_vec3	get_cylinder_normal_local(const t_vec3 *hit_local, double hit_t,
-										double t_side, double t_bottom)
-{
-	t_vec3	normal;
-
-	if (fabs(hit_t - t_side) < 1e-8)
-	{
-		normal = (t_vec3){hit_local->x, 0, hit_local->z};
-		return (unit_vector(normal));
-	}
-	else if (fabs(hit_t - t_bottom) < 1e-8)
-	{
-		return ((t_vec3){0, -1, 0});
-	}
-	else
-	{
-		return ((t_vec3){0, 1, 0});
-	}
-}
-
 // Check for intersections in local space
 // Check bottom cap (y = 0 in local space)
 // Check top cap (y = height in local space)
@@ -122,18 +98,6 @@ static bool	find_closest_intersection(const t_cylinder *cl,
 	if (t->min == INFINITY)
 		return (false);
 	return (true);
-}
-
-static t_vec3	calc_world_normal(t_uvw *c,
-		t_cyl_t t, t_vec3 *hit_local)
-{
-	t_vec3	normal_local;
-	t_vec3	normal_world;
-
-	normal_local = get_cylinder_normal_local(hit_local, t.min,
-			t.side, t.bottom);
-	normal_world = object_to_world_direction(&normal_local, c);
-	return (normal_world);
 }
 
 // Transform ray to cylinder's local coordinate system
