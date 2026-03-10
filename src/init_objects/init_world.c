@@ -6,7 +6,7 @@
 /*   By: avaliull <avaliull@student.codam.nl>              +#+                */
 /*                                                        +#+                 */
 /*   Created: 2026/03/07 19:07:21 by avaliull            #+#    #+#           */
-/*   Updated: 2026/03/07 19:07:32 by avaliull            ########   odam.nl   */
+/*   Updated: 2026/03/10 20:21:32 by avaliull            ########   odam.nl   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 
 bool	world_init(t_world *world, t_object_counter *c)
 {
-	ft_memset(world, 0, sizeof(t_world));
 	if (c->sphere_cap)
 	{
 		if (!sphere_list_init(&world->sp_list, c->sphere_cap))

@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/miniRT.h"
+#include "miniRT.h"
 
 //random scatter
 //direction = random_on_hemisphere(&rec.normal);

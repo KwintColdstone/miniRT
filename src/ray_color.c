@@ -6,12 +6,13 @@
 /*   By: avaliull <avaliull@student.codam.nl>              +#+                */
 /*                                                        +#+                 */
 /*   Created: 2026/03/10 18:33:40 by avaliull            #+#    #+#           */
-/*   Updated: 2026/03/10 18:39:02 by avaliull            ########   odam.nl   */
+/*   Updated: 2026/03/10 20:18:43 by avaliull            ########   odam.nl   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "miniRT.h"
 #include "display.h"
+#include "bonus.h"
 
 //A unit vector is a vector with length/magnitude of exactly 1
 //we use it in formulas where you only need the direction not how far in
@@ -75,7 +76,7 @@ t_vec3	ray_color(
 	if (depth <= 0)
 		return ((t_vec3){0, 0, 0});
 	color = get_direct_color(r, world, &rec);
-	if (INDIRECT_LIGHTING == true)
+	if (world->indirect_lighting == true)
 	{
 		if (rec.mat.type == MAT_LAMBERTIAN)
 		{

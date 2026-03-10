@@ -11,9 +11,6 @@
 #include <float.h>
 #include "MLX42/MLX42.h"
 
-#define INDIRECT_LIGHTING true
-#define WRITE_TO_FILE true
-
 typedef struct s_vec3
 {
 	double x;
@@ -123,12 +120,14 @@ typedef struct s_cylinder_list
 
 
 typedef struct s_world {
-	t_sphere_list sp_list;
-	t_quad_list qu_list;
-	t_plane_list pl_list;
-	t_cylinder_list cy_list;
-	t_light	light;
-	t_vec3	ambient;
+	t_sphere_list	sp_list;
+	t_quad_list		qu_list;
+	t_plane_list	pl_list;
+	t_cylinder_list	cy_list;
+	t_light			light;
+	t_vec3			ambient;
+	bool			write_to_file;
+	bool			indirect_lighting;
 }	t_world;
 
 typedef struct s_hit_record {
@@ -254,10 +253,6 @@ void	world_destroy(t_world *world);
 
 // camera.c
 void	camera_init(t_camera *cam);
-
-// material.c
-bool lambertian_scatter(const t_hit_record *rec, t_vec3 *attenuation, t_ray *scattered);
-bool metal_scatter(const t_ray *r_in, const t_hit_record *rec, t_vec3 *attenuation, t_ray *scattered);
 
 /*
 * Parsing

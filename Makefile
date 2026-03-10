@@ -4,6 +4,7 @@ NAME	=	minirt
 
 CFILES	=	main.c\
 			error_and_exit.c\
+			$(BONUS_CFILES)\
 			$(INIT_CFILES)\
 			$(PARSE_CFILES)\
 			camera.c\
@@ -11,7 +12,6 @@ CFILES	=	main.c\
 			hit_cylinder_helpers.c\
 			hit_objects.c\
 			hit_objects_helpers.c\
-			material.c\
 			ray.c\
 			render.c\
 			ray_color.c\
@@ -49,6 +49,10 @@ PARSE_CFILES =	parse.c\
 				parse_quad.c\
 				parse_utils.c
 
+BONUS_CFILES =	ppm_file.c\
+				bonus_parsing.c\
+				material.c
+
 OFILES	= $(addprefix $(BUILDDIR),$(CFILES:.c=.o))
 DEPFILES	= $(addprefix $(BUILDDIR),$(CFILES:.c=.d))
 
@@ -59,7 +63,7 @@ INCDIR = inc/
 LIBDIR = lib/
 SRCDIRS =	$(SRCDIR) \
 			$(addprefix $(SRCDIR), parsing parsing/objects display \
-			error_and_exit init_objects)
+			error_and_exit init_objects bonus)
 
 $(SRCDIR):
 	mkdir -p $@
@@ -97,7 +101,7 @@ INCFLAGS	= $(addprefix -I,$(INCLUDE))
 #CFLAGS	=
 CFLAGS	= -Wall -Wextra -Werror
 #CFLAGS	= -Wall -Wextra -Werror -fsanitize=undefined
-INPUT	= rt_files/cyl.rt
+INPUT	= rt_files/cyl.rt --ppm --il
 
 
 -include $(OFILES:.o=.d)
