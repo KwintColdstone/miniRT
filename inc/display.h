@@ -6,7 +6,7 @@
 /*   By: avaliull <avaliull@student.codam.nl>              +#+                */
 /*                                                        +#+                 */
 /*   Created: 2026/02/17 16:09:30 by avaliull            #+#    #+#           */
-/*   Updated: 2026/03/10 18:34:16 by avaliull            ########   odam.nl   */
+/*   Updated: 2026/03/10 18:42:39 by avaliull            ########   odam.nl   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,8 @@ t_vec3 ray_color(
 );
 // dierct_lighting.c
 t_vec3	direct_lighting(const t_world *world, t_hit_record *rec);
+// get_ray.c
+t_ray	get_ray(int i, int j, t_camera *cam);
 
 // mlx_usage.c
 void	minirt_key_hook(mlx_key_data_t keydata, void* param);

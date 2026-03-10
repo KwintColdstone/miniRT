@@ -15,6 +15,7 @@ CFILES	=	main.c\
 			ray.c\
 			render.c\
 			ray_color.c\
+			get_ray.c\
 			direct_lighting.c\
 			transform.c\
 			utils.c\

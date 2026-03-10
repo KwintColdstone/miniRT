@@ -30,31 +30,6 @@ static void	write_color(t_vec3 *pixel_color)
 	//write(file, pixel, len);
 }
 
-// Returns the vector to a random point in the [-.5,-.5]-[+.5,+.5] unit square.
-static t_vec3	sample_square(void)
-{
-	t_vec3	sample;
-
-	sample = (t_vec3){random_double() - 0.5, random_double() - 0.5, 0};
-	return (sample);
-}
-
-// Construct a camera ray originating from the origin and directed at randomly sampled
-// point around the pixel location i, j.
-t_ray	get_ray(int i, int j, t_camera *cam)
-{
-	t_vec3	offset;
-
-	offset = sample_square();
-	t_vec3	pixel_column = multiply_by_scalar(cam->pixel_delta_u, ((double)j + offset.x));
-	t_vec3	pixel_row = multiply_by_scalar(cam->pixel_delta_v, ((double)i + offset.y));
-	t_vec3	cur_pixel = add_vec3(pixel_row, pixel_column);
-	t_vec3	cur_pixel_sample = add_vec3(cam->pixel00_loc, cur_pixel);
-	t_vec3	ray_direction = subtract_vec3(cur_pixel_sample, cam->camera_center);
-	t_ray	ray = {cam->camera_center, ray_direction};
-	return (ray);
-}
-
 //static bool	create_ppm_file()
 //{
 //	//open file to write image to
