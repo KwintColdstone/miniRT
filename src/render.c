@@ -23,11 +23,11 @@ t_vec3 sky(const t_ray *r)
 
 bool is_in_shadow(const t_world *world, const t_vec3 *point, const t_light *light)
 {
-	t_ray       shadow_ray;
-	t_hit_record shadow_rec;
-	t_interval  shadow_t;
-	t_vec3      light_dir;
-	double      light_distance;
+	t_ray			shadow_ray;
+	t_hit_record	shadow_rec;
+	t_interval		shadow_t;
+	t_vec3			light_dir;
+	double			light_distance;
 
 	// Calculate direction and distance to light
 	light_dir = subtract_vec3(light->position, *point);
@@ -51,11 +51,11 @@ bool is_in_shadow(const t_world *world, const t_vec3 *point, const t_light *ligh
 
 t_vec3 direct_lighting(const t_world *world, t_hit_record *rec)
 {
-	t_vec3 direct = {0, 0, 0};
-	t_vec3 ambient;
-	t_vec3 light_dir;
-	t_vec3 diffuse;
-	double diff;
+	t_vec3	direct;// = {0, 0, 0};
+	t_vec3	ambient;
+	t_vec3	light_dir;
+	t_vec3	diffuse;
+	double	diff;
 
 	ambient = multiply_vec3(world->ambient, rec->mat.albedo);
 	direct = ambient;
@@ -82,14 +82,14 @@ t_vec3 direct_lighting(const t_world *world, t_hit_record *rec)
 }
 
 static t_vec3 ray_color(const t_ray *r, const t_world *world, t_vec3 background, int depth)
-{
+{// separate path tracing and direct lighting options?
 	t_hit_record	rec;
-	t_interval	ray_t;
-	t_ray		scattered;
-	t_vec3		attenuation;
-	t_vec3		direct;
-	t_vec3		color;
-	bool		did_scatter; (void) did_scatter; //unused!
+	t_interval		ray_t;
+	t_ray			scattered;
+	t_vec3			attenuation;
+	t_vec3			direct;
+	t_vec3			color;
+	bool			did_scatter; (void) did_scatter; //unused!
 
 	if (depth <= 0)
 		return ((t_vec3){0,0,0});
@@ -107,10 +107,13 @@ static t_vec3 ray_color(const t_ray *r, const t_world *world, t_vec3 background,
 	direct = direct_lighting(world, &rec);
 	color = add_vec3(color, direct);
 
+	//(void) scattered;
+	//(void) attenuation;
+	//(void) background;
 	// indirect lightning (path tracing)
 	if (rec.mat.type == MAT_LAMBERTIAN)
 	{
-		if (lambertian_scatter(r, &rec, &attenuation, &scattered))
+		if (lambertian_scatter(&rec, &attenuation, &scattered))
 		{
 			t_vec3 indirect = ray_color(&scattered, world, background, depth - 1);
 			color = add_vec3(color, multiply_vec3(attenuation, indirect));
@@ -125,72 +128,63 @@ static t_vec3 ray_color(const t_ray *r, const t_world *world, t_vec3 background,
 		}
 	}
 	return (color);
-
 }
 
 static double linear_to_gamma(double linear_component)
 {
 	if (linear_component > 0)
-		return sqrt(linear_component);
-	return 0;
+		return (sqrt(linear_component));
+	return (0);
 }
 
-// commented for now
 static void	write_color(t_vec3 *pixel_color)
 {
-	t_interval	intensity;
+	const t_interval	intensity = (t_interval){0.000, 0.999};
+	double				r;
+	double				g;
+	double				b;
 
-	double r = pixel_color->x;
-	double g = pixel_color->y; 
-	double b = pixel_color->z;
-	r = linear_to_gamma(r);
-	g = linear_to_gamma(g);
-	b = linear_to_gamma(b);
-	intensity = (t_interval){0.000, 0.999};
-	int rbyte = (int)(256 * clamp_interval(r, intensity));
-	int gbyte = (int)(256 * clamp_interval(g, intensity));
-	int bbyte = (int)(256 * clamp_interval(b, intensity));
-
-	pixel_color->x = rbyte;
-	pixel_color->y = gbyte;
-	pixel_color->z = bbyte;
-
+	r = linear_to_gamma(pixel_color->x);
+	g = linear_to_gamma(pixel_color->y);
+	b = linear_to_gamma(pixel_color->z);
+	pixel_color->x = (int)(256 * clamp_interval(r, intensity));
+	pixel_color->y = (int)(256 * clamp_interval(g, intensity));
+	pixel_color->z = (int)(256 * clamp_interval(b, intensity));
+	// if (WRITE_TO_FILE == true)
 	//char pixel[16];
 	//int len = sprintf(pixel, "%d %d %d\n", rbyte, gbyte, bbyte);
 	//write(file, pixel, len);
 }
 
+// Returns the vector to a random point in the [-.5,-.5]-[+.5,+.5] unit square.
 static t_vec3	sample_square(void)
 {
-	// Returns the vector to a random point in the [-.5,-.5]-[+.5,+.5] unit square.
 	t_vec3	sample;
 
 	sample = (t_vec3){random_double() - 0.5, random_double() - 0.5, 0};
 	return (sample);
 }
 
+// Construct a camera ray originating from the origin and directed at randomly sampled
+// point around the pixel location i, j.
 t_ray	get_ray(int i, int j, t_camera *cam)
 {
-	// Construct a camera ray originating from the origin and directed at randomly sampled
-	// point around the pixel location i, j.
 	t_vec3	offset;
 
 	offset = sample_square();
-	t_vec3 pixel_column = multiply_by_scalar(cam->pixel_delta_u, ((double)j + offset.x));
-	t_vec3 pixel_row = multiply_by_scalar(cam->pixel_delta_v, ((double)i + offset.y));
-	t_vec3 cur_pixel = add_vec3(pixel_row, pixel_column);
-	t_vec3 cur_pixel_sample = add_vec3(cam->pixel00_loc, cur_pixel);
-
-	t_vec3 ray_direction = subtract_vec3(cur_pixel_sample, cam->camera_center);
-	t_ray ray = {cam->camera_center, ray_direction};
+	t_vec3	pixel_column = multiply_by_scalar(cam->pixel_delta_u, ((double)j + offset.x));
+	t_vec3	pixel_row = multiply_by_scalar(cam->pixel_delta_v, ((double)i + offset.y));
+	t_vec3	cur_pixel = add_vec3(pixel_row, pixel_column);
+	t_vec3	cur_pixel_sample = add_vec3(cam->pixel00_loc, cur_pixel);
+	t_vec3	ray_direction = subtract_vec3(cur_pixel_sample, cam->camera_center);
+	t_ray	ray = {cam->camera_center, ray_direction};
 	return (ray);
 }
 
 bool render(t_camera *cam, t_world *world, t_rgba **colors)
-{
+{// separate writing to ppm and regular display?
 	t_ray	r;
 	t_vec3	pixel_color;
-	//int file;
 	int i;
 	int j;
 	int sample;
