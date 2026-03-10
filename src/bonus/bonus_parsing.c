@@ -6,7 +6,7 @@
 /*   By: avaliull <avaliull@student.codam.nl>              +#+                */
 /*                                                        +#+                 */
 /*   Created: 2026/03/10 20:26:57 by avaliull            #+#    #+#           */
-/*   Updated: 2026/03/10 20:37:51 by avaliull            ########   odam.nl   */
+/*   Updated: 2026/03/10 20:41:15 by avaliull            ########   odam.nl   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static int	parse_option(char *argument, t_world *world)
 
 int	parse_bonus_options(int argc, char *argv[], t_world *world)
 {
-	int			i;
+	int	i;
 
 	if (argc == 2)
 		return (0);
