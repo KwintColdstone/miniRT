@@ -11,13 +11,14 @@
 #include <float.h>
 #include "MLX42/MLX42.h"
 
+#define INDIRECT_LIGHTING true
+
 typedef struct s_vec3
 {
 	double x;
 	double y;
 	double z;
 }	t_vec3;
-#define WHITE_VEC3
 
 typedef struct s_uvw
 {

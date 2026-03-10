@@ -28,49 +28,56 @@ t_vec3 sky(const t_ray *r)
 	return (construct_sky_vec3(a));
 }
 
-static t_vec3 ray_color(const t_ray *r, const t_world *world, t_vec3 background, int depth)
-{// separate path tracing and direct lighting options?
+// Start with emitted light
+// Then generate direct lighting (ray tracing)
+static t_vec3	get_direct_color(
+	const t_ray *r,
+	const t_world *world,
+	t_hit_record *const rec
+)
+{
+	t_vec3		color;
+	t_interval	ray_t;
+	t_vec3		direct;
+
+	ray_t.min = 0.001;
+	ray_t.max = INFINITY;
+	if (!world_hit(world, r, ray_t, rec))
+		return (sky(r));
+	color = rec->mat.emit_color;
+	direct = direct_lighting(world, rec);
+	color = add_vec3(color, direct);
+	return (color);
+}
+
+static t_vec3 ray_color(
+	const t_ray *r,
+	const t_world *world,
+	t_vec3 background,
+	int depth
+)
+{
 	t_hit_record	rec;
-	t_interval		ray_t;
+	t_vec3			color;
 	t_ray			scattered;
 	t_vec3			attenuation;
-	t_vec3			direct;
-	t_vec3			color;
-	bool			did_scatter; (void) did_scatter; //unused!
+	t_vec3			indirect;
 
 	if (depth <= 0)
 		return ((t_vec3){0,0,0});
-	ray_t.min = 0.001;
-	ray_t.max = INFINITY;
-	if (!world_hit(world, r, ray_t, &rec))
+	color = get_direct_color(r, world, &rec);
+	if (INDIRECT_LIGHTING == true)
 	{
-		return (sky(r));
-		//return (background);
-	}
-	// Start with emitted light
-	color = rec.mat.emit_color;
-
-	// Direct lighting (ray tracing)
-	direct = direct_lighting(world, &rec);
-	color = add_vec3(color, direct);
-
-	//(void) scattered;
-	//(void) attenuation;
-	//(void) background;
-	// indirect lightning (path tracing)
-	if (rec.mat.type == MAT_LAMBERTIAN)
-	{
-		if (lambertian_scatter(&rec, &attenuation, &scattered))
+		if (rec.mat.type == MAT_LAMBERTIAN)
 		{
-			t_vec3 indirect = ray_color(&scattered, world, background, depth - 1);
+			lambertian_scatter(&rec, &attenuation, &scattered);
+			indirect = ray_color(&scattered, world, background, depth - 1);
 			color = add_vec3(color, multiply_vec3(attenuation, indirect));
 		}
-	}
-	else if (rec.mat.type == MAT_METAL)
-	{
-		if (metal_scatter(r, &rec, &attenuation, &scattered))
+		else if (rec.mat.type == MAT_METAL)
 		{
-			t_vec3 indirect = ray_color(&scattered, world, background, depth - 1);
+			metal_scatter(r, &rec, &attenuation, &scattered);
+			indirect = ray_color(&scattered, world, background, depth - 1);
 			color = add_vec3(color, multiply_vec3(attenuation, indirect));
 		}
 	}
