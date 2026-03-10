@@ -6,7 +6,7 @@
 /*   By: avaliull <avaliull@student.codam.nl>              +#+                */
 /*                                                        +#+                 */
 /*   Created: 2026/02/17 16:09:30 by avaliull            #+#    #+#           */
-/*   Updated: 2026/03/10 17:12:05 by avaliull            ########   odam.nl   */
+/*   Updated: 2026/03/10 18:34:16 by avaliull            ########   odam.nl   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,13 @@ int	raytrace(
 // render.c
 bool	render(t_camera *cam, t_world *world, t_rgba **colors);
 void	window_close(void* param);
+// ray_color.c
+t_vec3 ray_color(
+	const t_ray *r,
+	const t_world *world,
+	t_vec3 background,
+	int depth
+);
 // dierct_lighting.c
 t_vec3	direct_lighting(const t_world *world, t_hit_record *rec);
 

@@ -12,6 +12,7 @@
 #include "MLX42/MLX42.h"
 
 #define INDIRECT_LIGHTING true
+#define WRITE_TO_FILE true
 
 typedef struct s_vec3
 {
