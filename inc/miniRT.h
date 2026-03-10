@@ -213,7 +213,7 @@ bool	calculate_sphere_root(const t_sphere *s,
 // hit_cylinder.c
 bool	cylinder_hit(const t_cylinder *cl, const t_ray *r, t_interval ray_t, t_hit_record *rec);
 // hit_cylinder_helpers.c
-static t_vec3	calc_world_normal(t_uvw *c,
+t_vec3	calc_world_normal(t_uvw *c,
 		t_cyl_t t, t_vec3 *hit_local);
 
 // world_hit.c

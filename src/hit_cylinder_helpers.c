@@ -36,7 +36,7 @@ static t_vec3	get_cylinder_normal_local(const t_vec3 *hit_local, double hit_t,
 	}
 }
 
-static t_vec3	calc_world_normal(t_uvw *c,
+t_vec3	calc_world_normal(t_uvw *c,
 		t_cyl_t t, t_vec3 *hit_local)
 {
 	t_vec3	normal_local;
