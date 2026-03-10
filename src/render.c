@@ -4,81 +4,28 @@
 #include <unistd.h>
 #include "display.h"
 
-t_vec3 sky(const t_ray *r)
+//A unit vector is a vector with length/magnitude of exactly 1
+//we use it in formulas where you only need the direction not how far in
+//a particular direction it goes
+// unit_direction.y goes from -1 to 1
+// a transforms that to a range of 0 to 1
+// so when a = 0 we get white and when a = 1 we get blue
+static t_vec3	construct_sky_vec3(const double a) // check that name makes sense
 {
-	//A unit vector is a vector with length/magnitude of exactly 1
-	//we use it in formulas where you only need the direction not how far in
-	//a particular direction it goes
-	t_vec3 unit_direction = unit_vector(r->direction);
-	// unit_direction.y goes from -1 to 1
-	// a transforms that to a range of 0 to 1
-	// so when a = 0 we get white and when a = 1 we get blue
-	double a = 0.5*(unit_direction.y + 1.0);
-	t_vec3 white = {1.0, 1.0, 1.0};
-	t_vec3 blue = {0.5, 0.7, 1.0};
-	t_vec3 w_amount = multiply_by_scalar(white,(1.0-a));
-	t_vec3 b_amount = multiply_by_scalar(blue,a);
+	const t_vec3	white = {1.0, 1.0, 1.0};
+	const t_vec3	blue = {0.5, 0.7, 1.0};
+	const t_vec3	w_amount = multiply_by_scalar(white,(1.0-a));
+	const t_vec3	b_amount = multiply_by_scalar(blue,a);
+
 	return (add_vec3(w_amount, b_amount));
 }
 
-bool is_in_shadow(const t_world *world, const t_vec3 *point, const t_light *light)
+t_vec3 sky(const t_ray *r)
 {
-	t_ray			shadow_ray;
-	t_hit_record	shadow_rec;
-	t_interval		shadow_t;
-	t_vec3			light_dir;
-	double			light_distance;
+	const t_vec3	unit_direction = unit_vector(r->direction);
+	const double	a = 0.5*(unit_direction.y + 1.0);
 
-	// Calculate direction and distance to light
-	light_dir = subtract_vec3(light->position, *point);
-	light_distance = vec3_length(light_dir);
-
-	if (light_distance < 1e-6)
-		return (false);
-
-	light_dir = unit_vector(light_dir);
-
-	// Move the ray origin slightly in the direction of the light
-	// This prevents the ray from intersecting the same surface
-	t_vec3 shadow_origin = add_vec3(*point, multiply_by_scalar(light_dir, 0.001));
-	shadow_ray = (t_ray){shadow_origin, light_dir};
-
-	// Check for occluders between point and light (but not beyond the light)
-	shadow_t = (t_interval){0.001, light_distance - 0.001};
-
-	return (world_hit(world, &shadow_ray, shadow_t, &shadow_rec));
-}
-
-t_vec3 direct_lighting(const t_world *world, t_hit_record *rec)
-{
-	t_vec3	direct;// = {0, 0, 0};
-	t_vec3	ambient;
-	t_vec3	light_dir;
-	t_vec3	diffuse;
-	double	diff;
-
-	ambient = multiply_vec3(world->ambient, rec->mat.albedo);
-	direct = ambient;
-	if (world->light.brightness > 0.0)
-	{
-		if (!is_in_shadow(world, &rec->position, &world->light))
-		{
-			light_dir = unit_vector(subtract_vec3(world->light.position, rec->position));
-			
-			// Diffuse factor (Lambert's cosine law)
-			diff = fmax(dot_vec3(rec->normal, light_dir), 0.0);
-	
-			// Diffuse color
-			diffuse = multiply_by_scalar(
-				multiply_vec3(world->light.color, rec->mat.albedo),
-				diff * world->light.brightness
-			);
-			
-			direct = add_vec3(direct, diffuse);
-		}
-	}
-
-	return (direct);
+	return (construct_sky_vec3(a));
 }
 
 static t_vec3 ray_color(const t_ray *r, const t_world *world, t_vec3 background, int depth)

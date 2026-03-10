@@ -14,6 +14,7 @@ CFILES	=	main.c\
 			material.c\
 			ray.c\
 			render.c\
+			direct_lighting.c\
 			transform.c\
 			utils.c\
 			vec3_1.c\

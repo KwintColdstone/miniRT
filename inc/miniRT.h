@@ -17,6 +17,7 @@ typedef struct s_vec3
 	double y;
 	double z;
 }	t_vec3;
+#define WHITE_VEC3
 
 typedef struct s_uvw
 {
