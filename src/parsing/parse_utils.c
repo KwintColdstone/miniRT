@@ -123,7 +123,7 @@ bool	assign_float(double *f, char *s, double min, double max)
 		free(elem);
 		return (false);
 	}
-	*f = ft_atof(elem); // atof function needs to be normed!
+	*f = ft_atof(elem);
 	free(elem);
 	if (*f < min || *f > max)
 		return (minirt_perror("Float outside of range"), NULL);
