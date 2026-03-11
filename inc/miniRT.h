@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                            ::::::::        */
-/*   miniRT.h                                                :+:    :+:       */
+/*   miniRT.h                                           :+:      :+:    :+:   */
 /*                                                          +:+               */
 /*   By: avaliull <avaliull@student.codam.nl>              +#+                */
 /*                                                        +#+                 */
 /*   Created: 2026/03/11 15:56:39 by avaliull            #+#    #+#           */
-/*   Updated: 2026/03/11 16:05:27 by avaliull            ########   odam.nl   */
+/*   Updated: 2026/03/11 16:17:51 by kjongeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -240,7 +240,7 @@ bool	world_hit(const t_world *world, const t_ray *r,
 			t_interval ray_t, t_hit_record *rec);
 // world_hit2.c
 bool	is_plane_hit(const t_world *world, const t_ray *r,
-			t_interval new_ray_t, t_hit_record *rec);
+			t_interval *new_ray_t, t_hit_record *rec);
 
 // transform.c
 void	create_orthonormal_basis(const t_vec3 *axis, t_uvw *c);

@@ -6,7 +6,7 @@
 /*   By: kjongeri <kjongeri@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/05 16:07:11 by kjongeri          #+#    #+#             */
-/*   Updated: 2026/03/09 17:18:06 by kjongeri         ###   ########.fr       */
+/*   Updated: 2026/03/11 18:40:39 by kjongeri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,18 +87,18 @@ static bool	find_closest_intersection(const t_cylinder *cl,
 		t->min = t->side;
 	}
 	if (check_cap(cl, rotated_r, 0, &t->bottom)
-		&& t->bottom > ray_t.min && t->bottom < t->min)
+		&& t->bottom > ray_t.min && t->bottom < ray_t.max
+		&& t->bottom < t->min)
 	{
 		t->min = t->bottom;
 	}
 	if (check_cap(cl, rotated_r, cl->height, &t->top)
-		&& t->top > ray_t.min && t->top < t->min)
+		&& t->top > ray_t.min && t->top < ray_t.max
+		&& t->top < t->min)
 	{
 		t->min = t->top;
 	}
-	if (t->min == INFINITY)
-		return (false);
-	return (true);
+	return (t->min != INFINITY);
 }
 
 // Transform ray to cylinder's local coordinate system
