@@ -70,6 +70,9 @@ t_vec3	ray_color(
 )
 {
 	t_hit_record	rec;
+	// it looks like the rec variable does not always initialize all values
+	// valgrind shows a bunch of "conditional jump based on uninitalized value" errors
+	// this doesn't happen every time and I'm not sure what the cause is
 	t_vec3			color;
 	t_ray			scattered;
 	t_vec3			attenuation;
