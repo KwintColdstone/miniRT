@@ -69,16 +69,19 @@ static bool	assign_one_letter_objects(
 	{
 		(*i)++;
 		success = parse_ambient(world, &line[*i]);
+		world->ambient_is_parsed = success;
 	}
 	else if (line[*i] == 'C')
 	{
 		(*i)++;
 		success = parse_camera(cam, &line[*i]);
+		cam->camera_is_parsed = success;
 	}
 	else if (line[*i] == 'L')
 	{
 		(*i)++;
 		success = parse_light(world, &line[*i]);
+		world->light_is_parsed = success;
 	}
 	return (success);
 }

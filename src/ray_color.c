@@ -14,6 +14,7 @@
 #include "display.h"
 #include "bonus.h"
 #include <math.h>
+#include <stdio.h>
 
 //A unit vector is a vector with length/magnitude of exactly 1
 //we use it in formulas where you only need the direction not how far in
@@ -77,7 +78,7 @@ t_vec3	ray_color(
 	if (depth <= 0)
 		return ((t_vec3){0, 0, 0});
 	color = get_direct_color(r, world, &rec);
-	if (world->indirect_lighting == true)
+	if (world->indirect_lighting == true) // something needs to be done for scenes that dont have material
 	{
 		if (rec.mat.type == MAT_LAMBERTIAN)
 		{

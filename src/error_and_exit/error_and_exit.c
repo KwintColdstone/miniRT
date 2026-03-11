@@ -42,7 +42,7 @@ bool	catch_gnl_error(char *line)
 		if (errno != 0)
 			return (external_perror("Could not get lines from file"), false);
 		else
-			return (minirt_perror("Corrupted .rt file"), false);
+			return (minirt_perror("Empty or corrupted .rt file"), false);
 	}
 	return (true);
 }

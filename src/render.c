@@ -57,6 +57,9 @@ static t_vec3	render_pixel_color(
 	sample = 0;
 	pixel_color = (t_vec3){0, 0, 0};
 	final_color = (t_vec3){0, 0, 0};
+	// it seems that we need an initialized t_record variable here
+	// I don't know how to initialize it, also will have to fuck around to fit
+	// norm. but this causes issues when indirect lighting is turned on
 	while (sample < cam->samples_per_pixel)
 	{
 		r = get_ray(i, j, cam);

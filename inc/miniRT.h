@@ -137,6 +137,8 @@ typedef struct s_world
 	t_cylinder_list	cy_list;
 	t_light			light;
 	t_vec3			ambient;
+	bool			light_is_parsed;
+	bool			ambient_is_parsed;
 	bool			write_to_file;
 	bool			indirect_lighting;
 }	t_world;
@@ -176,6 +178,7 @@ typedef struct s_camera
 	int		samples_per_pixel;
 	int		max_depth;
 	int		hfov;
+	bool	camera_is_parsed;
 }	t_camera;
 
 typedef struct s_object_counter

@@ -13,8 +13,17 @@
 #include "miniRT.h"
 #include <unistd.h>
 
+static void	init_light(t_light *light)
+{
+	light->position = (t_vec3){0, 0, 0};
+	light->brightness = 0.0;
+	light->color = (t_vec3){0, 0, 0};
+}
+
 bool	world_init(t_world *world, t_object_counter *c)
 {
+	world->ambient = (t_vec3){0, 0, 0};
+	init_light(&world->light);
 	if (c->sphere_cap)
 	{
 		if (!sphere_list_init(&world->sp_list, c->sphere_cap))

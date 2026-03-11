@@ -80,14 +80,7 @@ static bool	first_pass(char *file, t_world *world, t_object_counter *counter)
 	return (true);
 }
 
-bool	parse(char *file, t_world *world, t_camera *cam)
-{
-	t_object_counter	counter;
-
-	if (!first_pass(file, world, &counter))
-		return (false);
-	if (!second_pass(file, world, cam))
-		return (false);
+//these are for testing if parsing fucks up
 	//printf("World sphere count: %d\n", world->sp_list.count);
 	//printf("Counter sphere count: %d\n", counter.sphere_cap);
 	//printf("World plane count: %d\n", world->pl_list.count);
@@ -96,6 +89,19 @@ bool	parse(char *file, t_world *world, t_camera *cam)
 	//printf("Counter culinder count: %d\n", counter.cylinder_cap);
 	//printf("World quad count: %d\n", world->qu_list.count);
 	//printf("Counter quad count: %d\n", counter.quad_cap);
+bool	parse(char *file, t_world *world, t_camera *cam)
+{
+	t_object_counter	counter;
+
+	world->light_is_parsed = false;
+	world->ambient_is_parsed = false;
+	cam->camera_is_parsed = false;
+	if (!first_pass(file, world, &counter))
+		return (false);
+	if (counter.light == 0 || counter.camera == 0 || counter.ambient == 0)
+		return (minirt_perror("Camera, light or ambient not set up"), false);
+	if (!second_pass(file, world, cam))
+		return (false);
 	if (world->sp_list.count != counter.sphere_cap
 		|| world->pl_list.count != counter.plane_cap
 		|| world->cy_list.count != counter.cylinder_cap
@@ -104,5 +110,8 @@ bool	parse(char *file, t_world *world, t_camera *cam)
 		minirt_perror("Failed sanity check on object count (parsing mismatch)");
 		return (false);
 	}
+	if (world->light_is_parsed == false || world->ambient_is_parsed == false
+		|| cam->camera_is_parsed == false)
+		return (minirt_perror("Camera, light or ambient not set up"), false);
 	return (true);
 }

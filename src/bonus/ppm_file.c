@@ -58,5 +58,7 @@ int	create_ppm_file(t_world *world, t_camera *cam)
 		return (external_perror("malloc error:"), -1);
 	}
 	write_default_ppm(width, height, file);
+	free(height);
+	free(width);
 	return (file);
 }
