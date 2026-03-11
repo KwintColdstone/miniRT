@@ -100,9 +100,9 @@ CPPFLAGS	= $(INCFLAGS) -MMD -MP
 INCFLAGS	= $(addprefix -I,$(INCLUDE))
 #CFLAGS	=
 CFLAGS	= -Wall -Wextra -Werror
-#CFLAGS	= -Wall -Wextra -Werror -fsanitize=undefined
-INPUT	= rt_files/smallmalloctest.rt
-#INPUT	= rt_files/cyl.rt --ppm --il
+#CFLAGS	= -Wall -Wextra -Werror -fsanitize=undefined --ppm --il
+#INPUT	= rt_files/smallmalloctest.rt
+INPUT	= rt_files/cyl.rt --ppm --il
 
 
 -include $(OFILES:.o=.d)

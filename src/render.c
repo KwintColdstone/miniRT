@@ -90,7 +90,7 @@ bool	render(t_camera *cam, t_world *world, t_rgba **colors)
 							final_color.z, 0xFF);
 		}
 		i++;
-		//printf("Scanlines done: %5d/%d\n", i, cam->image_height);
+		printf("Scanlines done: %5d/%d\n", i, cam->image_height);
 	}
 	if (world->write_to_file == true)
 		close(ppm_file);
