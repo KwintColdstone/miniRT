@@ -101,7 +101,8 @@ INCFLAGS	= $(addprefix -I,$(INCLUDE))
 #CFLAGS	=
 CFLAGS	= -Wall -Wextra -Werror
 #CFLAGS	= -Wall -Wextra -Werror -fsanitize=undefined
-INPUT	= rt_files/cyl.rt --ppm --il
+INPUT	= rt_files/smallmalloctest.rt
+#INPUT	= rt_files/cyl.rt --ppm --il
 
 
 -include $(OFILES:.o=.d)
@@ -153,10 +154,10 @@ run:
 	./$(NAME) $(INPUT)
 leak:
 	$(MAKE) -s debug
-	valgrind --track-fds=yes --track-origins=yes \
+	valgrind --suppressions=MLX42.supp --track-fds=yes --track-origins=yes \
 	--leak-check=full --show-leak-kinds=all ./$(NAME) $(INPUT)
 val:
-	valgrind --track-fds=yes --track-origins=yes \
+	valgrind --suppressions=MLX42.supp --track-fds=yes --track-origins=yes \
 	--leak-check=full --show-leak-kinds=all ./$(NAME) $(INPUT)
 
 .PHONY:	clangd all clean fclean re test run leak debug gdb

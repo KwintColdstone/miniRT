@@ -13,6 +13,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <errno.h>
 #include "libft.h"
 #include "miniRT.h"
 #include "display.h"
@@ -75,8 +76,11 @@ int	main(int argc, char *argv[])
 	ft_memset(&world, 0, sizeof(t_world));
 	if (parse_bonus_options(argc, argv, &world) != 0)
 		return (1);
-	if (!parse(argv[1], &world, &cam)) // check parsing allocations
+	if (!parse(argv[1], &world, &cam))
+	{
+		world_destroy(&world);
 		return (1);
+	}
 	exit_data.exit_code = 0;
 	set_camera_defaults(&cam);
 	camera_init(&cam);

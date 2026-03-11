@@ -86,43 +86,43 @@ static bool	assign_one_letter_objects(
 static bool	check_and_assign_objects_from_line(
 	t_world *world,
 	t_camera *cam,
-	char *line,
-	int *i
+	char *line
 )
 {
 	bool	success;
+	int		i;
 
-	success = assign_one_letter_objects(world, cam, line, i);
+	i = 0;
+	while (ft_isspace(line[i]))
+		i++;
+	success = assign_one_letter_objects(world, cam, line, &i);
 	if (success == true)
-		success = assign_two_letter_objects(world, line, i);
+		success = assign_two_letter_objects(world, line, &i);
 	return (success);
 }
 
 bool	assign_objects(int fd, t_world *world, t_camera *cam)
 {
 	char	*line;
-	int		i;
 	int		line_count;
 
 	line_count = 1;
 	line = get_next_line(fd);
+	if (!catch_gnl_error(line))
+		return (false);
 	while (line)
 	{
-		i = 0;
-		while (ft_isspace(line[i]))
-			i++;
-		if (check_and_assign_objects_from_line(world, cam, line, &i) == false)
+		if (check_and_assign_objects_from_line(world, cam, line) == false)
 		{
-			printf("Error\nParsing failure at line: %d\n", line_count);
-			printf("incorrect values for element\n");
-			close(fd);
+			printf("%s%d\n%s", PARSE_ERR, line_count, INCORRECT_VAL);
 			free(line);
 			return (false);
 		}
 		free(line);
 		line = get_next_line(fd);
+		if (!catch_gnl_error_in_loop(line))
+			return (false);
 		line_count++;
 	}
-	close(fd);
 	return (true);
 }

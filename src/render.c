@@ -56,6 +56,7 @@ static t_vec3	render_pixel_color(
 
 	sample = 0;
 	pixel_color = (t_vec3){0, 0, 0};
+	final_color = (t_vec3){0, 0, 0};
 	while (sample < cam->samples_per_pixel)
 	{
 		r = get_ray(i, j, cam);
@@ -89,7 +90,7 @@ bool	render(t_camera *cam, t_world *world, t_rgba **colors)
 							final_color.z, 0xFF);
 		}
 		i++;
-		printf("Scanlines done: %5d/%d\n", i, cam->image_height);
+		//printf("Scanlines done: %5d/%d\n", i, cam->image_height);
 	}
 	if (world->write_to_file == true)
 		close(ppm_file);

@@ -35,6 +35,28 @@ void	external_perror(char *err_msg)
 	ft_putchar_fd('\n', STDERR_FILENO);
 }
 
+bool	catch_gnl_error(char *line)
+{
+	if (line == NULL)
+	{
+		if (errno != 0)
+			return (external_perror("Could not get lines from file"), false);
+		else
+			return (minirt_perror("Corrupted .rt file"), false);
+	}
+	return (true);
+}
+
+bool	catch_gnl_error_in_loop(char *line)
+{
+	if (line == NULL)
+	{
+		if (errno != 0)
+			return (external_perror("Could not get lines from file"), false);
+	}
+	return (true);
+}
+
 void	window_close(void *param)
 {
 	t_exit_data *const	exit_data = param;

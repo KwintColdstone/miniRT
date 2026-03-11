@@ -12,6 +12,7 @@
 
 #include "libft.h"
 #include "miniRT.h"
+#include <errno.h>
 
 // return 0 if valid one letter object
 // return 1 if not
@@ -95,17 +96,19 @@ bool	count_objects(int fd, t_object_counter *counts)
 
 	ft_memset(counts, 0, sizeof(t_object_counter));
 	line = get_next_line(fd);
+	if (!catch_gnl_error(line))
+		return (false);
 	while (line)
 	{
 		if (check_objects_in_line(counts, line) == false)
 		{
-			close(fd);
 			free(line);
 			return (false);
 		}
 		free(line);
 		line = get_next_line(fd);
+		if (!catch_gnl_error_in_loop(line))
+			return (false);
 	}
-	close(fd);
 	return (true);
 }

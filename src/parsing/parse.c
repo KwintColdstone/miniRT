@@ -38,26 +38,71 @@ static bool	validate_and_open_file(
 	if (!check_file_name(file))
 		return (minirt_perror("Incorrect file format. Use [name].rt"), false);
 	*fd = open(file, O_RDONLY);
-	if (*fd == -1)
-		return (external_perror("System error when opening file"), false);
+	if (*fd < 0)
+		return (external_perror("Can't open .rt file"), false);
+	return (true);
+}
+
+static bool	second_pass(char *file, t_world *world, t_camera *cam)
+{
+	int	fd;
+
+	fd = -1;
+	if (validate_and_open_file(file, &fd) == false)
+		return (false);
+	if (!assign_objects(fd, world, cam))
+	{
+		close(fd);
+		return (minirt_perror("Failed to assign values to element"), false);
+	}
+	close(fd);
+	return (true);
+}
+
+static bool	first_pass(char *file, t_world *world, t_object_counter *counter)
+{
+	int		fd;
+
+	fd = -1;
+	if (validate_and_open_file(file, &fd) == false)
+		return (false);
+	if (!count_objects(fd, counter))
+	{
+		close(fd);
+		return (minirt_perror("Failed to count objects"), false);
+	}
+	if (!world_init(world, counter))
+	{
+		close(fd);
+		return (minirt_perror("Failed to init world"), false);
+	}
+	close(fd);
 	return (true);
 }
 
 bool	parse(char *file, t_world *world, t_camera *cam)
 {
 	t_object_counter	counter;
-	int					fd;
 
-	fd = -1;
-	if (validate_and_open_file(file, &fd) == false)
+	if (!first_pass(file, world, &counter))
 		return (false);
-	if (!count_objects(fd, &counter))
-		return (minirt_perror("Failed to count objects"), false);
-	if (!world_init(world, &counter))
-		return (minirt_perror("Failed to init world"), false);
-	if (validate_and_open_file(file, &fd) == false)
+	if (!second_pass(file, world, cam))
 		return (false);
-	if (!assign_objects(fd, world, cam))
-		return (minirt_perror("Failed to assign values to element"), false);
+	//printf("World sphere count: %d\n", world->sp_list.count);
+	//printf("Counter sphere count: %d\n", counter.sphere_cap);
+	//printf("World plane count: %d\n", world->pl_list.count);
+	//printf("Counter plane count: %d\n", counter.plane_cap);
+	//printf("World cylinder count: %d\n", world->cy_list.count);
+	//printf("Counter culinder count: %d\n", counter.cylinder_cap);
+	//printf("World quad count: %d\n", world->qu_list.count);
+	//printf("Counter quad count: %d\n", counter.quad_cap);
+	if (world->sp_list.count != counter.sphere_cap
+		|| world->pl_list.count != counter.plane_cap
+		|| world->cy_list.count != counter.cylinder_cap
+		|| world->qu_list.count != counter.quad_cap)
+	{
+		minirt_perror("Failed sanity check on object count (parsing mismatch)");
+		return (false);
+	}
 	return (true);
 }
