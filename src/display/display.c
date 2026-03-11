@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "MLX42/MLX42.h"
 #include "miniRT.h"
 #include "display.h"

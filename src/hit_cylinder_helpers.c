@@ -10,7 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/miniRT.h"
+#include "miniRT.h"
+#include <math.h>
 
 // Determine which part of the cylinder was hit
 // Side hit: normal points radially outward

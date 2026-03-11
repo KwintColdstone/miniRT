@@ -13,7 +13,7 @@
 #ifndef BONUS_H
 # define BONUS_H
 
-#include "miniRT.h"
+# include "miniRT.h"
 
 // MAX_ARGC is 2 + amount of bonus options
 # define MAX_ARGC 4
@@ -23,7 +23,7 @@
 # define OPTION_INDIRECT_LIGHTING "--il"
 
 // bonus_parsing.c
-int	parse_bonus_options(int argc, char *argv[], t_world *world);
+int		parse_bonus_options(int argc, char *argv[], t_world *world);
 
 // Writing image to a .ppm file
 // ppm_file.c
@@ -31,8 +31,9 @@ void	write_to_file(int ppm_file, t_vec3 *pixel_color);
 int		create_ppm_file(t_world *world, t_camera *cam);
 
 // material.c
-bool lambertian_scatter(const t_hit_record *rec, t_vec3 *attenuation, t_ray *scattered);
-bool metal_scatter(const t_ray *r_in, const t_hit_record *rec, t_vec3 *attenuation, t_ray *scattered);
-
+bool	lambertian_scatter(const t_hit_record *rec, t_vec3 *attenuation,
+			t_ray *scattered);
+bool	metal_scatter(const t_ray *r_in, const t_hit_record *rec,
+			t_vec3 *attenuation, t_ray *scattered);
 
 #endif //BONUS_H

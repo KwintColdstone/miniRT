@@ -1,21 +1,29 @@
-#pragma once
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                            ::::::::        */
+/*   miniRT.h                                                :+:    :+:       */
+/*                                                          +:+               */
+/*   By: avaliull <avaliull@student.codam.nl>              +#+                */
+/*                                                        +#+                 */
+/*   Created: 2026/03/11 15:56:39 by avaliull            #+#    #+#           */
+/*   Updated: 2026/03/11 16:05:27 by avaliull            ########   odam.nl   */
+/*                                                                            */
+/* ************************************************************************** */
 
-#include "../lib/libft/libft.h"
-#include <fcntl.h>
-#include <math.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <limits.h>
-#include <float.h>
-#include "MLX42/MLX42.h"
+#ifndef MINIRT_H
+# define MINIRT_H
+
+# include <fcntl.h>
+# include <stdbool.h>
+# include <unistd.h>
+# include <limits.h>
+# include <float.h>
 
 typedef struct s_vec3
 {
-	double x;
-	double y;
-	double z;
+	double	x;
+	double	y;
+	double	z;
 }	t_vec3;
 
 typedef struct s_uvw
@@ -25,12 +33,14 @@ typedef struct s_uvw
 	t_vec3	w;
 }	t_uvw;
 
-typedef struct s_ray {
-	t_vec3 origin;
-	t_vec3 direction;
+typedef struct s_ray
+{
+	t_vec3	origin;
+	t_vec3	direction;
 }	t_ray;
 
-typedef enum e_material_type {
+typedef enum e_material_type
+{
 	MAT_LAMBERTIAN,
 	MAT_METAL,
 	MAT_EMIT,
@@ -39,18 +49,19 @@ typedef enum e_material_type {
 typedef struct s_material
 {
 	t_material_type	type;
-	t_vec3		albedo;
-	t_vec3		emit_color;
-	double		fuzz;
+	t_vec3			albedo;
+	t_vec3			emit_color;
+	double			fuzz;
 }	t_material;
 
-typedef struct s_light {
-    t_vec3          position;
-    double          brightness;
-    t_vec3          color;
-}   t_light;
+typedef struct s_light
+{
+	t_vec3	position;
+	double	brightness;
+	t_vec3	color;
+}	t_light;
 
-typedef struct	s_quad
+typedef struct s_quad
 {
 	t_vec3		corner;
 	t_vec3		u;
@@ -58,31 +69,31 @@ typedef struct	s_quad
 	t_material	mat;
 }	t_quad;
 
-typedef struct	s_plane
+typedef struct s_plane
 {
 	t_vec3		point;
 	t_vec3		normal;
 	t_material	mat;
 }	t_plane;
 
-typedef struct	s_sphere
+typedef struct s_sphere
 {
-	t_vec3	center;
-	t_material mat;
-	double	radius;
+	t_vec3		center;
+	t_material	mat;
+	double		radius;
 }	t_sphere;
 
-typedef struct	s_cylinder
+typedef struct s_cylinder
 {
-	t_vec3	center;
-	t_vec3	axis;
-	t_material mat;
-	double	rotation_angle;
-	double	radius;
-	double	height;
+	t_vec3		center;
+	t_vec3		axis;
+	t_material	mat;
+	double		rotation_angle;
+	double		radius;
+	double		height;
 }	t_cylinder;
 
-typedef struct	s_cyl_t
+typedef struct s_cyl_t
 {
 	double	side;
 	double	bottom;
@@ -93,33 +104,33 @@ typedef struct	s_cyl_t
 typedef struct s_sphere_list
 {
 	t_sphere	*spheres;
-	int		count;
-	int		capacity;
+	int			count;
+	int			capacity;
 }	t_sphere_list;
 
 typedef struct s_quad_list
 {
 	t_quad	*quads;
-	int count;
-	int capacity;
+	int		count;
+	int		capacity;
 }	t_quad_list;
 
 typedef struct s_plane_list
 {
 	t_plane	*planes;
-	int count;
-	int capacity;
+	int		count;
+	int		capacity;
 }	t_plane_list;
 
 typedef struct s_cylinder_list
 {
 	t_cylinder	*cylinders;
-	int count;
-	int capacity;
+	int			count;
+	int			capacity;
 }	t_cylinder_list;
 
-
-typedef struct s_world {
+typedef struct s_world
+{
 	t_sphere_list	sp_list;
 	t_quad_list		qu_list;
 	t_plane_list	pl_list;
@@ -130,12 +141,13 @@ typedef struct s_world {
 	bool			indirect_lighting;
 }	t_world;
 
-typedef struct s_hit_record {
-	t_vec3	position;
-	t_vec3	normal;
-	t_material mat;
-	double	t;
-	bool	front_face;
+typedef struct s_hit_record
+{
+	t_vec3		position;
+	t_vec3		normal;
+	t_material	mat;
+	double		t;
+	bool		front_face;
 }	t_hit_record;
 
 typedef struct s_interval
@@ -168,13 +180,13 @@ typedef struct s_camera
 
 typedef struct s_object_counter
 {
-	int sphere_cap;
-	int quad_cap;
-	int plane_cap;
-	int cylinder_cap;
-	int light;
-	int camera;
-	int ambient;
+	int	sphere_cap;
+	int	quad_cap;
+	int	plane_cap;
+	int	cylinder_cap;
+	int	light;
+	int	camera;
+	int	ambient;
 }	t_object_counter;
 
 //vec3.c
@@ -202,35 +214,42 @@ bool	near_zero(t_vec3 v);
 t_vec3	ray_at(const t_ray *ray, double t);
 
 // hit_objects.c
-bool	sphere_hit(const t_sphere *s, const t_ray *r, t_interval ray_t, t_hit_record *rec);
-bool	quad_hit(const t_quad *p, const t_ray *r, t_interval ray_t, t_hit_record *rec);
-bool	plane_hit(const t_plane *p, const t_ray *r, t_interval ray_t, t_hit_record *rec);
+bool	sphere_hit(const t_sphere *s, const t_ray *r, t_interval ray_t,
+			t_hit_record *rec);
+bool	quad_hit(const t_quad *p, const t_ray *r, t_interval ray_t,
+			t_hit_record *rec);
+bool	plane_hit(const t_plane *p, const t_ray *r, t_interval ray_t,
+			t_hit_record *rec);
 // hit_objects_helpers.c
-void	set_face_normal(const t_ray *r, const t_vec3 *outward_normal, t_hit_record *rec);
+void	set_face_normal(const t_ray *r, const t_vec3 *outward_normal,
+			t_hit_record *rec);
 void	fill_sphere_hit_record(t_hit_record *rec,
 			const t_sphere *s, const t_ray *r, double root);
 bool	calculate_sphere_root(const t_sphere *s,
 			const t_ray *r, t_interval ray_t, double *root);
 
 // hit_cylinder.c
-bool	cylinder_hit(const t_cylinder *cl, const t_ray *r, t_interval ray_t, t_hit_record *rec);
+bool	cylinder_hit(const t_cylinder *cl, const t_ray *r, t_interval ray_t,
+			t_hit_record *rec);
 // hit_cylinder_helpers.c
 t_vec3	calc_world_normal(t_uvw *c,
-		t_cyl_t t, t_vec3 *hit_local);
+			t_cyl_t t, t_vec3 *hit_local);
 
 // world_hit.c
-bool	world_hit(const t_world* world, const t_ray* r,
-	t_interval ray_t, t_hit_record* rec);
+bool	world_hit(const t_world *world, const t_ray *r,
+			t_interval ray_t, t_hit_record *rec);
 // world_hit2.c
 bool	is_plane_hit(const t_world *world, const t_ray *r,
-	t_interval new_ray_t, t_hit_record *rec);
+			t_interval new_ray_t, t_hit_record *rec);
 
 // transform.c
-void create_orthonormal_basis(const t_vec3 *axis, t_uvw *c);
-t_vec3 world_to_object_space(const t_vec3 *point, const t_vec3 *center, t_uvw *c);
-t_vec3 object_to_world_space(const t_vec3 *point_obj, const t_vec3 *center, t_uvw *c);
-t_vec3 world_to_object_direction(const t_vec3 *dir, t_uvw *c);
-t_vec3 object_to_world_direction(const t_vec3 *dir_obj, t_uvw *c);
+void	create_orthonormal_basis(const t_vec3 *axis, t_uvw *c);
+t_vec3	world_to_object_space(const t_vec3 *point, const t_vec3 *center,
+			t_uvw *c);
+t_vec3	object_to_world_space(const t_vec3 *point_obj, const t_vec3 *center,
+			t_uvw *c);
+t_vec3	world_to_object_direction(const t_vec3 *dir, t_uvw *c);
+t_vec3	object_to_world_direction(const t_vec3 *dir_obj, t_uvw *c);
 
 // utils.c
 double	degrees_to_radians(double degrees);
@@ -286,3 +305,5 @@ bool	count_objects(int fd, t_object_counter *counts);
 */
 void	minirt_perror(char *err_msg);
 void	external_perror(char *err_msg);
+
+#endif //MINIRT_H

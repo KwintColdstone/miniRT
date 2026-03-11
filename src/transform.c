@@ -10,7 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/miniRT.h"
+#include "miniRT.h"
+#include <math.h>
 
 // Find an arbitrary vector perpendicular to w
 void	create_orthonormal_basis(const t_vec3 *axis, t_uvw *c)

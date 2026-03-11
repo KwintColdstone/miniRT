@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "miniRT.h"
+#include <stdlib.h>
 
 // Cylinder list functions
 bool	cylinder_list_init(t_cylinder_list *list, int capacity)

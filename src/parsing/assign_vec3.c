@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "miniRT.h"
 
 static void	free_xyz_strings(char *r, char *g, char *b)

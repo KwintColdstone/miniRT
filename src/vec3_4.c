@@ -10,7 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/miniRT.h"
+#include "miniRT.h"
+#include <math.h>
 
 t_vec3	unit_vector(t_vec3 v)
 {

@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "miniRT.h"
+#include <stdlib.h>
 
 // Plane list functions
 bool	plane_list_init(t_plane_list *list, int capacity)

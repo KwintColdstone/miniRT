@@ -11,6 +11,8 @@
 /* ************************************************************************** */
 
 #include "miniRT.h"
+#include <math.h>
+#include <stdlib.h>
 
 double	degrees_to_radians(double degrees)
 {

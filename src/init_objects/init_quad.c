@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "miniRT.h"
+#include <stdlib.h>
 
 // Quad list functions
 bool	quad_list_init(t_quad_list *list, int capacity)

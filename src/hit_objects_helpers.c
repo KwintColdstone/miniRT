@@ -10,7 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/miniRT.h"
+#include "miniRT.h"
+#include <math.h>
 
 // Checks if ray hit from the inside or outside
 void	set_face_normal(const t_ray *r,

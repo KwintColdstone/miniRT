@@ -13,6 +13,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include "libft.h"
 #include "miniRT.h"
 #include "display.h"
 #include "bonus.h"

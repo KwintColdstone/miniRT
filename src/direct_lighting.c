@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "miniRT.h"
+#include <math.h>
 
 // 1. Calculate direction and distance to light
 // 2. Move the ray origin slightly in the direction of the light

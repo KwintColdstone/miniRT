@@ -13,8 +13,8 @@
 #ifndef DISPLAY_H
 # define DISPLAY_H
 
-#include "miniRT.h"
-#include "MLX42/MLX42.h"
+# include "miniRT.h"
+# include "MLX42/MLX42.h"
 
 typedef union t_rgba
 {
@@ -28,7 +28,8 @@ typedef union t_rgba
 	} ;
 }	t_rgba;
 
-typedef struct	s_exit_data {
+typedef struct s_exit_data
+{
 	t_world		*world;
 	mlx_t		*window;
 	t_rgba		**colors;
@@ -37,28 +38,20 @@ typedef struct	s_exit_data {
 
 uint32_t	get_color(int red, int green, int blue, int opacity);
 
-int	raytrace(
-	t_camera *cam,
-	t_world *world,
-	t_exit_data *exit_data
-);
+int			raytrace(t_camera *cam, t_world *world, t_exit_data *exit_data);
 // render.c
-bool	render(t_camera *cam, t_world *world, t_rgba **colors);
-void	window_close(void* param);
+bool		render(t_camera *cam, t_world *world, t_rgba **colors);
+void		window_close(void *param);
 // ray_color.c
-t_vec3 ray_color(
-	const t_ray *r,
-	const t_world *world,
-	t_vec3 background,
-	int depth
-);
+t_vec3		ray_color(const t_ray *r, const t_world *world, t_vec3 background,
+				int depth);
 // dierct_lighting.c
-t_vec3	direct_lighting(const t_world *world, t_hit_record *rec);
+t_vec3		direct_lighting(const t_world *world, t_hit_record *rec);
 // get_ray.c
-t_ray	get_ray(int i, int j, t_camera *cam);
+t_ray		get_ray(int i, int j, t_camera *cam);
 
 // mlx_usage.c
-void	minirt_key_hook(mlx_key_data_t keydata, void* param);
+void		minirt_key_hook(mlx_key_data_t keydata, void *param);
 uint32_t	get_color(int red, int green, int blue, int opacity);
 
 #endif	// DISPLAY_H

@@ -10,8 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdbool.h>
 #include "miniRT.h"
+#include <stdlib.h>
+#include <stdbool.h>
 
 static bool	parse_point(char *line, t_plane *const pl, int *i)
 {

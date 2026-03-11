@@ -10,7 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/miniRT.h"
+#include "miniRT.h"
+#include <math.h>
 
 static bool	check_cap(const t_cylinder *cl, const t_ray *r, double cap_height,
 		double *t_cap)

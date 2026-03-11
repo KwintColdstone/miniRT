@@ -10,8 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdbool.h>
 #include "miniRT.h"
+#include <stdlib.h>
+#include <stdbool.h>
 
 static bool	parse_corner(t_quad *const qu, char *line, int *i)
 {

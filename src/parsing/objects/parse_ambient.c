@@ -10,8 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdbool.h>
 #include "miniRT.h"
+#include <stdlib.h>
+#include <stdbool.h>
 
 bool	parse_ambient(t_world *world, char *line)
 {
