@@ -44,6 +44,7 @@ typedef enum e_material_type
 	MAT_LAMBERTIAN,
 	MAT_METAL,
 	MAT_EMIT,
+	MAT_NOMAT,
 }	t_material_type;
 
 typedef struct s_material

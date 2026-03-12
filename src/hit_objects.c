@@ -12,6 +12,7 @@
 
 #include "../inc/miniRT.h"
 #include "math.h"
+#include <stdio.h> // for testing
 
 // Find nearest root in acceptable range
 bool	sphere_hit(const t_sphere *s, const t_ray *r,
@@ -106,6 +107,7 @@ bool	plane_hit(const t_plane *p, const t_ray *r,
 	rec->t = t;
 	rec->position = intersection;
 	rec->mat = p->mat;
+	printf("p->mat type?%d\n", p->mat.type); // remive ths
 	set_face_normal(r, &p->normal, rec);
 	return (true);
 }

@@ -70,9 +70,6 @@ t_vec3	ray_color(
 )
 {
 	t_hit_record	rec;
-	// it looks like the rec variable does not always initialize all values
-	// valgrind shows a bunch of "conditional jump based on uninitalized value" errors
-	// this doesn't happen every time and I'm not sure what the cause is
 	t_vec3			color;
 	t_ray			scattered;
 	t_vec3			attenuation;
@@ -80,18 +77,16 @@ t_vec3	ray_color(
 
 	if (depth <= 0)
 		return ((t_vec3){0, 0, 0});
+	rec.mat = (t_material){MAT_NOMAT, (t_vec3){0, 0, 0}, (t_vec3){0, 0, 0}, 0};
 	color = get_direct_color(r, world, &rec);
-	if (world->indirect_lighting == true) // something needs to be done for scenes that dont have material
+	if (world->indirect_lighting == true)
 	{
 		if (rec.mat.type == MAT_LAMBERTIAN)
-		{
 			lambertian_scatter(&rec, &attenuation, &scattered);
-			indirect = ray_color(&scattered, world, background, depth - 1);
-			color = add_vec3(color, multiply_vec3(attenuation, indirect));
-		}
 		else if (rec.mat.type == MAT_METAL)
-		{
 			metal_scatter(r, &rec, &attenuation, &scattered);
+		if (rec.mat.type != MAT_NOMAT)
+		{
 			indirect = ray_color(&scattered, world, background, depth - 1);
 			color = add_vec3(color, multiply_vec3(attenuation, indirect));
 		}
