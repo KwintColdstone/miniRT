@@ -101,8 +101,10 @@ INCFLAGS	= $(addprefix -I,$(INCLUDE))
 #CFLAGS	=
 CFLAGS	= -Wall -Wextra -Werror
 #CFLAGS	= -Wall -Wextra -Werror -fsanitize=undefined --ppm --il
-#INPUT	= rt_files/smallmalloctest.rt
-INPUT	= rt_files/cyl.rt --ppm --il
+#INPUT	= rt_files/just_enough_objects.rt
+INPUT	= rt_files/just_enough_objects.rt --ppm --il
+#INPUT	= rt_files/just_enough_objects.rt --ppm
+#INPUT	= rt_files/just_enough_objects.rt --il
 
 
 -include $(OFILES:.o=.d)

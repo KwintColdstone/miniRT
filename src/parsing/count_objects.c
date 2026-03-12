@@ -12,7 +12,6 @@
 
 #include "libft.h"
 #include "miniRT.h"
-#include <errno.h>
 
 // return 0 if valid one letter object
 // return 1 if not
@@ -90,6 +89,11 @@ static bool	check_objects_in_line(
 	return (true);
 }
 
+static int	objects_total(t_object_counter *c)
+{
+	return (c->sphere_cap + c->plane_cap + c->cylinder_cap + c->quad_cap);
+}
+
 bool	count_objects(int fd, t_object_counter *counts)
 {
 	char	*line;
@@ -106,10 +110,9 @@ bool	count_objects(int fd, t_object_counter *counts)
 			return (false);
 		}
 		free(line);
-		if (counts->sphere_cap + counts->plane_cap + \
-			counts->cylinder_cap + counts->quad_cap > 100)
+		if (objects_total(counts) > MAX_OBJ)
 		{
-			minirt_perror("Exceeded total object count\n");
+			minirt_perror("Exceeded maximum object count\n");
 			return (false);
 		}
 		line = get_next_line(fd);
