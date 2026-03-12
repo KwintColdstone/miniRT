@@ -12,9 +12,15 @@
 
 #ifndef LIBFT_H
 # define LIBFT_H
+
 //get_next_line
-# ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 10
+# if defined(BUFFER_SIZE)
+#  if BUFFER_SIZE > 8300000 || BUFFER_SIZE < 1
+#   undef BUFFER_SIZE
+#   define BUFFER_SIZE 42
+#  endif
+# else
+#  define BUFFER_SIZE 42
 # endif
 
 # include <stdlib.h>
@@ -78,5 +84,12 @@ char	*ft_strtrim(char const *s1, char const *set);
 char	*ft_strmapi(char const *s, char (*f)(unsigned int, char));
 char	**ft_split(char const *s, char c);
 char	**ft_split_whitespace(char const *s);
+
+//get_next_line
 char	*get_next_line(int fd);
+void	set_str(const char *src, char *dest, ssize_t size);
+char	*gnl_join(char *str1, char *str2, ssize_t len_1, ssize_t len_2);
+void	trim_buff(char **buffer, ssize_t last_char_index, ssize_t max_len);
+void	gnl_bzero(char **mem, ssize_t size);
+
 #endif

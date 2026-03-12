@@ -17,9 +17,10 @@ SOURCES	=	ft_atoi.c ft_atol.c ft_atof.c ft_bzero.c ft_isalnum.c ft_isalpha.c \
 			ft_memmove.c ft_strdup.c ft_strnstr.c ft_strjoin.c ft_putchar_fd.c \
 			ft_putstr_fd.c ft_putendl_fd.c ft_putnbr_fd.c ft_strmapi.c \
 			ft_strtrim.c ft_substr.c ft_split.c ft_itoa.c ft_striteri.c \
-			get_next_line.c ft_strncpy.c ft_hextol.c \
+			ft_strncpy.c ft_hextol.c \
 			ft_isspace.c ft_split_whitespace.c ft_strndup.c \
-			ft_strcmp.c
+			ft_strcmp.c \
+			get_next_line.c get_next_line_utils.c get_next_line_utils_bonus.c
 
 OBJECTS	=	$(SOURCES:.c=.o)
 

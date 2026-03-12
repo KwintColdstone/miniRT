@@ -19,6 +19,9 @@
 # include <limits.h>
 # include <float.h>
 
+// maximum total amount of objects per scene
+# define MAX_OBJ 100
+
 typedef struct s_vec3
 {
 	double	x;

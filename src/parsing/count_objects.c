@@ -106,6 +106,12 @@ bool	count_objects(int fd, t_object_counter *counts)
 			return (false);
 		}
 		free(line);
+		if (counts->sphere_cap + counts->plane_cap + \
+			counts->cylinder_cap + counts->quad_cap > 100)
+		{
+			minirt_perror("Exceeded total object count\n");
+			return (false);
+		}
 		line = get_next_line(fd);
 		if (!catch_gnl_error_in_loop(line))
 			return (false);

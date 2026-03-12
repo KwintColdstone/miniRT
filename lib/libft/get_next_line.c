@@ -1,136 +1,116 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line.c                                     :+:    :+:           */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kjongeri <kjongeri@student.codam.nl>       +#+  +:+       +#+        */
+/*   By: avaliull <avaliull@student.codam.nl>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/21 11:26:25 by kjongeri          #+#    #+#             */
-/*   Updated: 2025/02/20 13:45:15 by kjongeri         ###   ########.fr       */
+/*   Created: 2024/11/24 12:37:21 by avaliull          #+#    #+#             */
+/*   Updated: 2024/12/13 15:03:47 by avaliull       ########   odam.nl        */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static char	*read_from_file(char *stash, int fd);
-static char	*extract_line(char *stash);
-static char	*extract_remainder(char *stash);
-static char	*read_loop(int fd, char *buffer, char *stash);
-
-char	*get_next_line(int fd)
+static ssize_t	find_nl_index(const char *buffer, int read_len)
 {
-	static char	*stash = NULL;
-	char		*line;
+	int	nl_index;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
-		return (NULL);
-	stash = read_from_file(stash, fd);
-	if (!stash)
-		return (NULL);
-	line = extract_line(stash);
-	if (!line)
+	nl_index = 0;
+	while (nl_index < read_len)
 	{
-		free(stash);
-		stash = NULL;
-		return (NULL);
+		if (buffer[nl_index] == '\n')
+			return (nl_index);
+		nl_index++;
 	}
-	stash = extract_remainder(stash);
-	return (line);
+	return (nl_index);
 }
 
-static char	*extract_line(char *stash)
+static char	*eof_or_error(char **buffer, int read_return, char *next_line)
 {
-	char	*line;
-	char	*newline;
-	ssize_t	line_length;
-
-	if (!stash)
-		return (NULL);
-	newline = ft_strchr(stash, '\n');
-	if (!newline)
-	{
-		line = ft_strdup(stash);
-		if (!line)
-			return (NULL);
-		return (line);
-	}
-	line_length = newline - stash + 1;
-	line = ft_calloc(line_length + 1, sizeof(char));
-	if (!line)
-		return (NULL);
-	ft_strncpy(line, stash, line_length);
-	return (line);
+	gnl_bzero(buffer, BUFFER_SIZE);
+	if (read_return == 0)
+		return (next_line);
+	free(next_line);
+	return (NULL);
 }
 
-static char	*extract_remainder(char *stash)
+static char	*read_loop(char **buffer, int fd, char *next_line, ssize_t len)
 {
-	char	*remainder;
-	char	*newline;
-
-	if (!stash)
-		return (NULL);
-	newline = ft_strchr(stash, '\n');
-	if (!newline)
-	{
-		free(stash);
-		return (NULL);
-	}
-	newline++;
-	if (*newline == '\0')
-	{
-		free(stash);
-		return (NULL);
-	}
-	remainder = ft_strdup(newline);
-	if (!remainder)
-	{
-		free(stash);
-		return (NULL);
-	}
-	free(stash);
-	return (remainder);
-}
-
-static char	*read_from_file(char *stash, int fd)
-{
-	char	*buffer;
-
-	buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
-	if (!buffer)
-	{
-		free(stash);
-		return (NULL);
-	}
-	stash = read_loop(fd, buffer, stash);
-	free(buffer);
-	return (stash);
-}
-
-static char	*read_loop(int fd, char *buffer, char *stash)
-{
-	char	*new_stash;
-	ssize_t	bytes_read;
+	int	read_return;
+	int	nl_i;
 
 	while (1)
 	{
-		bytes_read = read(fd, buffer, BUFFER_SIZE);
-		if (bytes_read <= 0)
+		read_return = read(fd, *buffer, BUFFER_SIZE);
+		if (read_return <= 0)
+			return (eof_or_error(buffer, read_return, next_line));
+		nl_i = find_nl_index(*buffer, read_return);
+		if (nl_i < read_return)
 		{
-			if (!stash || bytes_read < 0)
-				return (free(stash), NULL);
+			next_line = gnl_join(next_line, *buffer, len, nl_i + 1);
 			break ;
 		}
-		buffer[bytes_read] = '\0';
-		if (!stash)
-			new_stash = ft_strdup(buffer);
-		else
-			new_stash = ft_strjoin(stash, buffer);
-		free(stash);
-		if (!new_stash)
+		next_line = gnl_join(next_line, *buffer, len, read_return);
+		if (!next_line)
 			return (NULL);
-		stash = new_stash;
-		if (ft_strchr(buffer, '\n'))
-			break ;
+		len += read_return;
 	}
-	return (stash);
+	if (nl_i == read_return - 1 && read_return < BUFFER_SIZE)
+		gnl_bzero(buffer, BUFFER_SIZE);
+	else
+		trim_buff(buffer, nl_i, read_return);
+	return (next_line);
+}
+
+static char	*find_nl(char **buffer, int fd, int buff_len)
+{
+	char	*next_line;
+	int		nl_index;
+
+	nl_index = find_nl_index(*buffer, buff_len);
+	if (nl_index == buff_len)
+		next_line = malloc(nl_index + 1);
+	else
+		next_line = malloc(nl_index + 2);
+	if (!next_line)
+		return (NULL);
+	if (nl_index == buff_len)
+	{
+		set_str(*buffer, next_line, buff_len);
+		next_line = read_loop(buffer, fd, next_line, buff_len);
+		return (next_line);
+	}
+	set_str(*buffer, next_line, nl_index + 1);
+	if (nl_index == buff_len - 1 && buff_len < BUFFER_SIZE)
+		gnl_bzero(buffer, BUFFER_SIZE);
+	else
+		trim_buff(buffer, nl_index, buff_len);
+	return (next_line);
+}
+
+char	*get_next_line(int fd)
+{
+	static char	buffer[BUFFER_SIZE];
+	char		*buffer_ptr;
+	int			buff_len;
+
+	buff_len = 0;
+	if (buffer[0] == '\0')
+	{
+		buff_len = read(fd, buffer, BUFFER_SIZE);
+		if (buff_len <= 0)
+			return (NULL);
+	}
+	if (!buff_len)
+	{
+		while (buffer[buff_len] && buff_len < BUFFER_SIZE)
+		{
+			if (buffer[buff_len] == '\0')
+				break ;
+			buff_len++;
+		}
+	}
+	buffer_ptr = &buffer[0];
+	return (find_nl(&buffer_ptr, fd, buff_len));
 }
