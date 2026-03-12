@@ -86,8 +86,8 @@ bool	render(t_camera *cam, t_world *world, t_rgba **colors)
 		{
 			final_color = render_pixel_color(cam, world, i, j);
 			write_color(world, &final_color, ppm_file);
-			colors[i][j].rgba = get_color(final_color.x, final_color.y,
-							final_color.z, 0xFF);
+			colors[i][j].rgba = get_color(final_color.x,
+					final_color.y, final_color.z, 0xFF);
 		}
 		i++;
 		printf("Scanlines done: %5d/%d\n", i, cam->image_height);

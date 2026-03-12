@@ -87,7 +87,7 @@ int	raytrace(
 	exit_data->colors = colors;
 	if (!render(cam, world, colors))
 		return (minirt_perror("Failed to render image"), 1);
-	mlx_set_setting(MLX_STRETCH_IMAGE, 1); // this does not preserve the proportions :(
+	mlx_set_setting(MLX_STRETCH_IMAGE, 1);
 	window = mlx_init(cam->image_width, cam->image_height, "miniRT", true);
 	if (!window)
 		return (external_perror("MLX - Failed to init window"), 1);

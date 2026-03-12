@@ -14,7 +14,6 @@
 #include "display.h"
 #include "bonus.h"
 #include <math.h>
-#include <stdio.h>
 
 //A unit vector is a vector with length/magnitude of exactly 1
 //we use it in formulas where you only need the direction not how far in

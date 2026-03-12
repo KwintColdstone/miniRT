@@ -309,6 +309,7 @@ bool	count_objects(int fd, t_object_counter *counts);
 */
 # define PARSE_ERR "Error\nParsing failure at line: "
 # define INCORRECT_VAL "incorrect values for element\n"
+
 void	minirt_perror(char *err_msg);
 void	external_perror(char *err_msg);
 bool	catch_gnl_error(char *line);
