@@ -20,7 +20,7 @@ SOURCES	=	ft_atoi.c ft_atol.c ft_atof.c ft_bzero.c ft_isalnum.c ft_isalpha.c \
 			ft_strncpy.c ft_hextol.c \
 			ft_isspace.c ft_split_whitespace.c ft_strndup.c \
 			ft_strcmp.c \
-			get_next_line.c get_next_line_utils.c get_next_line_utils_bonus.c
+			get_next_line.c get_next_line_utils_bonus.c
 
 OBJECTS	=	$(SOURCES:.c=.o)
 
