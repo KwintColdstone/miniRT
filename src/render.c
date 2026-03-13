@@ -24,7 +24,7 @@ static double	linear_to_gamma(double linear_component)
 	return (0);
 }
 
-static void	write_color(t_world *world, t_vec3 *pixel_color, int ppm_file)
+static void	write_color(t_vec3 *pixel_color)
 {
 	const t_interval	intensity = (t_interval){0.000, 0.999};
 	double				r;
@@ -37,8 +37,6 @@ static void	write_color(t_world *world, t_vec3 *pixel_color, int ppm_file)
 	pixel_color->x = (int)(256 * clamp_interval(r, intensity));
 	pixel_color->y = (int)(256 * clamp_interval(g, intensity));
 	pixel_color->z = (int)(256 * clamp_interval(b, intensity));
-	if (world->write_to_file == true)
-		write_to_file(ppm_file, pixel_color);
 }
 
 static t_vec3	render_pixel_color(
@@ -73,11 +71,7 @@ bool	render(t_camera *cam, t_world *world, t_rgba **colors)
 	int		i;
 	int		j;
 	t_vec3	final_color;
-	int		ppm_file;
 
-	ppm_file = create_ppm_file(world, cam);
-	if (ppm_file == -1)
-		return (false);
 	i = 0;
 	while (i < cam->image_height)
 	{
@@ -85,14 +79,12 @@ bool	render(t_camera *cam, t_world *world, t_rgba **colors)
 		while (++j < cam->image_width)
 		{
 			final_color = render_pixel_color(cam, world, i, j);
-			write_color(world, &final_color, ppm_file);
+			write_color(&final_color);
 			colors[i][j].rgba = get_color(final_color.x,
 					final_color.y, final_color.z, 0xFF);
 		}
 		i++;
 		printf("Scanlines done: %5d/%d\n", i, cam->image_height);
 	}
-	if (world->write_to_file == true)
-		close(ppm_file);
 	return (true);
 }

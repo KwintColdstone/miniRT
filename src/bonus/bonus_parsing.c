@@ -16,14 +16,11 @@
 
 static int	parse_option(char *argument, t_world *world)
 {
-	if (ft_strcmp(argument, OPTION_PPM) == 0)
-		world->write_to_file = true;
-	else if (ft_strcmp(argument, OPTION_INDIRECT_LIGHTING) == 0)
+	if (ft_strcmp(argument, OPTION_INDIRECT_LIGHTING) == 0)
 		world->indirect_lighting = true;
 	else
 	{
 		minirt_perror("Incorrect bonus options");
-		printf("Use:\n\t--ppm to save output to a .ppm file\n");
 		printf("\t--il to render indirect lighting\n");
 		return (1);
 	}

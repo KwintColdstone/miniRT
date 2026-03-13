@@ -100,10 +100,10 @@ CPPFLAGS	= $(INCFLAGS) -MMD -MP
 INCFLAGS	= $(addprefix -I,$(INCLUDE))
 #CFLAGS	=
 CFLAGS	= -Wall -Wextra -Werror
-#CFLAGS	= -Wall -Wextra -Werror -fsanitize=undefined --ppm --il
+#CFLAGS	= -Wall -Wextra -Werror -fsanitize=undefined --il
 #INPUT	= rt_files/just_enough_objects.rt
-INPUT	= rt_files/just_enough_objects.rt --ppm --il
-#INPUT	= rt_files/just_enough_objects.rt --ppm
+INPUT	= rt_files/cyl.rt --il
+#INPUT	= rt_files/just_enough_objects.rt
 #INPUT	= rt_files/just_enough_objects.rt --il
 
 

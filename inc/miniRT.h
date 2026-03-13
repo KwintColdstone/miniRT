@@ -143,7 +143,6 @@ typedef struct s_world
 	t_vec3			ambient;
 	bool			light_is_parsed;
 	bool			ambient_is_parsed;
-	bool			write_to_file;
 	bool			indirect_lighting;
 }	t_world;
 

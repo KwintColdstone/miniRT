@@ -18,7 +18,7 @@
 // MAX_ARGC is 2 + amount of bonus options
 # define MAX_ARGC 4
 // --ppm enables writing output of the renderer to a .ppm file
-# define OPTION_PPM "--ppm"
+//# define OPTION_PPM "--ppm"
 // --il enables rendering with indirect lighting
 # define OPTION_INDIRECT_LIGHTING "--il"
 
