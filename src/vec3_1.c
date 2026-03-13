@@ -10,8 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/miniRT.h"
-#include "math.h"
+#include "miniRT.h"
 
 t_vec3	add_vec3(t_vec3 a, t_vec3 b)
 {
