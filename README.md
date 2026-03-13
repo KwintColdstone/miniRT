@@ -20,10 +20,10 @@ of one or two characters), followed by all specific information for each object
 in a strict order such as:
 
 - Ambient lighting:
-A 0.2 255,255,255
-    identifier: A
-    ambient lighting ratio in the range [0.0,1.0]: 0.2
-    R, G, B colors in the range [0-255]: 255, 255, 255
+A 0.2 255,255,255  
+    identifier: A  
+    ambient lighting ratio in the range [0.0,1.0]: 0.2  
+    R, G, B colors in the range [0-255]: 255, 255, 255  
 
 - Camera:
 C -50.0,0,20 0,0,1 70
