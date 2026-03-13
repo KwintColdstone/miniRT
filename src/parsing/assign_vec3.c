@@ -31,7 +31,6 @@ static bool	assign_vector_values(t_vec3 *v, double min, double max,
 	double	z;
 
 	x = ft_atof(vec3[0]);
-	printf("x: %f\n", x);
 	y = ft_atof(vec3[1]);
 	z = ft_atof(vec3[2]);
 	free_xyz_strings(vec3[0], vec3[1], vec3[2]);
