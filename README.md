@@ -19,58 +19,58 @@ we have provided a lot of .rt files with the project, but you can also make your
 of one or two characters), followed by all specific information for each object
 in a strict order such as:
 
-- Ambient lighting:
-A 0.2 255,255,255  
-    identifier: A  
-    ambient lighting ratio in the range [0.0,1.0]: 0.2  
-    R, G, B colors in the range [0-255]: 255, 255, 255  
+- Ambient lighting: <br>
+A 0.2 255,255,255 <br>
+    identifier: A  <br> 
+    ambient lighting ratio in the range [0.0,1.0]: 0.2 <br>
+    R, G, B colors in the range [0-255]: 255, 255, 255 <br>
 
-- Camera:
-C -50.0,0,20 0,0,1 70
-    identifier: C
-    x, y, z coordinates of the viewpoint: -50.0,0,20
-    3D normalized orientation vector, in the range [-1,1] for each x, y, z axis: 0.0,0.0,1.0
-    FOV: Horizontal field of view in degrees in the range [0,180]: 70
+- Camera: <br>
+C -50.0,0,20 0,0,1 70 <br>
+    identifier: C <br>
+    x, y, z coordinates of the viewpoint: -50.0,0,20 <br>
+    3D normalized orientation vector, in the range [-1,1] for each x, y, z axis: 0.0,0.0,1.0 <br>
+    FOV: Horizontal field of view in degrees in the range [0,180]: 70 <br>
 
-- Light:
-L -40.0,50.0,0.0 0.6 10,0,255
-    identifier: L
-    x, y, z coordinates of the light point: -40.0,50.0,0.0
-    the light brightness ratio in the range [0.0,1.0]: 0.6
-    (unused in mandatory part) R, G, B colors in the range [0-255]: 10, 0, 255
+- Light: <br>
+L -40.0,50.0,0.0 0.6 10,0,255 <br>
+    identifier: L <br>
+    x, y, z coordinates of the light point: -40.0,50.0,0.0 <br>
+    the light brightness ratio in the range [0.0,1.0]: 0.6 <br>
+    (unused in mandatory part) R, G, B colors in the range [0-255]: 10, 0, 255 <br>
 
 - Sphere:
-sp 0.0,0.0,20.6 12.6 10,0,255
-    identifier: sp
-    x, y, z coordinates of the sphere center: 0.0,0.0,20.6
-    the sphere diameter: 12.6
-    R,G,B colors in the range [0-255]: 10, 0, 255
+sp 0.0,0.0,20.6 12.6 10,0,255 <br>
+    identifier: sp <br>
+    x, y, z coordinates of the sphere center: 0.0,0.0,20.6 <br>
+    the sphere diameter: 12.6 <br>
+    R,G,B colors in the range [0-255]: 10, 0, 255 <br>
 
-- Plane:
-pl 0.0,0.0,-10.0 0.0,1.0,0.0 0,0,225
-    identifier: pl
-    x, y, z coordinates of a point in the plane: 0.0,0.0,-10.0
-    3D normalized normal vector, in the range [-1,1] for each x, y, z axis:
-    0.0,1.0,0.0
-    R,G,B colors in the range [0-255]: 0,0,225
+- Plane: <br>
+pl 0.0,0.0,-10.0 0.0,1.0,0.0 0,0,225 <br>
+    identifier: pl <br>
+    x, y, z coordinates of a point in the plane: 0.0,0.0,-10.0 <br>
+    3D normalized normal vector, in the range [-1,1] for each x, y, z axis: <br>
+    0.0,1.0,0.0 <br>
+    R,G,B colors in the range [0-255]: 0,0,225 <br>
 
-- Cylinder:
-cy 50.0,0.0,20.6 0.0,0.0,1.0 14.2 21.42 10,0,255
-    identifier: cy
-    x, y, z coordinates of the center of the cylinder: 50.0,0.0,20.6
-    3D normalized vector of axis of cylinder, in the range [-1,1] for each x, y,
-    axis: 0.0,0.0,1.0
-    the cylinder diameter: 14.2
-    the cylinder height: 21.42
-    R, G, B colors in the range [0,255]: 10, 0, 255
+- Cylinder: <br>
+cy 50.0,0.0,20.6 0.0,0.0,1.0 14.2 21.42 10,0,255 <br>
+    identifier: cy <br>
+    x, y, z coordinates of the center of the cylinder: 50.0,0.0,20.6 <br>
+    3D normalized vector of axis of cylinder, in the range [-1,1] for each x, y, <br>
+    axis: 0.0,0.0,1.0 <br>
+    the cylinder diameter: 14.2 <br>
+    the cylinder height: 21.42 <br>
+    R, G, B colors in the range [0,255]: 10, 0, 255 <br>
 
-- Quad:
-qu 0,0,0 555,0,0 0,0,555 0,0,225
-    identifier: qu
-    Q, a 3D vector representing the the starting corner
-    u, a 3D vector representing the first side. Q+u gives one of the corners adjacent to Q
-    v, a 3D vector representing the second side. Q+v gives the other corner adjacent to Q
-    R,G,B colors in the range [0-255]: 0,0,225
+- Quad: <br>
+qu 0,0,0 555,0,0 0,0,555 0,0,225 <br>
+    identifier: qu <br>
+    Q, a 3D vector representing the the starting corner <br>
+    u, a 3D vector representing the first side. Q+u gives one of the corners adjacent to Q <br>
+    v, a 3D vector representing the second side. Q+v gives the other corner adjacent to Q <br>
+    R,G,B colors in the range [0-255]: 0,0,225 <br>
 
 # Materials
 
