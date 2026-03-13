@@ -107,11 +107,6 @@ static bool	is_cylinder_hit(const t_world *world, const t_ray *r,
 	return (hit_anything);
 }
 
-	//t_vec3		position;
-	//t_vec3		normal;
-	//t_material	mat;
-	//double		t;
-	//bool		front_face;
 bool	world_hit(const t_world *world, const t_ray *r,
 	t_interval ray_t, t_hit_record *rec)
 {

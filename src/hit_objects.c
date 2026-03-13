@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/miniRT.h"
+#include "miniRT.h"
 #include "math.h"
 
 // Find nearest root in acceptable range

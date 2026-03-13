@@ -80,15 +80,6 @@ static bool	first_pass(char *file, t_world *world, t_object_counter *counter)
 	return (true);
 }
 
-//these are for testing if parsing fucks up
-	//printf("World sphere count: %d\n", world->sp_list.count);
-	//printf("Counter sphere count: %d\n", counter.sphere_cap);
-	//printf("World plane count: %d\n", world->pl_list.count);
-	//printf("Counter plane count: %d\n", counter.plane_cap);
-	//printf("World cylinder count: %d\n", world->cy_list.count);
-	//printf("Counter culinder count: %d\n", counter.cylinder_cap);
-	//printf("World quad count: %d\n", world->qu_list.count);
-	//printf("Counter quad count: %d\n", counter.quad_cap);
 bool	parse(char *file, t_world *world, t_camera *cam)
 {
 	t_object_counter	counter;

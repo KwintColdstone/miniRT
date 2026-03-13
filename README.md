@@ -5,11 +5,13 @@
 The goal of this project was to learn about raytracing. A method of computing 3D graphics by shooting rays from a virtual camera.
 If the ray hits an object you calculate if it's currently being lit or if it's in shadow. Raytracing and the even more realistic pathtracing can create very realistic images. We implemented both.
 The program reads from a .rt file. The .rt file contains the coordinates, sizes and colors of the objects. From this .rt file we create a 3D scene and render it.
+By default, the project runs a simple raytracing algorithm. There is an option to turn on path tracing and some advanced rendering features. They will be described below.
 
 # Instructions
 
 - compile the program by going to our raytracer directory and run: make
 - then use the program by running: ./minirt [.rt]
+- you can add the --il (indirect lighting) flag to enable path tracing
 
 we have provided a lot of .rt files with the project, but you can also make your own by following these rules:
 
@@ -70,6 +72,19 @@ qu 0,0,0 555,0,0 0,0,555 0,0,225
     v, a 3D vector representing the second side. Q+v gives the other corner adjacent to Q
     R,G,B colors in the range [0-255]: 0,0,225
 
+# Materials
+
+You can add material properties to objects by adding the name of the material after RGB specification.
+-   LAMBERTIAN - the default option, not specified in the file: makes the object matte
+-   METAL: makes the object reflective
+-   EMIT: make the object emit light. This function is unfinished. The code that makes the object emit
+light is in place, but the parser does not handle the additional information required. As a result,
+objects will always appear dark when EMIT is assigned.
+
+-   Example of a sphere descrition for a .rt file with METAL property:
+sp 0.0,0.0,20.6 12.6 10,0,255 METAL
+
+
 # Resources
 
 book series on raytracing(actually path tracing):
@@ -86,5 +101,8 @@ https://www.youtube.com/watch?v=Qz0KTGYJtUk
 
 playlist on linear algebra:
 https://www.youtube.com/watch?v=fNk_zzaMoSs&list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab
+
+MLX42 wiki for the graphical library:
+https://github.com/codam-coding-college/MLX42/wiki
 
 kjongeri used ai to better understand some of the concepts in rayTracingInOneWeekend and to help come up with a good way to deal with the cylinders. Also some debugging.

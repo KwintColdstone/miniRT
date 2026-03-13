@@ -102,7 +102,7 @@ INCFLAGS	= $(addprefix -I,$(INCLUDE))
 CFLAGS	= -Wall -Wextra -Werror
 #CFLAGS	= -Wall -Wextra -Werror -fsanitize=undefined --il
 #INPUT	= rt_files/just_enough_objects.rt
-INPUT	= rt_files/sphere_corridor.rt --il
+INPUT	= rt_files/cyl.rt --il
 #INPUT	= rt_files/just_enough_objects.rt
 #INPUT	= rt_files/just_enough_objects.rt --il
 
