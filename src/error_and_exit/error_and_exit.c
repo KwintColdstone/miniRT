@@ -76,6 +76,5 @@ void	window_close(void *param)
 	exit_data->window = NULL;
 	exit_data->world = NULL;
 	exit_data->colors = NULL;
-	dprintf(STDERR_FILENO, "\nDEBUG: exit hook caled\n");
 	exit (exit_data->exit_code);
 }
