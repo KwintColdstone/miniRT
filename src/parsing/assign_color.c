@@ -53,13 +53,13 @@ bool	assign_color(t_vec3 *v, char *s, double strength)
 
 	i = 0;
 	r_str = extract_element(s, &i, ',');
-	if (!r_str)
+	if (!r_str || ft_strcmp(r_str, "") == 0)
 		return (free_color_strings(r_str, NULL, NULL), false);
 	g_str = extract_element(s, &i, ',');
-	if (!g_str)
+	if (!g_str || ft_strcmp(g_str, "") == 0)
 		return (free_color_strings(r_str, g_str, NULL), false);
 	b_str = extract_element(s, &i, ' ');
-	if (!b_str)
+	if (!b_str || ft_strcmp(b_str, "") == 0)
 		return (free_color_strings(r_str, g_str, b_str), false);
 	if (!is_float(r_str) || !is_float(g_str) || !is_float(b_str))
 		return (free_color_strings(r_str, g_str, b_str), false);
