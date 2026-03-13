@@ -31,6 +31,7 @@ static bool	assign_vector_values(t_vec3 *v, double min, double max,
 	double	z;
 
 	x = ft_atof(vec3[0]);
+	printf("x: %f\n", x);
 	y = ft_atof(vec3[1]);
 	z = ft_atof(vec3[2]);
 	free_xyz_strings(vec3[0], vec3[1], vec3[2]);
@@ -51,13 +52,13 @@ bool	assign_vec3(t_vec3 *v, char *s, double min, double max)
 
 	i = 0;
 	x_str = extract_element(s, &i, ',');
-	if (!x_str)
+	if (!x_str || ft_strcmp(x_str, "") == 0)
 		return (free_xyz_strings(x_str, NULL, NULL), false);
 	y_str = extract_element(s, &i, ',');
-	if (!y_str)
+	if (!y_str || ft_strcmp(y_str, "") == 0)
 		return (free_xyz_strings(x_str, y_str, NULL), false);
 	z_str = extract_element(s, &i, ' ');
-	if (!z_str)
+	if (!z_str || ft_strcmp(z_str, "") == 0)
 		return (free_xyz_strings(x_str, y_str, z_str), false);
 	if (!is_float(x_str) || !is_float(y_str) || !is_float(z_str))
 	{
